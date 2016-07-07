@@ -1,0 +1,55 @@
+﻿@model IEnumerable<STV.Models.Departamento>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+
+@using (Html.BeginForm("Index", "Departamentos", FormMethod.Get))
+{
+    <p>
+        Informe o ID: @Html.TextBox("s", ViewBag.Filtro as string)
+        <input type="submit" value="Filtrar" />
+        <input type="button" value="Limpar" onclick="location.href='@Url.Action("Index", "Departamentos")'" />
+    </p>
+}
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Descricao)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Status)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Stamp)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Descricao)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Status)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Stamp)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.Iddepartamento }) |
+            @Html.ActionLink("Details", "Details", new { id=item.Iddepartamento }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.Iddepartamento })
+        </td>
+    </tr>
+}
+
+</table>

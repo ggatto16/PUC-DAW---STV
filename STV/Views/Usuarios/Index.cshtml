@@ -1,0 +1,78 @@
+﻿@model IEnumerable<STV.Models.Usuario>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+
+@using (Html.BeginForm("Index", "Usuarios", FormMethod.Get))
+{
+    <p>
+        Informe o CPF: @Html.TextBox("Cpf", ViewBag.FiltroCPF as string)
+    </p>
+    <p>
+        Ou o nome se preferir: @Html.TextBox("Nome", ViewBag.FiltroNome as string)
+    </p>
+    <p>
+        <input type="submit" value="Filtrar" />
+        <input type="button" value="Limpar" onclick="location.href='@Url.Action("Index", "Usuarios")'" />
+    </p>
+} 
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Cpf)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Nome)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Email)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Senha)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Status)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Stamp)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Cpf)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Nome)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Email)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Senha)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Status)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Stamp)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.Idusuario }) |
+            @Html.ActionLink("Details", "Details", new { id=item.Idusuario }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.Idusuario })
+        </td>
+    </tr>
+}
+
+</table>

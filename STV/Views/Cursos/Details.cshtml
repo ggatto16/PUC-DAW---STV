@@ -1,0 +1,99 @@
+﻿@model STV.ViewModels.cursoVM
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div class="col-md-6">
+    <div>
+        <h4>Curso</h4>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.Titulo)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Titulo)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Dtinicial)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Dtinicial)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Dtfinal)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Dtfinal)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Categoria)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Categoria)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Palavraschave)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Palavraschave)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Stamp)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Stamp)
+            </dd>
+
+        </dl>
+    </div>
+    <p>
+        @Html.ActionLink("Edit", "Edit", new { id = Model.Idcurso }) |
+        @Html.ActionLink("Back to List", "Index")
+    </p>
+    <hr />
+
+    <h3>Unidades</h3>
+    <table>
+        @{
+            foreach (var unidade in Model.Unidades)
+            {
+                <tr>
+                    <td>
+                        @Ajax.ActionLink(unidade.Titulo, "CarregarConteudo", "Unidades", new { idunidade = unidade.Idunidade }, new AjaxOptions { UpdateTargetId = "ConteudoUnidade", InsertionMode = InsertionMode.Replace, HttpMethod = "Get" })
+                    </td>
+                </tr>
+                @Html.Raw("<tr><td id='materiais_" + unidade.Idunidade + "'></td></tr>")
+            }
+        }
+    </table>
+</div>
+
+<div class="col-md-6">
+    <div id="ConteudoUnidade"></div>
+</div>
+
+@section scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        $(document).ready(function () {
+            if (@ViewBag.UnidadeSelecionada != null)
+                var url = '@Url.Action("CarregarConteudo","Unidades", new { idunidade = ViewBag.UnidadeSelecionada })';
+            $.post(url, null, function(data) { $('#ConteudoUnidade').html(data); });
+        });
+    </script>
+}

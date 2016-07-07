@@ -1,0 +1,88 @@
+﻿@model STV.Models.Atividade
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div class="col-md-6">
+    <div>
+        <h4>Atividade</h4>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.Unidade.Titulo)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Unidade.Titulo)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Descricao)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Descricao)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Valor)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Valor)
+            </dd>
+
+        </dl>
+    </div>
+    <p>
+        @Html.ActionLink("Edit", "Edit", new { id = Model.Idatividade }) |
+        @Html.ActionLink("Back to List", "Index")
+    </p>
+
+    <hr />
+
+    <div class="form-group">
+
+        <h4>Questões</h4>
+
+        <p>
+            @Html.ActionLink("Adicionar", "Create", "Questoes", new { Idatividade = Model.Idatividade }, null)
+        </p>
+
+        <div class="col-md-10">
+            <table>
+                @foreach (var questao in Model.Questoes)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => questao.Descricao)
+                        </td>
+                        <td>
+                            @Html.ActionLink("Edit", "Edit", "Questoes" ,new { id = questao.Idquestao }, null) |
+                            @Ajax.ActionLink("Mostrar Alternativas", "CarregarAlternativas", "Questoes", new { Idquestao = questao.Idquestao }, new AjaxOptions { UpdateTargetId = "Alternativas", InsertionMode = InsertionMode.Replace, HttpMethod = "Get" }) |
+                            @Html.ActionLink("Delete", "Delete", "Questoes", new { id = questao.Idquestao }, null)
+                        </td>
+                    </tr>
+                }
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<div class="col-md-6">
+    <div id="Alternativas"></div>
+</div>
+
+@section scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        $(document).ready(function () {
+            if (@ViewBag.QuestaoSelecionada != null)
+                var url = '@Url.Action("CarregarAlternativas", "Questoes", new { Idquestao = ViewBag.QuestaoSelecionada })';
+            $.post(url, null, function(data) { $('#Alternativas').html(data); });
+        });
+    </script>
+}

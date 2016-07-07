@@ -22,8 +22,16 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li>@Html.ActionLink("Home", "Index", "Home")</li>
+                    <li>@Html.ActionLink("Departamentos", "Index", "Departamentos")</li>
+                    <li>@Html.ActionLink("Usuários", "Index", "Usuarios")</li>
+                    <li>@Html.ActionLink("Cursos", "Index", "Cursos")</li>
+                    <!--<li>@Html.ActionLink("Unidades", "Index", "Unidades")</li>
+                    <li>@Html.ActionLink("Materiais", "Index", "Materiais")</li>
+                    <li>@Html.ActionLink("Atividades", "Index", "Atividades")</li>
+                    <li>@Html.ActionLink("Questões", "Index", "Questoes")</li>
+                    <li>@Html.ActionLink("Alternativas", "Index", "Alternativas")</li>
                     <li>@Html.ActionLink("About", "About", "Home")</li>
-                    <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
+                    <li>@Html.ActionLink("Contact", "Contact", "Home")</li>-->
                 </ul>
                 @Html.Partial("_LoginPartial")
             </div>
@@ -31,8 +39,10 @@
     </div>
     <div class="container body-content">
         @RenderBody()
-        <hr />
+    </div>
+    <div class="container">
         <footer>
+            <hr />
             <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
         </footer>
     </div>

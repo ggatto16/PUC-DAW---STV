@@ -1,0 +1,70 @@
+﻿@model STV.Models.Unidade
+
+<h3> Conteúdo - @Html.DisplayFor(item => item.Titulo)</h3>
+
+<div class="pull-right">
+    <a href="javascript:void(0);" onclick='$("#ConteudoUnidade").empty();'>Fechar</a>
+</div>
+
+<h4>Materiais</h4>
+
+<p>
+    @Html.ActionLink("Adicionar", "Create", "Materiais", new { Idunidade = Model.Idunidade }, null)
+</p>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Materiais.FirstOrDefault().Descricao)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Materiais.FirstOrDefault().Tipo)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model.Materiais)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Descricao)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Tipo)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", "Materiais", new { id = item.Idmaterial }, null) |
+                @Html.ActionLink("Details", "Details", "Materiais", new { id = item.Idmaterial }, null) |
+                @Ajax.ActionLink("Excluir", "Delete", "Materiais", new { id = item.Idmaterial }, new AjaxOptions { UpdateTargetId = "ConteudoUnidade", InsertionMode = InsertionMode.Replace, HttpMethod = "Get" })
+            </td>
+        </tr>
+    }
+
+</table>
+
+<hr />
+
+<h4>Atividades</h4>
+
+<p>
+    @Html.ActionLink("Adicionar", "Create", "Atividades", new { idUnidade = Model.Idunidade }, null)
+</p>
+
+<table class="table">
+
+    @foreach (var item in Model.Atividades)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Descricao)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", "Atividades", new { id = item.Idatividade }, null) |
+                @Html.ActionLink("Details", "Details", "Atividades", new { id = item.Idatividade }, null) |
+                @Html.ActionLink("Delete", "Delete", "Atividades", new { id = item.Idatividade }, null)
+            </td>
+        </tr>
+    }
+
+</table>
+

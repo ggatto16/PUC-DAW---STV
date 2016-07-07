@@ -1,0 +1,42 @@
+﻿@model STV.Models.Questao
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Questao</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Alternativa.Descricao)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Alternativa.Descricao)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Atividade.Idatividade)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Atividade.Idatividade)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Descricao)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Descricao)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Idquestao }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

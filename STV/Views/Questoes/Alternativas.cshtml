@@ -1,0 +1,46 @@
+﻿@model STV.Models.Questao 
+
+<h3> Alternativas </h3>
+
+<div class="pull-right">
+    <a href="javascript:void(0);" onclick='$("#Alternativas").empty();'>Fechar</a>
+</div>
+
+<p>
+    @Html.ActionLink("Adicionar", "Create", "Alternativas", new { Idquestao = Model.Idquestao }, null)
+</p>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Alternativas.FirstOrDefault().Descricao)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model.Alternativas)
+    {
+        var correta = string.Empty;
+        var tooltip = "Alternativa Incorreta";
+
+        if (item.Idalternativa == Model.IdalternativaCorreta)
+        {
+            correta = "success";
+            tooltip = "Alternativa Correta";
+        }
+
+        <tr class="@correta" data-toggle="tooltip" data-placement="bottom" title="@tooltip">
+            <td>
+                @Html.DisplayFor(modelItem => item.Descricao)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", "Alternativas", new { id = item.Idalternativa }, null) |
+                @Html.ActionLink("Details", "Details", "Alternativas", new { id = item.Idalternativa }, null) |
+                @Ajax.ActionLink("Excluir", "Delete", "Alternativas", new { id = item.Idalternativa }, new AjaxOptions { UpdateTargetId = "Alternativas", InsertionMode = InsertionMode.Replace, HttpMethod = "Get" })
+            </td>
+        </tr>
+    }
+
+</table>
+
+
