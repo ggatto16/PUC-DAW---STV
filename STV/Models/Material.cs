@@ -3,10 +3,17 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.Spatial;
-using STV.Enum;
+using STV.Models.Enum;
 
 namespace STV.Models
 {
+    public enum TipoMaterial
+    {
+        Video = 1,
+        Arquivo = 2,
+        Link = 3
+    };
+
     [Table("Material")]
     public partial class Material
     {
@@ -19,7 +26,7 @@ namespace STV.Models
         public string Descricao { get; set; }
 
         [Required]
-        public int Tipo { get; set; }
+        public TipoMaterial Tipo { get; set; }
 
         public virtual Unidade Unidade { get; set; }
 

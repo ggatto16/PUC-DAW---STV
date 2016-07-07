@@ -26,7 +26,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.Tipo, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.Tipo, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EnumDropDownListFor(model => model.Tipo, null, htmlAttributes: new { @class = "form-control", onchange = "CarregarTipo(this.value);" })
                 @Html.ValidationMessageFor(model => model.Tipo, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -52,5 +52,13 @@
 </div>
 
 @section Scripts {
+
     @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+        function CarregarTipo(tipo) {
+            var url = '@Html.Raw(Url.Action("CarregarPartialMaterial", "Materiais", new { Tipo =' + tipo + '  })
+                $.post(url, null, function (data) { $('#Tipo').html(data); });
+            };
+    </script>
 }

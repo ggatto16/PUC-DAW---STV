@@ -8,6 +8,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using STV.Models;
+using STV.Models.Enum;
 
 namespace STV.Controllers
 {

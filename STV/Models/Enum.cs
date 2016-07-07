@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace STV.Enum
+namespace STV.Models.Enum
 {
         public enum TipoMaterial
         {
