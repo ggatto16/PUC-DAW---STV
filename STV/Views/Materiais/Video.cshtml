@@ -1,0 +1,13 @@
+﻿@model STV.Models.Material
+
+<div class="form-horizontal">
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Arquivo.Nomearquivo, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            <input type="file" name="upload" id="Arquivo"/>
+            @Html.ValidationMessageFor(model => model.Arquivo.Nomearquivo,"", new { @class = "text-danger" })
+        </div>
+    </div>
+
+</div>

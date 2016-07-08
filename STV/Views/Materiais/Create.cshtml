@@ -7,58 +7,76 @@
 <h2>Create</h2>
 
 
-@using (Html.BeginForm()) 
-{
-    @Html.AntiForgeryToken()
-    
-    <div class="form-horizontal">
-        <h4>Material</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        <div class="form-group">
-            @Html.LabelFor(model => model.Descricao, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Descricao, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Descricao, "", new { @class = "text-danger" })
+
+    @using (Html.BeginForm("Create", "Materiais", null, FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="col-md-6">
+
+            <div class="form-horizontal">
+                <h4>Material</h4>
+                <hr />
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Descricao, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.Descricao, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Descricao, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Tipo, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EnumDropDownListFor(model => model.Tipo, "Selecione", htmlAttributes: new { @class = "form-control", onchange = "CarregarTipo(this.value);" })
+                        @Html.ValidationMessageFor(model => model.Tipo, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Idunidade, "Idunidade", htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.DropDownList("Idunidade", null, htmlAttributes: new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.Idunidade, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <input type="submit" value="Create" class="btn btn-default" />
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                @Html.ActionLink("Back to List", "Index")
             </div>
         </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.Tipo, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EnumDropDownListFor(model => model.Tipo, null, htmlAttributes: new { @class = "form-control", onchange = "CarregarTipo(this.value);" })
-                @Html.ValidationMessageFor(model => model.Tipo, "", new { @class = "text-danger" })
-            </div>
+        <div class="col-md-6">
+            <div id="container"></div>
         </div>
+    }
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.Idunidade, "Idunidade", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownList("Idunidade", null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.Idunidade, "", new { @class = "text-danger" })
-            </div>
-        </div>
+    @section Scripts {
 
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-default" />
-            </div>
-        </div>
-    </div>
-}
+        @Scripts.Render("~/bundles/jqueryval")
 
-<div>
-    @Html.ActionLink("Back to List", "Index")
-</div>
-
-@section Scripts {
-
-    @Scripts.Render("~/bundles/jqueryval")
-
-    <script>
-        function CarregarTipo(tipo) {
-            var url = '@Html.Raw(Url.Action("CarregarPartialMaterial", "Materiais", new { Tipo =' + tipo + '  })
-                $.post(url, null, function (data) { $('#Tipo').html(data); });
-            };
-    </script>
-}
+        <script>
+            $(function () {
+                $('#Tipo').change(function () {
+                    var tipoID = $(this).val();
+                    $.ajax({
+                        url: '@Url.Action("CarregarTipo", "Materiais")',
+                        type: 'GET',
+                        data: { Idtipo: tipoID },
+                        cache: false,
+                        success: function (result) {
+                            $('#container').html(result);
+                        }
+                    });
+                });
+            });
+        </script>
+    }

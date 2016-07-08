@@ -8,7 +8,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using STV.Models;
-//oi git
+
 namespace STV.Controllers
 {
     public class AlternativasController : Controller

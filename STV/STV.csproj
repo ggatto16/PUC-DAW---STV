@@ -204,6 +204,7 @@
     <Compile Include="AutoMapperBootStrapper.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AlternativasController.cs" />
+    <Compile Include="Controllers\ArquivosController.cs" />
     <Compile Include="Controllers\AtividadesController.cs" />
     <Compile Include="Controllers\CursosController.cs" />
     <Compile Include="Controllers\DepartamentosController.cs" />
@@ -232,9 +233,18 @@
     <Compile Include="Migrations\201607052012539_DescricaoAtividade.Designer.cs">
       <DependentUpon>201607052012539_DescricaoAtividade.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201607081521233_file2.cs" />
+    <Compile Include="Migrations\201607081521233_file2.Designer.cs">
+      <DependentUpon>201607081521233_file2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201607081553502_file4.cs" />
+    <Compile Include="Migrations\201607081553502_file4.Designer.cs">
+      <DependentUpon>201607081553502_file4.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Alternativa.cs" />
+    <Compile Include="Models\Arquivo.cs" />
     <Compile Include="Models\Atividade.cs" />
     <Compile Include="Models\Curso.cs" />
     <Compile Include="Models\Departamento.cs" />
@@ -363,6 +373,7 @@
     <Content Include="Views\Alternativas\Edit.cshtml" />
     <Content Include="Views\Alternativas\Index.cshtml" />
     <Content Include="Views\Questoes\Alternativas.cshtml" />
+    <Content Include="Views\Materiais\Video.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
@@ -381,6 +392,15 @@
     <EmbeddedResource Include="Migrations\201607052012539_DescricaoAtividade.resx">
       <DependentUpon>201607052012539_DescricaoAtividade.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201607081521233_file2.resx">
+      <DependentUpon>201607081521233_file2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201607081553502_file4.resx">
+      <DependentUpon>201607081553502_file4.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Views\Arquivos\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

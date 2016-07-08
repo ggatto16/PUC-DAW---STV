@@ -9,6 +9,7 @@ using System.Web;
 using System.Web.Mvc;
 using STV.Models;
 using STV.Models.Enum;
+using System.IO;
 
 namespace STV.Controllers
 {
@@ -38,12 +39,18 @@ namespace STV.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Material material = await db.Material.FindAsync(id);
+            Material material = await db.Material.Include(m => m.Arquivo).SingleOrDefaultAsync(m => m.Idmaterial == id);
             if (material == null)
             {
                 return HttpNotFound();
             }
             return View(material);
+        }
+
+        // GET: Tipo
+        public async Task<ActionResult> CarregarTipo(int Idtipo)
+        {
+            return PartialView("Video");
         }
 
         // GET: Materiais/Create
@@ -60,10 +67,12 @@ namespace STV.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Idmaterial,Idunidade,Descricao,Tipo")] Material material)
+        public async Task<ActionResult> Create([Bind(Include = "Idmaterial,Idunidade,Descricao,Tipo")] Material material, HttpPostedFileBase upload)
         {
             if (ModelState.IsValid)
             {
+                GetUpload(ref material, upload);
+
                 db.Material.Add(material);
                 await db.SaveChangesAsync();
                 return VoltarParaListagem(material);
@@ -93,10 +102,11 @@ namespace STV.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "Idmaterial,Idunidade,Descricao,Tipo")] Material material)
+        public async Task<ActionResult> Edit([Bind(Include = "Idmaterial,Idunidade,Descricao,Tipo")] Material material, HttpPostedFileBase upload)
         {
             if (ModelState.IsValid)
             {
+                GetUpload(ref material, upload);
                 db.Entry(material).State = EntityState.Modified;
                 await db.SaveChangesAsync();
                 return VoltarParaListagem(material);
@@ -130,6 +140,33 @@ namespace STV.Controllers
             await db.SaveChangesAsync();
             return VoltarParaListagem(material);
         }
+
+        private void GetUpload (ref Material material, HttpPostedFileBase upload)
+        {
+            try
+            {
+                if (upload != null && upload.ContentLength > 0)
+                {
+                    var arquivo = new Arquivo
+                    {
+                        Nomearquivo = Path.GetFileName(upload.FileName),
+                        ContentType = upload.ContentType,
+                        Idmaterial = material.Idmaterial
+                    };
+                    using (var reader = new System.IO.BinaryReader(upload.InputStream))
+                    {
+                        arquivo.Content = reader.ReadBytes(upload.ContentLength);
+                    }
+                    material.Arquivo = arquivo;
+                    material.Idarquivo = arquivo.Idarquivo;
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
 
         //Retorna para a tela principal do Curso
         private RedirectToRouteResult VoltarParaListagem(Material material)

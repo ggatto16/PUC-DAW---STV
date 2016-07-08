@@ -21,6 +21,7 @@ namespace STV.Models
         public virtual DbSet<Atividade> Atividade { get; set; }
         public virtual DbSet<Questao> Questao { get; set; }
         public virtual DbSet<Alternativa> Alternativa { get; set; }
+        public virtual DbSet<Arquivo> Arquivo { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -79,7 +80,10 @@ namespace STV.Models
 
             modelBuilder.Entity<Material>()
                 .HasRequired(x => x.Unidade).WithMany(x => x.Materiais).HasForeignKey(x => x.Idunidade);
-                //.Map(m => m.MapKey("Idunidade"));
+            //.Map(m => m.MapKey("Idunidade"));
+
+            modelBuilder.Entity<Material>()
+                .HasOptional(x => x.Arquivo).WithRequired();
 
             modelBuilder.Entity<Atividade>()
                 .ToTable("Atividade")
@@ -107,7 +111,16 @@ namespace STV.Models
 
             modelBuilder.Entity<Alternativa>()
                 .HasRequired(x => x.Questao).WithMany(x => x.Alternativas).HasForeignKey(x => x.Idquestao);
-                //.Map(m => m.MapKey("Idquestao"));
+            //.Map(m => m.MapKey("Idquestao"));
+
+            modelBuilder.Entity<Arquivo>()
+                .ToTable("Arquivo")
+                .HasKey(x => x.Idarquivo);
+
+            modelBuilder.Entity<Arquivo>()
+                .HasRequired(x => x.Material).WithOptional();
+
+
         }
 
     }

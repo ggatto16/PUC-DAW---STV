@@ -26,6 +26,16 @@
             @Html.DisplayFor(model => model.Tipo)
         </dd>
 
+        @if (Model.Arquivo != null)
+        {
+            <dt>
+                @Html.DisplayNameFor(model => model.Arquivo.Nomearquivo)
+            </dt>
+
+            <dd>
+                @Html.ActionLink(Model.Arquivo.Nomearquivo, "Index", "Arquivos", new { id = Model.Arquivo.Idarquivo }, new { target = "_blank" })
+            </dd>
+        }
     </dl>
 </div>
 <p>
