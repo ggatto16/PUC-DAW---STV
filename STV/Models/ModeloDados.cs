@@ -82,8 +82,12 @@ namespace STV.Models
                 .HasRequired(x => x.Unidade).WithMany(x => x.Materiais).HasForeignKey(x => x.Idunidade);
             //.Map(m => m.MapKey("Idunidade"));
 
+            modelBuilder.Entity<Arquivo>()
+                .ToTable("Arquivo")
+                .HasKey(x => x.Idmaterial);
+
             modelBuilder.Entity<Material>()
-                .HasOptional(x => x.Arquivo).WithRequired();
+                .HasOptional(x => x.Arquivo).WithRequired(x => x.Material);
 
             modelBuilder.Entity<Atividade>()
                 .ToTable("Atividade")
@@ -112,13 +116,6 @@ namespace STV.Models
             modelBuilder.Entity<Alternativa>()
                 .HasRequired(x => x.Questao).WithMany(x => x.Alternativas).HasForeignKey(x => x.Idquestao);
             //.Map(m => m.MapKey("Idquestao"));
-
-            modelBuilder.Entity<Arquivo>()
-                .ToTable("Arquivo")
-                .HasKey(x => x.Idarquivo);
-
-            modelBuilder.Entity<Arquivo>()
-                .HasRequired(x => x.Material).WithOptional();
 
 
         }

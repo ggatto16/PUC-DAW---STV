@@ -107,6 +107,7 @@ namespace STV.Controllers
             if (ModelState.IsValid)
             {
                 GetUpload(ref material, upload);
+                if (material.Arquivo != null) db.Arquivo.Add(material.Arquivo);
                 db.Entry(material).State = EntityState.Modified;
                 await db.SaveChangesAsync();
                 return VoltarParaListagem(material);
@@ -158,7 +159,6 @@ namespace STV.Controllers
                         arquivo.Content = reader.ReadBytes(upload.ContentLength);
                     }
                     material.Arquivo = arquivo;
-                    material.Idarquivo = arquivo.Idarquivo;
                 }
             }
             catch (Exception)

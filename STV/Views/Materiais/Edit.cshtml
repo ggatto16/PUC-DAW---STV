@@ -48,8 +48,8 @@
                 <div id="arquivo" class="form-group">
                     @Html.LabelFor(model => model.Arquivo.Nomearquivo, "Idarquivo", htmlAttributes: new { @class = "control-label col-md-2" })
                     <div class="col-md-10">
-                        @Html.ActionLink(Model.Arquivo.Nomearquivo, "Index", "Arquivos", new { id = Model.Arquivo.Idarquivo }, new { target = "_blank" })
-                        @Ajax.ActionLink("Excluir", "Excluir", "Arquivos", new { id = Model.Arquivo.Idarquivo }, new AjaxOptions { HttpMethod = "Delete", OnComplete = "function() { $('#arquivo').remove(); }" }, null)
+                        @Html.ActionLink(Model.Arquivo.Nomearquivo, "Index", "Arquivos", new { id = Model.Arquivo.Idmaterial }, new { target = "_blank" })
+                        @Ajax.ActionLink("Excluir", "Excluir", "Arquivos", new { id = Model.Arquivo.Idmaterial }, new AjaxOptions { HttpMethod = "Delete", OnComplete = "function() { $('#arquivo').remove(); }" }, null)
                     </div>
                 </div>
             }

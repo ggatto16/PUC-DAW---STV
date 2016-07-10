@@ -225,21 +225,9 @@
     <Compile Include="Map\UsuarioMap.cs" />
     <Compile Include="Map\DepartamentoMap.cs" />
     <Compile Include="Map\CursoMap.cs" />
-    <Compile Include="Migrations\201606241716498_v1.cs" />
-    <Compile Include="Migrations\201606241716498_v1.Designer.cs">
-      <DependentUpon>201606241716498_v1.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201607052012539_DescricaoAtividade.cs" />
-    <Compile Include="Migrations\201607052012539_DescricaoAtividade.Designer.cs">
-      <DependentUpon>201607052012539_DescricaoAtividade.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201607081521233_file2.cs" />
-    <Compile Include="Migrations\201607081521233_file2.Designer.cs">
-      <DependentUpon>201607081521233_file2.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201607081553502_file4.cs" />
-    <Compile Include="Migrations\201607081553502_file4.Designer.cs">
-      <DependentUpon>201607081553502_file4.cs</DependentUpon>
+    <Compile Include="Migrations\201607100029385_teste.cs" />
+    <Compile Include="Migrations\201607100029385_teste.Designer.cs">
+      <DependentUpon>201607100029385_teste.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -387,21 +375,12 @@
     <None Include="Project_Readme.html" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201606241716498_v1.resx">
-      <DependentUpon>201606241716498_v1.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201607052012539_DescricaoAtividade.resx">
-      <DependentUpon>201607052012539_DescricaoAtividade.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201607081521233_file2.resx">
-      <DependentUpon>201607081521233_file2.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201607081553502_file4.resx">
-      <DependentUpon>201607081553502_file4.cs</DependentUpon>
-    </EmbeddedResource>
+    <Folder Include="Views\Arquivos\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Views\Arquivos\" />
+    <EmbeddedResource Include="Migrations\201607100029385_teste.resx">
+      <DependentUpon>201607100029385_teste.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
