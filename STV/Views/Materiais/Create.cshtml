@@ -1,11 +1,14 @@
 ﻿@model STV.Models.Material
 
+@section MeusEstilos {
+    @Styles.Render("~/Content/fileinput")
+}
+
 @{
     ViewBag.Title = "Create";
 }
 
 <h2>Create</h2>
-
 
 
     @using (Html.BeginForm("Create", "Materiais", null, FormMethod.Post, new { enctype = "multipart/form-data" }))
@@ -29,7 +32,7 @@
                 <div class="form-group">
                     @Html.LabelFor(model => model.Tipo, htmlAttributes: new { @class = "control-label col-md-2" })
                     <div class="col-md-10">
-                        @Html.EnumDropDownListFor(model => model.Tipo, "Selecione", htmlAttributes: new { @class = "form-control", onchange = "CarregarTipo(this.value);" })
+                        @Html.EnumDropDownListFor(model => model.Tipo, "Selecione", htmlAttributes: new { @class = "form-control" })
                         @Html.ValidationMessageFor(model => model.Tipo, "", new { @class = "text-danger" })
                     </div>
                 </div>
@@ -74,9 +77,24 @@
                         cache: false,
                         success: function (result) {
                             $('#container').html(result);
+                            PrepararFileUpload();
                         }
                     });
                 });
             });
+
+            function PrepararFileUpload() {
+	            $("#Arquivo").fileinput({
+	                language: 'pt-BR',
+	                maxFileCount: 1,
+	                showUpload: false,
+	                showCaption: true,
+	                browseClass: "btn btn-primary btn-lg",
+	                fileType: "any",
+
+	            });
+            }
+
         </script>
+
     }

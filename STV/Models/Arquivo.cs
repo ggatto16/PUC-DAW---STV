@@ -8,13 +8,11 @@ namespace STV.Models
 
     public class Arquivo
     {
-        //public int Idarquivo { get; set; }
+        public int Idarquivo { get; set; }
 
         public string Nomearquivo { get; set; }
 
         public string ContentType { get; set; }
-
-        public byte[] Content { get; set; }
 
         public int Idmaterial { get; set; }
 

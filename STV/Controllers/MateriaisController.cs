@@ -39,7 +39,8 @@ namespace STV.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Material material = await db.Material.Include(m => m.Arquivo).SingleOrDefaultAsync(m => m.Idmaterial == id);
+            //Material material = await db.Material.Include(m => m.Arquivo).SingleOrDefaultAsync(m => m.Idmaterial == id);
+            Material material = await db.Material.FindAsync(id);
             if (material == null)
             {
                 return HttpNotFound();
@@ -84,17 +85,25 @@ namespace STV.Controllers
         // GET: Materiais/Edit/5
         public async Task<ActionResult> Edit(int? id)
         {
-            if (id == null)
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                if (id == null)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
+                Material material = await db.Material.FindAsync(id);
+                if (material == null)
+                {
+                    return HttpNotFound();
+                }
+                ViewBag.Idunidade = new SelectList(db.Unidade, "Idunidade", "Titulo");
+                return View(material);
             }
-            Material material = await db.Material.FindAsync(id);
-            if (material == null)
+            catch (Exception)
             {
-                return HttpNotFound();
+
+                throw;
             }
-            ViewBag.Idunidade = new SelectList(db.Unidade, "Idunidade", "Titulo");
-            return View(material);
         }
 
         // POST: Materiais/Edit/5
@@ -104,15 +113,25 @@ namespace STV.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit([Bind(Include = "Idmaterial,Idunidade,Descricao,Tipo")] Material material, HttpPostedFileBase upload)
         {
-            if (ModelState.IsValid)
+            try
             {
-                GetUpload(ref material, upload);
-                if (material.Arquivo != null) db.Arquivo.Add(material.Arquivo);
-                db.Entry(material).State = EntityState.Modified;
-                await db.SaveChangesAsync();
-                return VoltarParaListagem(material);
+                if (ModelState.IsValid)
+                {
+                    //GetUpload(ref material, upload);
+                    //if (material.Arquivo != null) db.Arquivo.Add(material.Arquivo);
+                    db.Entry(material).State = EntityState.Modified;
+                    await db.SaveChangesAsync();
+                    return VoltarParaListagem(material);
+                }
             }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+                ViewBag.Idunidade = new SelectList(db.Unidade, "Idunidade", "Titulo");
+            }
+
             return View(material);
+
         }
 
         // GET: Materiais/Delete/5
@@ -156,9 +175,13 @@ namespace STV.Controllers
                     };
                     using (var reader = new System.IO.BinaryReader(upload.InputStream))
                     {
-                        arquivo.Content = reader.ReadBytes(upload.ContentLength);
+                        //arquivo.Content = reader.ReadBytes(upload.ContentLength);
                     }
-                    material.Arquivo = arquivo;
+                    //material.Arquivo = arquivo;
+                }
+                else
+                {
+                    //material.Arquivo = db.Arquivo.Find(material.Idmaterial);
                 }
             }
             catch (Exception)

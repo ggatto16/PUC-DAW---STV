@@ -29,8 +29,6 @@ namespace STV.Models
         [Required]
         public TipoMaterial Tipo { get; set; }
 
-        public virtual Arquivo Arquivo { get; set; }
-
         public virtual Unidade Unidade { get; set; }
 
     }
