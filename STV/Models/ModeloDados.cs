@@ -84,7 +84,10 @@ namespace STV.Models
 
             modelBuilder.Entity<Arquivo>()
                 .ToTable("Arquivo")
-                .HasKey(x => x.Idarquivo);
+                .HasKey(x => x.Idmaterial);
+
+            modelBuilder.Entity<Arquivo>()
+                .HasRequired(x => x.Material).WithOptional().WillCascadeOnDelete(true);
 
             //modelBuilder.Entity<Material>()
             //    .HasOptional(x => x.Arquivo).WithRequired(x => x.Material).WillCascadeOnDelete(true);
