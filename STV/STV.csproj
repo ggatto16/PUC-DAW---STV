@@ -291,6 +291,7 @@
     </Content>
     <Content Include="App_Data\stvdb_08072016.dacpac" />
     <Content Include="App_Data\stvdb_09072016.dacpac" />
+    <Content Include="App_Data\stvdb_12072016.dacpac" />
     <None Include="Scripts\jquery-3.0.0.intellisense.js" />
     <Content Include="Scripts\fileinput\fileinput.min.js" />
     <Content Include="Scripts\jquery-3.0.0.js" />
