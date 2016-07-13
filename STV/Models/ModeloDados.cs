@@ -5,7 +5,7 @@ namespace STV.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Linq;
     using STV.Map;
-
+    using System.Data.Entity.ModelConfiguration.Conventions;
     public partial class ModeloDados : DbContext
     {
         public ModeloDados()
@@ -56,6 +56,8 @@ namespace STV.Models
                 .HasRequired(x => x.Usuario).WithMany(x => x.Cursos).HasForeignKey(x => x.Idusuario);
             //.Map(m => m.MapKey("Idusuario"));
 
+            modelBuilder.Conventions.Remove<ManyToManyCascadeDeleteConvention>();
+
             modelBuilder.Entity<Curso>()
                 .HasMany(x => x.Departamentos)
                 .WithMany(x => x.Cursos)
@@ -87,7 +89,8 @@ namespace STV.Models
                 .HasKey(x => x.Idmaterial);
 
             modelBuilder.Entity<Arquivo>()
-                .HasRequired(x => x.Material).WithOptional().WillCascadeOnDelete(true);
+                .HasRequired(x => x.Material).WithOptional(x => x.Arquivo).WillCascadeOnDelete(true);
+
 
             //modelBuilder.Entity<Material>()
             //    .HasOptional(x => x.Arquivo).WithRequired(x => x.Material).WillCascadeOnDelete(true);

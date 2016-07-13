@@ -225,33 +225,21 @@
     <Compile Include="Map\UsuarioMap.cs" />
     <Compile Include="Map\DepartamentoMap.cs" />
     <Compile Include="Map\CursoMap.cs" />
-    <Compile Include="Migrations\201607100029385_teste.cs" />
-    <Compile Include="Migrations\201607100029385_teste.Designer.cs">
-      <DependentUpon>201607100029385_teste.cs</DependentUpon>
+    <Compile Include="Migrations\201607122036067_Initial.cs" />
+    <Compile Include="Migrations\201607122036067_Initial.Designer.cs">
+      <DependentUpon>201607122036067_Initial.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201607111921195_cascade.cs" />
-    <Compile Include="Migrations\201607111921195_cascade.Designer.cs">
-      <DependentUpon>201607111921195_cascade.cs</DependentUpon>
+    <Compile Include="Migrations\201607122349143_Initial1.cs" />
+    <Compile Include="Migrations\201607122349143_Initial1.Designer.cs">
+      <DependentUpon>201607122349143_Initial1.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201607112027082_teste1.cs" />
-    <Compile Include="Migrations\201607112027082_teste1.Designer.cs">
-      <DependentUpon>201607112027082_teste1.cs</DependentUpon>
+    <Compile Include="Migrations\201607122359074_Initial2.cs" />
+    <Compile Include="Migrations\201607122359074_Initial2.Designer.cs">
+      <DependentUpon>201607122359074_Initial2.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201607121250345_blob.cs" />
-    <Compile Include="Migrations\201607121250345_blob.Designer.cs">
-      <DependentUpon>201607121250345_blob.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201607121721246_blob1.cs" />
-    <Compile Include="Migrations\201607121721246_blob1.Designer.cs">
-      <DependentUpon>201607121721246_blob1.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201607121726059_idmaterial.cs" />
-    <Compile Include="Migrations\201607121726059_idmaterial.Designer.cs">
-      <DependentUpon>201607121726059_idmaterial.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201607121735169_idmaterial2.cs" />
-    <Compile Include="Migrations\201607121735169_idmaterial2.Designer.cs">
-      <DependentUpon>201607121735169_idmaterial2.cs</DependentUpon>
+    <Compile Include="Migrations\201607130037254_Arquivo.cs" />
+    <Compile Include="Migrations\201607130037254_Arquivo.Designer.cs">
+      <DependentUpon>201607130037254_Arquivo.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -407,26 +395,17 @@
     <Folder Include="Views\Arquivos\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201607100029385_teste.resx">
-      <DependentUpon>201607100029385_teste.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201607122036067_Initial.resx">
+      <DependentUpon>201607122036067_Initial.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201607111921195_cascade.resx">
-      <DependentUpon>201607111921195_cascade.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201607122349143_Initial1.resx">
+      <DependentUpon>201607122349143_Initial1.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201607112027082_teste1.resx">
-      <DependentUpon>201607112027082_teste1.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201607122359074_Initial2.resx">
+      <DependentUpon>201607122359074_Initial2.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201607121250345_blob.resx">
-      <DependentUpon>201607121250345_blob.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201607121721246_blob1.resx">
-      <DependentUpon>201607121721246_blob1.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201607121726059_idmaterial.resx">
-      <DependentUpon>201607121726059_idmaterial.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201607121735169_idmaterial2.resx">
-      <DependentUpon>201607121735169_idmaterial2.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201607130037254_Arquivo.resx">
+      <DependentUpon>201607130037254_Arquivo.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

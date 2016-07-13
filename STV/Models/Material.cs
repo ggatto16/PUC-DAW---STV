@@ -31,5 +31,7 @@ namespace STV.Models
 
         public virtual Unidade Unidade { get; set; }
 
+        public virtual Arquivo Arquivo { get; set; }
+
     }
 }

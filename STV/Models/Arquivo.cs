@@ -9,16 +9,13 @@ namespace STV.Models
 
     public class Arquivo
     {
-        [Key]
-        public int Idarquivo { get; set; }
+        public int Idmaterial { get; set; }
 
         public byte[] Blob { get; set; }
 
-        public string Nomearquivo { get; set; }
+        public string Nome { get; set; }
 
         public string ContentType { get; set; }
-
-        public int Idmaterial { get; set; }
 
         public virtual Material Material { get; set; }
 

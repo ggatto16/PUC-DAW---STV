@@ -169,19 +169,16 @@ namespace STV.Controllers
                 {
                     var arquivo = new Arquivo
                     {
-                        Nomearquivo = Path.GetFileName(upload.FileName),
+                        Nome = Path.GetFileName(upload.FileName),
                         ContentType = upload.ContentType,
                         Idmaterial = material.Idmaterial
                     };
-                    using (var reader = new System.IO.BinaryReader(upload.InputStream))
+                    using (var fileData = new MemoryStream())
                     {
-                        //arquivo.Content = reader.ReadBytes(upload.ContentLength);
+                        upload.InputStream.CopyTo(fileData);
+                        arquivo.Blob = fileData.ToArray();
                     }
-                    //material.Arquivo = arquivo;
-                }
-                else
-                {
-                    //material.Arquivo = db.Arquivo.Find(material.Idmaterial);
+                    material.Arquivo = arquivo;
                 }
             }
             catch (Exception)
