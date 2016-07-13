@@ -29,11 +29,11 @@
         @if (Model.Arquivo != null)
         {
             <dt>
-                @Html.DisplayNameFor(model => model.Arquivo.Nomearquivo)
+                @Html.DisplayNameFor(model => model.Arquivo.Nome)
             </dt>
 
             <dd>
-                @Html.ActionLink(Model.Arquivo.Nomearquivo, "Index", "Arquivos", new { id = Model.Arquivo.Idmaterial }, new { target = "_blank" })
+                @Html.ActionLink(Model.Arquivo.Nome, "Index", "Arquivos", new { id = Model.Arquivo.Idmaterial }, new { target = "_blank" })
             </dd>
         }
     </dl>
