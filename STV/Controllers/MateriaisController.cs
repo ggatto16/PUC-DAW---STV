@@ -39,8 +39,8 @@ namespace STV.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            //Material material = await db.Material.Include(m => m.Arquivo).SingleOrDefaultAsync(m => m.Idmaterial == id);
-            Material material = await db.Material.FindAsync(id);
+            Material material = await db.Material.Include(m => m.Arquivo).SingleOrDefaultAsync(m => m.Idmaterial == id);
+            //Material material = await db.Material.FindAsync(id);
             if (material == null)
             {
                 return HttpNotFound();
@@ -91,7 +91,7 @@ namespace STV.Controllers
                 {
                     return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
                 }
-                Material material = await db.Material.FindAsync(id);
+                Material material = await db.Material.Include(m => m.Arquivo).SingleOrDefaultAsync(m => m.Idmaterial == id);
                 if (material == null)
                 {
                     return HttpNotFound();
@@ -117,8 +117,8 @@ namespace STV.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    //GetUpload(ref material, upload);
-                    //if (material.Arquivo != null) db.Arquivo.Add(material.Arquivo);
+                    GetUpload(ref material, upload);
+                    if (material.Arquivo != null) db.Arquivo.Add(material.Arquivo);
                     db.Entry(material).State = EntityState.Modified;
                     await db.SaveChangesAsync();
                     return VoltarParaListagem(material);

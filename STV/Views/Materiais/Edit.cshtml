@@ -47,9 +47,9 @@
             @if (Model.Arquivo != null)
             {
                 <div id="arquivo" class="form-group">
-                    @Html.LabelFor(model => model.Arquivo.Nomearquivo, "Idarquivo", htmlAttributes: new { @class = "control-label col-md-2" })
+                    @Html.LabelFor(model => model.Arquivo.Nome, "Idarquivo", htmlAttributes: new { @class = "control-label col-md-2" })
                     <div class="col-md-10">
-                        @Html.ActionLink(Model.Arquivo.Nomearquivo, "Index", "Arquivos", new { id = Model.Arquivo.Idmaterial }, new { target = "_blank" })
+                        @Html.ActionLink(Model.Arquivo.Nome, "Index", "Arquivos", new { id = Model.Arquivo.Idmaterial }, new { target = "_blank" })
                         @Ajax.ActionLink("Excluir", "Excluir", "Arquivos", new { id = Model.Arquivo.Idmaterial }, new AjaxOptions { HttpMethod = "Delete", OnSuccess = "RemoverArquivo();", OnFailure = "$('#divErroArquivo').text('Algo deu errado');" }, null)
                     </div>
                 </div>

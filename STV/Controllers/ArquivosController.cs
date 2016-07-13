@@ -16,9 +16,8 @@ namespace STV.Controllers
         // GET: Arquivos
         public ActionResult Index(int id)
         {
-            //          var fileToRetrieve = db.Arquivo.Find(id);
-            //            return File(fileToRetrieve, fileToRetrieve.ContentType);
-            return View();
+            var fileToRetrieve = db.Arquivo.Find(id);
+            return File(fileToRetrieve.Blob, fileToRetrieve.ContentType);
         }
 
         [HttpDelete]
