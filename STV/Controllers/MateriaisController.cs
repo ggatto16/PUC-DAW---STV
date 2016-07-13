@@ -39,12 +39,25 @@ namespace STV.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Material material = await db.Material.Include(m => m.Arquivo).SingleOrDefaultAsync(m => m.Idmaterial == id);
-            //Material material = await db.Material.FindAsync(id);
+
+            //Material material = await db.Material.Include(m => m.Arquivo.Nome).SingleOrDefaultAsync(m => m.Idmaterial == id);
+            Material material = await db.Material.FindAsync(id);
+
             if (material == null)
             {
                 return HttpNotFound();
             }
+
+            var arquivo = db.Arquivo.Where(a => a.Idmaterial == material.Idmaterial)
+                .Select(a => new {
+                    Idmaterial = a.Idmaterial,
+                    Nome = a.Nome
+                }).Single();
+
+            material.Arquivo = new Arquivo();
+            material.Arquivo.Nome = arquivo.Nome;
+            material.Arquivo.Idmaterial = arquivo.Idmaterial;
+
             return View(material);
         }
 

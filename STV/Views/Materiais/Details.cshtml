@@ -34,6 +34,9 @@
 
             <dd>
                 @Html.ActionLink(Model.Arquivo.Nome, "Index", "Arquivos", new { id = Model.Arquivo.Idmaterial }, new { target = "_blank" })
+                <video id="videoPlay" width="480" height="400" controls autoplay>
+                    <source src="@Url.Action("Index", "Arquivos", new { id = Model.Arquivo.Idmaterial } )" />
+                </video> 
             </dd>
         }
     </dl>
