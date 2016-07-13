@@ -13,7 +13,7 @@ namespace STV
             );
 
             config.Routes.MapHttpRoute(
-                name: "DefaultMusic",
+                name: "DefaultVideo",
                 routeTemplate: "api/{controller}/{ext}/{filename}"
             );
         }
