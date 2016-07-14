@@ -6,42 +6,47 @@
 
 <h2>Details</h2>
 
-<div>
-    <h4>Material</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Descricao)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Descricao)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Tipo)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Tipo)
-        </dd>
-
-        @if (Model.Arquivo != null)
-        {
+<div class="col-md-6">
+    <div>
+        <h4>Material</h4>
+        <hr />
+        <dl class="dl-horizontal">
             <dt>
-                @Html.DisplayNameFor(model => model.Arquivo.Nome)
+                @Html.DisplayNameFor(model => model.Descricao)
             </dt>
 
             <dd>
-                @Html.ActionLink(Model.Arquivo.Nome, "Index", "Arquivos", new { id = Model.Arquivo.Idmaterial }, new { target = "_blank" })
-                <video id="videoPlay" width="480" height="400" controls autoplay>
-                    <source src="/api/videos/webm/CkY96QuiteBitterBeings" />
-                </video> 
+                @Html.DisplayFor(model => model.Descricao)
             </dd>
-        }
-    </dl>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Tipo)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Tipo)
+            </dd>
+
+            @if (Model.Arquivo != null)
+            {
+                <dt>
+                    @Html.DisplayNameFor(model => model.Arquivo.Nome)
+                </dt>
+
+                <dd>
+                    @Ajax.ActionLink(Model.Arquivo.Nome, "MostrarVideo", "Materiais", new { Id= Model.Idmaterial }, new AjaxOptions { UpdateTargetId = "ConteudoMaterial", InsertionMode = InsertionMode.Replace, HttpMethod = "Get" })
+                </dd>
+            }
+        </dl>
+    </div>
+    <p>
+        @Html.ActionLink("Edit", "Edit", new { id = Model.Idmaterial }) |
+        @Html.ActionLink("Back to List", "Index")
+    </p>
 </div>
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Idmaterial }) |
-    @Html.ActionLink("Back to List", "Index")
-</p>
+
+<div id="ConteudoMaterial" class="col-md-6"></div>
+
+@section scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

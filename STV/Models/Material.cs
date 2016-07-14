@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.Spatial;
-using STV.Models.Enum;
 
 namespace STV.Models
 {
@@ -12,7 +11,8 @@ namespace STV.Models
     {
         Video = 1,
         Arquivo = 2,
-        Link = 3
+        Link = 3,
+        Imagem = 4
     };
 
     [Table("Material")]

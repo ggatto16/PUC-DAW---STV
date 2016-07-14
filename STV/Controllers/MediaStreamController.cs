@@ -8,19 +8,22 @@ using STV.Media;
 using System.Net.Http.Headers;
 using System.IO;
 using System.Web;
+using STV.Models;
+using System.Data;
 
 namespace STV.Controllers
 {
     public class MediaStreamController : ApiController
     {
-        private string _filename;
 
+        private ModeloDados db = new ModeloDados();
 
-        public HttpResponseMessage Get(string filename, string ext)
+        public HttpResponseMessage Get(int id)
         {
-            var video = new MediaStream(filename, ext);
+            var arquivo = db.Arquivo.Find(id);
 
             var response = Request.CreateResponse();
+
             response.Content = new PushStreamContent(
                  async (Stream outputStream, HttpContent content, TransportContext context) =>
                     {
@@ -28,18 +31,20 @@ namespace STV.Controllers
                         {
                             var buffer = new byte[65536];
 
-                            using (var media = File.Open(_filename, FileMode.Open, FileAccess.Read))
+                            using (Stream stream = new MemoryStream(arquivo.Blob))
                             {
-                                var length = (int)media.Length;
+                                var length = (int)stream.Length;
                                 var bytesRead = 1;
+
 
                                 while (length > 0 && bytesRead > 0)
                                 {
-                                    bytesRead = media.Read(buffer, 0, Math.Min(length, buffer.Length));
+                                    bytesRead = stream.Read(buffer, 0, Math.Min(length, buffer.Length));
                                     await outputStream.WriteAsync(buffer, 0, bytesRead);
                                     length -= bytesRead;
                                 }
                             }
+
                         }
                         catch (HttpException)
                         {
@@ -49,7 +54,7 @@ namespace STV.Controllers
                         {
                             outputStream.Close();
                         }
-                    }, new MediaTypeHeaderValue("video/" + ext));
+                    }, new MediaTypeHeaderValue(arquivo.ContentType));
 
             return response;
         }

@@ -77,7 +77,6 @@
                         @Ajax.ActionLink(unidade.Titulo, "CarregarConteudo", "Unidades", new { idunidade = unidade.Idunidade }, new AjaxOptions { UpdateTargetId = "ConteudoUnidade", InsertionMode = InsertionMode.Replace, HttpMethod = "Get" })
                     </td>
                 </tr>
-                @Html.Raw("<tr><td id='materiais_" + unidade.Idunidade + "'></td></tr>")
             }
         }
     </table>

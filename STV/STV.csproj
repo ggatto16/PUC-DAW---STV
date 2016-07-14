@@ -262,7 +262,6 @@
     <Compile Include="Models\Atividade.cs" />
     <Compile Include="Models\Curso.cs" />
     <Compile Include="Models\Departamento.cs" />
-    <Compile Include="Models\Enum.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\Material.cs" />
@@ -408,7 +407,8 @@
     <Content Include="Views\Alternativas\Edit.cshtml" />
     <Content Include="Views\Alternativas\Index.cshtml" />
     <Content Include="Views\Questoes\Alternativas.cshtml" />
-    <Content Include="Views\Materiais\Video.cshtml" />
+    <Content Include="Views\Materiais\Upload.cshtml" />
+    <Content Include="Views\Materiais\ConteudoArquivo.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

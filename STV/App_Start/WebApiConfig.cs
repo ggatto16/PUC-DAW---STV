@@ -14,7 +14,7 @@ namespace STV
 
             config.Routes.MapHttpRoute(
                 name: "DefaultVideo",
-                routeTemplate: "api/{controller}/{ext}/{filename}"
+                routeTemplate: "api/{controller}/{ext}/{id}"
             );
         }
     }

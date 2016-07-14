@@ -8,7 +8,6 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using STV.Models;
-using STV.Models.Enum;
 using System.IO;
 
 namespace STV.Controllers
@@ -48,23 +47,53 @@ namespace STV.Controllers
                 return HttpNotFound();
             }
 
-            var arquivo = db.Arquivo.Where(a => a.Idmaterial == material.Idmaterial)
-                .Select(a => new {
-                    Idmaterial = a.Idmaterial,
-                    Nome = a.Nome
-                }).Single();
-
-            material.Arquivo = new Arquivo();
-            material.Arquivo.Nome = arquivo.Nome;
-            material.Arquivo.Idmaterial = arquivo.Idmaterial;
+            CarregarArquivoInfo(ref material);
 
             return View(material);
         }
 
-        // GET: Tipo
-        public async Task<ActionResult> CarregarTipo(int Idtipo)
+        private void CarregarArquivoInfo(ref Material material)
         {
-            return PartialView("Video");
+            int Idmaterial = material.Idmaterial;
+
+            var arquivoInfo = db.Arquivo.Where(a => a.Idmaterial == Idmaterial)
+                .Select(a => new {
+                    Idmaterial = a.Idmaterial,
+                    Nome = a.Nome,
+                    ContentType = a.ContentType
+                }).Single();
+
+            material.Arquivo = new Arquivo
+            {
+                Nome = arquivoInfo.Nome,
+                Idmaterial = arquivoInfo.Idmaterial,
+                ContentType = arquivoInfo.ContentType
+            };
+        }
+
+        // GET: Tipo
+        public ActionResult CarregarTipo(int Idtipo)
+        {
+            return PartialView("Upload");
+        }
+
+        // GET: Tipo
+        public async Task<ActionResult> MostrarVideo(int Id)
+        {
+            var material = await db.Material.FindAsync(Id);
+
+            CarregarArquivoInfo(ref material);
+
+            if (material.Tipo == TipoMaterial.Imagem)
+            {
+                var blobArquivo = await db.Arquivo.Where(a => a.Idmaterial == Id)
+                    .Select(a => new {
+                        Blob = a.Blob
+                    }).SingleAsync();
+                material.Arquivo.Blob = blobArquivo.Blob;
+            }
+
+            return PartialView("ConteudoArquivo", material);
         }
 
         // GET: Materiais/Create
@@ -100,16 +129,16 @@ namespace STV.Controllers
         {
             try
             {
-                if (id == null)
-                {
-                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-                }
-                Material material = await db.Material.Include(m => m.Arquivo).SingleOrDefaultAsync(m => m.Idmaterial == id);
-                if (material == null)
-                {
-                    return HttpNotFound();
-                }
+                if (id == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+                Material material = await db.Material.FindAsync(id);
+
+                if (material == null) return HttpNotFound();
+
+                CarregarArquivoInfo(ref material);
+
                 ViewBag.Idunidade = new SelectList(db.Unidade, "Idunidade", "Titulo");
+
                 return View(material);
             }
             catch (Exception)
@@ -131,9 +160,12 @@ namespace STV.Controllers
                 if (ModelState.IsValid)
                 {
                     GetUpload(ref material, upload);
+
                     if (material.Arquivo != null) db.Arquivo.Add(material.Arquivo);
+
                     db.Entry(material).State = EntityState.Modified;
                     await db.SaveChangesAsync();
+
                     return VoltarParaListagem(material);
                 }
             }
