@@ -10,6 +10,7 @@ using System.IO;
 using System.Web;
 using STV.Models;
 using System.Data;
+using STV.DAL;
 
 namespace STV.Controllers
 {
@@ -20,7 +21,23 @@ namespace STV.Controllers
 
         public HttpResponseMessage Get(int id)
         {
-            var arquivo = db.Arquivo.Find(id);
+
+            //Recuperar informações do arquivo
+            var arquivoInfo = db.Arquivo.Where(a => a.Idmaterial == id)
+                .Select(a => new {
+                    Idmaterial = a.Idmaterial,
+                    Nome = a.Nome,
+                    ContentType = a.ContentType,
+                    Tamanho = a.Tamanho
+                }).Single();
+
+            VarbinaryStream filestream = new VarbinaryStream(
+                                                db.Database.Connection.ConnectionString,
+                                                "Arquivo",
+                                                "Blob",
+                                                "Idmaterial",
+                                                id,
+                                                true);
 
             var response = Request.CreateResponse();
 
@@ -31,9 +48,9 @@ namespace STV.Controllers
                         {
                             var buffer = new byte[65536];
 
-                            using (Stream stream = new MemoryStream(arquivo.Blob))
+                            using (Stream stream = filestream)
                             {
-                                var length = (int)stream.Length;
+                                var length = (int)arquivoInfo.Tamanho;
                                 var bytesRead = 1;
 
 
@@ -54,7 +71,7 @@ namespace STV.Controllers
                         {
                             outputStream.Close();
                         }
-                    }, new MediaTypeHeaderValue(arquivo.ContentType));
+                    }, new MediaTypeHeaderValue(arquivoInfo.ContentType));
 
             return response;
         }

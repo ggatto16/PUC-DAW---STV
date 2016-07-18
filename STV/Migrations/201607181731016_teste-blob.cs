@@ -3,7 +3,7 @@ namespace STV.Migrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class Initial : DbMigration
+    public partial class testeblob : DbMigration
     {
         public override void Up()
         {
@@ -124,14 +124,15 @@ namespace STV.Migrations
                 "dbo.Arquivo",
                 c => new
                     {
-                        Id = c.Int(nullable: false),
+                        Idmaterial = c.Int(nullable: false),
                         Blob = c.Binary(),
-                        Nomearquivo = c.String(),
+                        Nome = c.String(),
                         ContentType = c.String(),
+                        testeBlob = c.Binary(),
                     })
-                .PrimaryKey(t => t.Id)
-                .ForeignKey("dbo.Material", t => t.Id, cascadeDelete: true)
-                .Index(t => t.Id);
+                .PrimaryKey(t => t.Idmaterial)
+                .ForeignKey("dbo.Material", t => t.Idmaterial, cascadeDelete: true)
+                .Index(t => t.Idmaterial);
             
             CreateTable(
                 "dbo.CursoDepartamento",
@@ -150,11 +151,11 @@ namespace STV.Migrations
         
         public override void Down()
         {
-            DropForeignKey("dbo.Arquivo", "Id", "dbo.Material");
             DropForeignKey("dbo.Alternativa", "Idquestao", "dbo.Questao");
             DropForeignKey("dbo.Questao", "Idatividade", "dbo.Atividade");
             DropForeignKey("dbo.Atividade", "Idunidade", "dbo.Unidade");
             DropForeignKey("dbo.Material", "Idunidade", "dbo.Unidade");
+            DropForeignKey("dbo.Arquivo", "Idmaterial", "dbo.Material");
             DropForeignKey("dbo.Unidade", "Idcurso", "dbo.Curso");
             DropForeignKey("dbo.Curso", "Idusuario", "dbo.Usuario");
             DropForeignKey("dbo.CursoDepartamento", "Iddepartamento", "dbo.Departamento");
@@ -163,7 +164,7 @@ namespace STV.Migrations
             DropForeignKey("dbo.Questao", "IdalternativaCorreta", "dbo.Alternativa");
             DropIndex("dbo.CursoDepartamento", new[] { "Iddepartamento" });
             DropIndex("dbo.CursoDepartamento", new[] { "Idcurso" });
-            DropIndex("dbo.Arquivo", new[] { "Id" });
+            DropIndex("dbo.Arquivo", new[] { "Idmaterial" });
             DropIndex("dbo.Material", new[] { "Idunidade" });
             DropIndex("dbo.Usuario", new[] { "Iddepartamento" });
             DropIndex("dbo.Curso", new[] { "Idusuario" });

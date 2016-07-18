@@ -227,6 +227,7 @@
     <Compile Include="Controllers\QuestoesController.cs" />
     <Compile Include="Controllers\UnidadesController.cs" />
     <Compile Include="Controllers\UsuariosController.cs" />
+    <Compile Include="DAL\VarbinaryStream.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -239,21 +240,13 @@
     <Compile Include="Map\DepartamentoMap.cs" />
     <Compile Include="Map\CursoMap.cs" />
     <Compile Include="MediaStream.cs" />
-    <Compile Include="Migrations\201607122036067_Initial.cs" />
-    <Compile Include="Migrations\201607122036067_Initial.Designer.cs">
-      <DependentUpon>201607122036067_Initial.cs</DependentUpon>
+    <Compile Include="Migrations\201607181731016_teste-blob.cs" />
+    <Compile Include="Migrations\201607181731016_teste-blob.Designer.cs">
+      <DependentUpon>201607181731016_teste-blob.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201607122349143_Initial1.cs" />
-    <Compile Include="Migrations\201607122349143_Initial1.Designer.cs">
-      <DependentUpon>201607122349143_Initial1.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201607122359074_Initial2.cs" />
-    <Compile Include="Migrations\201607122359074_Initial2.Designer.cs">
-      <DependentUpon>201607122359074_Initial2.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201607130037254_Arquivo.cs" />
-    <Compile Include="Migrations\201607130037254_Arquivo.Designer.cs">
-      <DependentUpon>201607130037254_Arquivo.cs</DependentUpon>
+    <Compile Include="Migrations\201607181753456_tamanho.cs" />
+    <Compile Include="Migrations\201607181753456_tamanho.Designer.cs">
+      <DependentUpon>201607181753456_tamanho.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -418,17 +411,11 @@
     <Folder Include="Views\Arquivos\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201607122036067_Initial.resx">
-      <DependentUpon>201607122036067_Initial.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201607181731016_teste-blob.resx">
+      <DependentUpon>201607181731016_teste-blob.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201607122349143_Initial1.resx">
-      <DependentUpon>201607122349143_Initial1.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201607122359074_Initial2.resx">
-      <DependentUpon>201607122359074_Initial2.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201607130037254_Arquivo.resx">
-      <DependentUpon>201607130037254_Arquivo.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201607181753456_tamanho.resx">
+      <DependentUpon>201607181753456_tamanho.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

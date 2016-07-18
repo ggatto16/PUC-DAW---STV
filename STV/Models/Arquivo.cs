@@ -17,7 +17,11 @@ namespace STV.Models
 
         public string ContentType { get; set; }
 
+        public int? Tamanho { get; set; }
+
         public virtual Material Material { get; set; }
+
+
 
     }
 }

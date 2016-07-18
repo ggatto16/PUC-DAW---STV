@@ -7,13 +7,13 @@ namespace STV.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class Arquivo : IMigrationMetadata
+    public sealed partial class testeblob : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(Arquivo));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(testeblob));
         
         string IMigrationMetadata.Id
         {
-            get { return "201607130037254_Arquivo"; }
+            get { return "201607181731016_teste-blob"; }
         }
         
         string IMigrationMetadata.Source

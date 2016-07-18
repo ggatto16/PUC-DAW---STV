@@ -9,7 +9,7 @@ using System.Web;
 using System.Web.Mvc;
 using STV.Models;
 using System.IO;
-
+using STV.DAL;
 namespace STV.Controllers
 {
     public class MateriaisController : Controller
@@ -47,17 +47,18 @@ namespace STV.Controllers
                 return HttpNotFound();
             }
 
-            CarregarArquivoInfo(ref material);
+            GetArquivoInfo(ref material);
 
             return View(material);
         }
 
-        private void CarregarArquivoInfo(ref Material material)
+        private void GetArquivoInfo(ref Material material)
         {
             int Idmaterial = material.Idmaterial;
 
             var arquivoInfo = db.Arquivo.Where(a => a.Idmaterial == Idmaterial)
-                .Select(a => new {
+                .Select(a => new
+                {
                     Idmaterial = a.Idmaterial,
                     Nome = a.Nome,
                     ContentType = a.ContentType
@@ -82,12 +83,13 @@ namespace STV.Controllers
         {
             var material = await db.Material.FindAsync(Id);
 
-            CarregarArquivoInfo(ref material);
+            GetArquivoInfo(ref material);
 
             if (material.Tipo == TipoMaterial.Imagem)
             {
                 var blobArquivo = await db.Arquivo.Where(a => a.Idmaterial == Id)
-                    .Select(a => new {
+                    .Select(a => new
+                    {
                         Blob = a.Blob
                     }).SingleAsync();
                 material.Arquivo.Blob = blobArquivo.Blob;
@@ -114,13 +116,37 @@ namespace STV.Controllers
         {
             if (ModelState.IsValid)
             {
-                GetUpload(ref material, upload);
+                //using (var transaction = db.Database.BeginTransaction())
+                //{
+                //    try
+                //    {
+                        db.Material.Add(material);
+                        GetUploadInfo(ref material, upload);
+                        await db.SaveChangesAsync();
 
-                db.Material.Add(material);
-                await db.SaveChangesAsync();
-                return VoltarParaListagem(material);
+                        var arquivo = await db.Arquivo.FindAsync(material.Idmaterial);
+
+                        //Grava o conteúdo do arquivo no banco de dados
+                        VarbinaryStream blob = new VarbinaryStream(
+                        db.Database.Connection.ConnectionString,
+                        "Arquivo",
+                        "Blob",
+                        "Idmaterial",
+                        arquivo.Idmaterial);
+
+                        await upload.InputStream.CopyToAsync(blob, 65536);
+                        //transaction.Commit();
+
+                        return VoltarParaListagem(material);
+                //    }
+                //    catch (Exception)
+                //    {
+                //        transaction.Rollback();
+                //        throw;
+                //    }
+                //}
             }
-            
+
             return View(material);
         }
 
@@ -135,7 +161,7 @@ namespace STV.Controllers
 
                 if (material == null) return HttpNotFound();
 
-                CarregarArquivoInfo(ref material);
+                GetArquivoInfo(ref material);
 
                 ViewBag.Idunidade = new SelectList(db.Unidade, "Idunidade", "Titulo");
 
@@ -155,28 +181,49 @@ namespace STV.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit([Bind(Include = "Idmaterial,Idunidade,Descricao,Tipo")] Material material, HttpPostedFileBase upload)
         {
-            try
+
+            if (ModelState.IsValid)
             {
-                if (ModelState.IsValid)
-                {
-                    GetUpload(ref material, upload);
+                //using (var transaction = db.Database.BeginTransaction())
+                //{
+                //    try
+                //    {
+                        GetUploadInfo(ref material, upload);
 
-                    if (material.Arquivo != null) db.Arquivo.Add(material.Arquivo);
+                        if (material.Arquivo != null) db.Arquivo.Add(material.Arquivo);
 
-                    db.Entry(material).State = EntityState.Modified;
-                    await db.SaveChangesAsync();
+                        db.Entry(material).State = EntityState.Modified;
+                        await db.SaveChangesAsync();
 
-                    return VoltarParaListagem(material);
-                }
+                        if (material.Arquivo != null)
+                        {
+                            var arquivo = await db.Arquivo.FindAsync(material.Idmaterial);
+
+                            //Grava o conteúdo do arquivo no banco de dados
+                            VarbinaryStream blob = new VarbinaryStream(
+                            db.Database.Connection.ConnectionString,
+                            "Arquivo",
+                            "Blob",
+                            "Idmaterial",
+                            arquivo.Idmaterial);
+
+                            await upload.InputStream.CopyToAsync(blob, 65536);
+                        }
+
+                        //transaction.Commit();
+
+                        return VoltarParaListagem(material);
+                    //}
+
+                    //catch (Exception ex)
+                    //{
+                    //    transaction.Rollback();
+                    //    ModelState.AddModelError("", ex.Message);
+                    //    ViewBag.Idunidade = new SelectList(db.Unidade, "Idunidade", "Titulo");
+                    //}
+                //}
             }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError("", ex.Message);
-                ViewBag.Idunidade = new SelectList(db.Unidade, "Idunidade", "Titulo");
-            }
-
             return View(material);
-
         }
 
         // GET: Materiais/Delete/5
@@ -206,7 +253,7 @@ namespace STV.Controllers
             return VoltarParaListagem(material);
         }
 
-        private void GetUpload (ref Material material, HttpPostedFileBase upload)
+        private void GetUploadContent(ref Material material, HttpPostedFileBase upload)
         {
             try
             {
@@ -218,11 +265,43 @@ namespace STV.Controllers
                         ContentType = upload.ContentType,
                         Idmaterial = material.Idmaterial
                     };
-                    using (var fileData = new MemoryStream())
+
+
+                    //using (var fileData = new MemoryStream())
+                    //{
+                    //    upload.InputStream.CopyTo(fileData);
+                    //    arquivo.Blob = fileData.ToArray();
+                    //}
+
+
+                    using (BinaryReader b = new BinaryReader(upload.InputStream))
                     {
-                        upload.InputStream.CopyTo(fileData);
-                        arquivo.Blob = fileData.ToArray();
+                        byte[] filedata = b.ReadBytes((int)upload.InputStream.Length);
+                        material.Arquivo.Blob = filedata;
                     }
+
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        private void GetUploadInfo(ref Material material, HttpPostedFileBase upload)
+        {
+            try
+            {
+                if (upload != null && upload.ContentLength > 0)
+                {
+                    var arquivo = new Arquivo
+                    {
+                        Nome = Path.GetFileName(upload.FileName),
+                        ContentType = upload.ContentType,
+                        Idmaterial = material.Idmaterial,
+                        Tamanho = upload.ContentLength
+                    };
+
                     material.Arquivo = arquivo;
                 }
             }
