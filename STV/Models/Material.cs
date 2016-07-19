@@ -9,6 +9,7 @@ namespace STV.Models
 
     public enum TipoMaterial
     {
+        Nenhum = 0,
         Video = 1,
         Arquivo = 2,
         Link = 3,

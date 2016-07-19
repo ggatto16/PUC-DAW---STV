@@ -61,15 +61,20 @@ namespace STV.Controllers
                 {
                     Idmaterial = a.Idmaterial,
                     Nome = a.Nome,
-                    ContentType = a.ContentType
-                }).Single();
+                    ContentType = a.ContentType,
+                    Tamanho = a.Tamanho
+                }).FirstOrDefault();
 
-            material.Arquivo = new Arquivo
+            if (arquivoInfo != null)
             {
-                Nome = arquivoInfo.Nome,
-                Idmaterial = arquivoInfo.Idmaterial,
-                ContentType = arquivoInfo.ContentType
-            };
+                material.Arquivo = new Arquivo
+                {
+                    Nome = arquivoInfo.Nome,
+                    Idmaterial = arquivoInfo.Idmaterial,
+                    ContentType = arquivoInfo.ContentType,
+                    Tamanho = arquivoInfo.Tamanho
+                };
+            }
         }
 
         // GET: Tipo
@@ -266,13 +271,11 @@ namespace STV.Controllers
                         Idmaterial = material.Idmaterial
                     };
 
-
                     //using (var fileData = new MemoryStream())
                     //{
                     //    upload.InputStream.CopyTo(fileData);
                     //    arquivo.Blob = fileData.ToArray();
                     //}
-
 
                     using (BinaryReader b = new BinaryReader(upload.InputStream))
                     {
@@ -286,6 +289,35 @@ namespace STV.Controllers
             {
                 throw;
             }
+        }
+
+        [HttpDelete]
+        public async Task<ActionResult> ExcluirArquivo(int id)
+        {
+            HttpStatusCodeResult HttpResult;
+
+            using (var transaction = db.Database.BeginTransaction())
+            {
+                try
+                {
+                    await db.Database.ExecuteSqlCommandAsync(@"DELETE FROM [Arquivo] WHERE Idmaterial = {0}", id);
+
+                    var material = await db.Material.FindAsync(id);
+                    material.Tipo = TipoMaterial.Nenhum;
+                    db.Entry(material).State = EntityState.Modified;
+                    await db.SaveChangesAsync();
+                    transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    HttpResult = new HttpStatusCodeResult(HttpStatusCode.InternalServerError);
+                    ViewBag.MensagemErro = ex.Message;
+                    return HttpResult;
+                }
+            }
+            HttpResult = new HttpStatusCodeResult(HttpStatusCode.OK);
+            return HttpResult;
         }
 
         private void GetUploadInfo(ref Material material, HttpPostedFileBase upload)
