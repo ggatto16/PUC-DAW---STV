@@ -9,7 +9,7 @@
 <div class="form-horizontal">
     <div class="form-group">
         <div class="col-md-10">
-            <input id="Arquivo" name="upload" class="file" type="file" multiple data-min-file-count="1" data-show-preview="false" />
+            <input id="Arquivo" name="upload" class="file-loading" type="file" />
             @Html.ValidationMessageFor(model => model.Arquivo.Nome,"", new { @class = "text-danger" })
 
         </div>

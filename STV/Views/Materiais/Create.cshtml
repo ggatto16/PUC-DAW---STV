@@ -65,36 +65,6 @@
     @section Scripts {
 
         @Scripts.Render("~/bundles/jqueryval")
-
-        <script>
-            $(function () {
-                $('#Tipo').change(function () {
-                    var tipoID = $(this).val();
-                    $.ajax({
-                        url: '@Url.Action("CarregarTipo", "Materiais")',
-                        type: 'GET',
-                        data: { Idtipo: tipoID },
-                        cache: false,
-                        success: function (result) {
-                            $('#container').html(result);
-                            PrepararFileUpload();
-                        }
-                    });
-                });
-            });
-
-            function PrepararFileUpload() {
-	            $("#Arquivo").fileinput({
-	                language: 'pt-BR',
-	                maxFileCount: 1,
-	                showUpload: false,
-	                showCaption: false,
-	                browseClass: "btn btn-primary btn-lg",
-	                fileType: "any",
-
-	            });
-            }
-
-        </script>
+        @Scripts.Render("~/bundles/fileinputSetup")
 
     }

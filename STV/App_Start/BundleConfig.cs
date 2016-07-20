@@ -28,7 +28,12 @@ namespace STV
                       "~/Content/bootstrap.css",
                       "~/Content/site.css"));
 
-            bundles.Add(new ScriptBundle("~/bundles/fileinput").Include("~/Scripts/fileinput/fileinput.min.js", "~/Scripts/fileinput/pt-BR.js"));
+            bundles.Add(new ScriptBundle("~/bundles/fileinput").Include(
+                "~/Scripts/fileinput/fileinput.min.js", 
+                "~/Scripts/fileinput/pt-BR.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/fileinputSetup").Include(
+                        "~/Scripts/fileinput/fileinputSetup.js"));
 
             bundles.Add(new StyleBundle("~/Content/fileinput").Include("~/Content/fileinput.min.css"));
         }
