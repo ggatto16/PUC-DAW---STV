@@ -268,7 +268,7 @@
     <Compile Include="ViewModels\cursoVM.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Data\stv_diagram.png" />
+    <Content Include="App_Data\stvdb_diagram.png" />
     <Content Include="App_Data\useFileStream.sql" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
@@ -284,9 +284,6 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="App_Data\stvdb_08072016.dacpac" />
-    <Content Include="App_Data\stvdb_09072016.dacpac" />
-    <Content Include="App_Data\stvdb_12072016.dacpac" />
     <Content Include="App_Data\stvdb_13072016.dacpac" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
