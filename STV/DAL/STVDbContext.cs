@@ -4,7 +4,6 @@ namespace STV.DAL
     using System.Data.Entity;
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Linq;
-    using STV.Map;
     using System.Data.Entity.ModelConfiguration.Conventions;
     using STV.Models;
 
@@ -55,7 +54,7 @@ namespace STV.DAL
                 .HasKey(x => x.Idcurso);
 
             modelBuilder.Entity<Curso>()
-                .HasRequired(x => x.Usuario).WithMany(x => x.Cursos).HasForeignKey(x => x.Idusuario);
+                .HasRequired(x => x.Instrutor).WithMany(x => x.CursosInstrutor).HasForeignKey(x => x.Idusuario);
                 //.Map(m => m.MapKey("IdusuarioInstrutor"));
 
             modelBuilder.Conventions.Remove<ManyToManyCascadeDeleteConvention>();
@@ -70,15 +69,15 @@ namespace STV.DAL
                     m.ToTable("CursoDepartamento");
                 });
 
-            //modelBuilder.Entity<Curso>()
-            //    .HasMany(x => x.Usuarios)
-            //    .WithMany(x => x.Cursos)
-            //    .Map(m =>
-            //    {
-            //        m.MapLeftKey("Idcurso");
-            //        m.MapRightKey("Idusuario");
-            //        m.ToTable("CursoUsuario");
-            //    });
+            modelBuilder.Entity<Curso>()
+                .HasMany(x => x.Usuarios)
+                .WithMany(x => x.Cursos)
+                .Map(m =>
+                {
+                    m.MapLeftKey("Idcurso");
+                    m.MapRightKey("Idusuario");
+                    m.ToTable("CursoUsuario");
+                });
 
             modelBuilder.Entity<Unidade>()
                 .ToTable("Unidade")

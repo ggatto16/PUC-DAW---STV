@@ -32,8 +32,10 @@ namespace STV.Models
 
         public virtual ICollection<Departamento> Departamentos { get; set; }
 
-        public virtual Usuario Usuario { get; set; }
+        public virtual Instrutor Instrutor { get; set; }
 
         public virtual ICollection<Unidade> Unidades { get; set; }
+
+        public virtual ICollection<Usuario> Usuarios { get; set; }
     }
 }

@@ -231,14 +231,6 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Map\AlternativaMap.cs" />
-    <Compile Include="Map\QuestaoMap.cs" />
-    <Compile Include="Map\AtividadeMap.cs" />
-    <Compile Include="Map\MaterialMap.cs" />
-    <Compile Include="Map\UnidadeMap.cs" />
-    <Compile Include="Map\UsuarioMap.cs" />
-    <Compile Include="Map\DepartamentoMap.cs" />
-    <Compile Include="Map\CursoMap.cs" />
     <Compile Include="MediaStream.cs" />
     <Compile Include="Migrations\201607181731016_teste-blob.cs" />
     <Compile Include="Migrations\201607181731016_teste-blob.Designer.cs">
@@ -260,6 +252,7 @@
     <Compile Include="Models\Curso.cs" />
     <Compile Include="Models\Departamento.cs" />
     <Compile Include="Models\IdentityModels.cs" />
+    <Compile Include="Models\Instrutor.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\Material.cs" />
     <Compile Include="DAL\STVDbContext.cs" />

@@ -33,5 +33,6 @@ namespace STV.Models
         public virtual ICollection<Curso> Cursos { get; set; }
 
         public virtual Departamento Departamento { get; set; }
+
     }
 }
