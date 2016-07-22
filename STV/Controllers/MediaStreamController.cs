@@ -17,7 +17,7 @@ namespace STV.Controllers
     public class MediaStreamController : ApiController
     {
 
-        private ModeloDados db = new ModeloDados();
+        private STVDbContext db = new STVDbContext();
 
         public HttpResponseMessage Get(int id)
         {

@@ -4,15 +4,16 @@ namespace STV.Migrations
     using System.Data.Entity;
     using System.Data.Entity.Migrations;
     using System.Linq;
+    using STV.Models;
 
-    internal sealed class Configuration : DbMigrationsConfiguration<STV.Models.ModeloDados>
+    internal sealed class Configuration : DbMigrationsConfiguration<STV.DAL.STVDbContext>
     {
         public Configuration()
         {
             AutomaticMigrationsEnabled = true;
         }
 
-        protected override void Seed(STV.Models.ModeloDados context)
+        protected override void Seed(STV.DAL.STVDbContext context)
         {
             //  This method will be called after migrating to the latest version.
 

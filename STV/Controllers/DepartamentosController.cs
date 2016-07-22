@@ -8,12 +8,14 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using STV.Models;
+using STV.DAL;
+using STV.DAL;
 
 namespace STV.Controllers
 {
     public class DepartamentosController : Controller
     {
-        private ModeloDados db = new ModeloDados();
+        private STVDbContext db = new STVDbContext();
 
         // GET: Departamentos
         public async Task<ActionResult> Index(string s)

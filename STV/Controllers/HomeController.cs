@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
+using STV.DAL;
 
 namespace STV.Controllers
 {
@@ -45,7 +46,7 @@ namespace STV.Controllers
         {
             if (ModelState.IsValid) 
             {
-                using (ModeloDados db = new ModeloDados())
+                using (STVDbContext db = new STVDbContext())
                 {
                     var v = db.Usuario.Where(a => a.Cpf.Equals(u.Cpf) && a.Senha.Equals(u.Senha)).FirstOrDefault();
                     if (v != null)

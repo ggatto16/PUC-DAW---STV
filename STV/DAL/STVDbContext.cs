@@ -1,4 +1,4 @@
-namespace STV.Models
+namespace STV.DAL
 {
     using System;
     using System.Data.Entity;
@@ -6,16 +6,18 @@ namespace STV.Models
     using System.Linq;
     using STV.Map;
     using System.Data.Entity.ModelConfiguration.Conventions;
-    public partial class ModeloDados : DbContext
+    using STV.Models;
+
+    public partial class STVDbContext : DbContext
     {
-        public ModeloDados()
-            : base("name=ModeloDados")
+        public STVDbContext()
+            : base("name=STVDbContext")
         {
         }
 
-        public virtual DbSet<Curso> Curso { get; set; }
         public virtual DbSet<Departamento> Departamento { get; set; }
         public virtual DbSet<Usuario> Usuario { get; set; }
+        public virtual DbSet<Curso> Curso { get; set; }
         public virtual DbSet<Unidade> Unidade { get; set; }
         public virtual DbSet<Material> Material { get; set; }
         public virtual DbSet<Atividade> Atividade { get; set; }
@@ -54,7 +56,7 @@ namespace STV.Models
 
             modelBuilder.Entity<Curso>()
                 .HasRequired(x => x.Usuario).WithMany(x => x.Cursos).HasForeignKey(x => x.Idusuario);
-            //.Map(m => m.MapKey("Idusuario"));
+                //.Map(m => m.MapKey("IdusuarioInstrutor"));
 
             modelBuilder.Conventions.Remove<ManyToManyCascadeDeleteConvention>();
 
@@ -67,6 +69,16 @@ namespace STV.Models
                     m.MapRightKey("Iddepartamento");
                     m.ToTable("CursoDepartamento");
                 });
+
+            //modelBuilder.Entity<Curso>()
+            //    .HasMany(x => x.Usuarios)
+            //    .WithMany(x => x.Cursos)
+            //    .Map(m =>
+            //    {
+            //        m.MapLeftKey("Idcurso");
+            //        m.MapRightKey("Idusuario");
+            //        m.ToTable("CursoUsuario");
+            //    });
 
             modelBuilder.Entity<Unidade>()
                 .ToTable("Unidade")

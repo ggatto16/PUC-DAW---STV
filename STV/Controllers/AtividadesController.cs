@@ -8,12 +8,13 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using STV.Models;
+using STV.DAL;
 
 namespace STV.Controllers
 {
     public class AtividadesController : Controller
     {
-        private ModeloDados db = new ModeloDados();
+        private STVDbContext db = new STVDbContext();
 
         // GET: Atividades
         public async Task<ActionResult> Index(int idunidade = 0)

@@ -248,6 +248,10 @@
     <Compile Include="Migrations\201607181753456_tamanho.Designer.cs">
       <DependentUpon>201607181753456_tamanho.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201607221941454_CursoUsuario.cs" />
+    <Compile Include="Migrations\201607221941454_CursoUsuario.Designer.cs">
+      <DependentUpon>201607221941454_CursoUsuario.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Alternativa.cs" />
@@ -258,7 +262,7 @@
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\Material.cs" />
-    <Compile Include="Models\ModeloDados.cs" />
+    <Compile Include="DAL\STVDbContext.cs" />
     <Compile Include="Models\Questao.cs" />
     <Compile Include="Models\Unidade.cs" />
     <Compile Include="Models\Usuario.cs" />
@@ -414,6 +418,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201607181753456_tamanho.resx">
       <DependentUpon>201607181753456_tamanho.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201607221941454_CursoUsuario.resx">
+      <DependentUpon>201607221941454_CursoUsuario.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

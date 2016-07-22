@@ -14,7 +14,7 @@ namespace STV.Controllers
 {
     public class MateriaisController : Controller
     {
-        private ModeloDados db = new ModeloDados();
+        private STVDbContext db = new STVDbContext();
 
         // GET: Materiais
         public async Task<ActionResult> Index(int idunidade = 0)

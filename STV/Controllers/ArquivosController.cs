@@ -7,12 +7,13 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using STV.DAL;
 
 namespace STV.Controllers
 {
     public class ArquivosController : Controller
     {
-        private ModeloDados db = new ModeloDados();
+        private STVDbContext db = new STVDbContext();
 
         // GET: Arquivos
         public ActionResult Index(int id)
