@@ -1,0 +1,58 @@
+﻿@model IEnumerable<STV.Models.Curso>
+
+@{
+    ViewBag.Title = "Meus Cursos";
+}
+
+<h2>Meus Cursos</h2>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Titulo)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Dtinicial)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Dtfinal)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Categoria)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Palavraschave)
+        </th>
+        <th></th>
+    </tr>
+
+
+    @foreach (var item in Model)
+    {
+
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Titulo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Dtinicial)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Dtfinal)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Categoria)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Palavraschave)
+            </td>
+            <td>
+            </td>
+
+        </tr>
+    }
+
+</table>
+
+
+

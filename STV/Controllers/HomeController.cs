@@ -55,7 +55,7 @@ namespace STV.Controllers
                         Session["UsuarioLogadoID"] = v.Idusuario.ToString();
                         Session["UsuarioLogadoNome"] = v.Nome.ToString();
 
-                        if (String.IsNullOrEmpty(returnUrl))
+                        if (string.IsNullOrEmpty(returnUrl))
                             return RedirectToAction("Index");
                         else
                             return Redirect(returnUrl);

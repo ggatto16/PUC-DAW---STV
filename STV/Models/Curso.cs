@@ -20,7 +20,7 @@ namespace STV.Models
         [Column(TypeName = "date")]
         public DateTime? Dtfinal { get; set; }
 
-        //public int IdusuarioInstrutor { get; set; }
+        public int IdusuarioInstrutor { get; set; }
 
         [StringLength(30)]
         public string Categoria { get; set; }

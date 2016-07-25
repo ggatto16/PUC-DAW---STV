@@ -28,7 +28,12 @@
                     <li>@Html.ActionLink("Home", "Index", "Home")</li>
                     <li>@Html.ActionLink("Departamentos", "Index", "Departamentos")</li>
                     <li>@Html.ActionLink("Usuários", "Index", "Usuarios")</li>
-                    <li>@Html.ActionLink("Cursos", "Index", "Cursos")</li>
+
+                    @if (Request.IsAuthenticated)
+                    {
+                        <li>@Html.ActionLink("Cursos", "Index", "Cursos")</li>
+                    }
+
                     <!--<li>@Html.ActionLink("Unidades", "Index", "Unidades")</li>
                     <li>@Html.ActionLink("Materiais", "Index", "Materiais")</li>
                     <li>@Html.ActionLink("Atividades", "Index", "Atividades")</li>

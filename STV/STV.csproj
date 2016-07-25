@@ -248,6 +248,10 @@
     <Compile Include="Migrations\201607232329580_CursoInstrutor2.Designer.cs">
       <DependentUpon>201607232329580_CursoInstrutor2.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201607251727192_Instrutor.cs" />
+    <Compile Include="Migrations\201607251727192_Instrutor.Designer.cs">
+      <DependentUpon>201607251727192_Instrutor.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Alternativa.cs" />
@@ -397,6 +401,8 @@
     <Content Include="Views\Questoes\Alternativas.cshtml" />
     <Content Include="Views\Materiais\Upload.cshtml" />
     <Content Include="Views\Materiais\ConteudoArquivo.cshtml" />
+    <Content Include="Views\Cursos\CursosDisponiveis.cshtml" />
+    <Content Include="Views\Cursos\MeusCursos.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
@@ -421,6 +427,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201607232329580_CursoInstrutor2.resx">
       <DependentUpon>201607232329580_CursoInstrutor2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201607251727192_Instrutor.resx">
+      <DependentUpon>201607251727192_Instrutor.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

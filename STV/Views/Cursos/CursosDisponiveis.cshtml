@@ -1,0 +1,72 @@
+﻿@model IEnumerable<STV.Models.Curso>
+
+@{
+    ViewBag.Title = "Cursos Disponíveis";
+}
+
+<h2>Cursos Disponíveis</h2>
+
+@Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Titulo)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Dtinicial)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Dtfinal)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Categoria)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Palavraschave)
+        </th>
+        <th></th>
+    </tr>
+
+    @{var cssLinha = string.Empty; }
+
+    @foreach (var item in Model)
+    {
+
+        if (item.Usuarios.Where(u => u.Idusuario == ViewBag.Idusuario).FirstOrDefault() != null)
+        {
+            cssLinha = "success";
+        }
+
+        <tr class="@cssLinha">
+            <td>
+                @Html.DisplayFor(modelItem => item.Titulo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Dtinicial)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Dtfinal)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Categoria)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Palavraschave)
+            </td>
+            <td>
+                @if (cssLinha != "success")
+                    {
+                        @Html.ActionLink("Inscrever-se", "Inscrever", new { Idcurso = item.Idcurso });
+                    }
+                    else
+                    {
+                        <p>Já está inscrito!</p>
+                    }
+        </td>
+
+    </tr>
+    }
+
+</table>
+

@@ -11,12 +11,52 @@ using STV.Models;
 using STV.ViewModels;
 using AutoMapper;
 using STV.DAL;
+using System.Web.Security;
 
 namespace STV.Controllers
 {
     public class CursosController : Controller
     {
         private STVDbContext db = new STVDbContext();
+
+        [Authorize]
+        public async Task<ActionResult> MeusCursos()
+        {
+            int Idusuario = Convert.ToInt16(FormsAuthentication.FormsCookieName);
+            var cursos = db.Curso.Where(x => x.Usuarios.Any(d => d.Idusuario == Idusuario));
+
+            ViewBag.Idusuario = Idusuario;
+            return View(await cursos.ToListAsync());
+        }
+
+        [Authorize]
+        public async Task<ActionResult> CursosDisponiveis()
+        {
+            int Idusuario = Convert.ToInt16(Session["UsuarioLogadoID"]);
+
+            int Iddepartamento = db.Usuario.Where(u => u.Idusuario == Idusuario).Select(u => u.Iddepartamento).FirstOrDefault();
+
+            //Lista os cursos disponíveis de acordo com o departamento do usuário, exceto os cursos cujo instrutor é o próprio usuário
+            var cursos = db.Curso.Where(x => x.Departamentos.Any(d => d.Iddepartamento == Iddepartamento) && x.IdusuarioInstrutor != Idusuario)
+                .Include(u => u.Usuarios);
+
+            ViewBag.Idusuario = Idusuario;
+
+            return View(await cursos.ToListAsync());
+        }
+
+        public async Task<ActionResult> Inscrever(int Idcurso)
+        {
+            int Idusuario = Convert.ToInt16(Session["UsuarioLogadoID"]);
+            var curso = await db.Curso.FindAsync(Idcurso);
+            var usuario = await db.Usuario.FindAsync(Idusuario);
+
+            curso.Usuarios.Add(usuario);
+
+            await db.SaveChangesAsync();
+
+            return RedirectToAction("CursosDisponiveis");
+        }
 
         // GET: Cursos
         public async Task<ActionResult> Index()
@@ -48,7 +88,7 @@ namespace STV.Controllers
             foreach (var unidade in unidadesdocurso)
             {
                 cursoVM.Unidades.Add(unidade);
-                var atividadesdaunidade = from a in db.Atividade  where a.Idunidade == unidade.Idunidade select a;
+                var atividadesdaunidade = from a in db.Atividade where a.Idunidade == unidade.Idunidade select a;
                 if (atividadesdaunidade.Count() > 0) cursoVM.Atividades = new List<Atividade>();
                 foreach (var atividade in atividadesdaunidade)
                 {

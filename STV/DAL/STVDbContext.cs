@@ -40,10 +40,11 @@ namespace STV.DAL
                 .ToTable("Curso")
                 .HasKey(x => x.Idcurso);
 
+            
             modelBuilder.Entity<Curso>()
                 .HasRequired(x => x.Instrutor).WithMany(x => x.CursosInstrutor)
-                //.HasForeignKey(x => x.IdusuarioInstrutor);
-                .Map(m => m.MapKey("IdusuarioInstrutor"));
+                .HasForeignKey(x => x.IdusuarioInstrutor);
+                //.Map(m => m.MapKey("IdusuarioInstrutor")).WillCascadeOnDelete(true);
 
             modelBuilder.Conventions.Remove<ManyToManyCascadeDeleteConvention>();
 
