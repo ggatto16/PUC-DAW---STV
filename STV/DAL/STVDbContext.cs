@@ -1,9 +1,6 @@
 namespace STV.DAL
 {
-    using System;
     using System.Data.Entity;
-    using System.ComponentModel.DataAnnotations.Schema;
-    using System.Linq;
     using System.Data.Entity.ModelConfiguration.Conventions;
     using STV.Models;
 
@@ -27,15 +24,6 @@ namespace STV.DAL
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
 
-            //modelBuilder.Configurations.Add(new DepartamentoMap());
-            //modelBuilder.Configurations.Add(new UsuarioMap());
-            //modelBuilder.Configurations.Add(new CursoMap());
-            //modelBuilder.Configurations.Add(new UnidadeMap());
-            //modelBuilder.Configurations.Add(new MaterialMap());
-            //modelBuilder.Configurations.Add(new AtividadeMap());
-            //modelBuilder.Configurations.Add(new QuestaoMap());
-            //modelBuilder.Configurations.Add(new AlternativaMap());
-
             modelBuilder.Entity<Departamento>()
                 .ToTable("Departamento")
                 .HasKey(x => x.Iddepartamento);
@@ -47,15 +35,15 @@ namespace STV.DAL
 
             modelBuilder.Entity<Usuario>()
                 .HasRequired(x => x.Departamento).WithMany(x => x.Usuarios).HasForeignKey(x => x.Iddepartamento);
-                ////.Map(m => m.MapKey("Iddepartamento"));
 
             modelBuilder.Entity<Curso>()
                 .ToTable("Curso")
                 .HasKey(x => x.Idcurso);
 
             modelBuilder.Entity<Curso>()
-                .HasRequired(x => x.Instrutor).WithMany(x => x.CursosInstrutor).HasForeignKey(x => x.Idusuario);
-                //.Map(m => m.MapKey("IdusuarioInstrutor"));
+                .HasRequired(x => x.Instrutor).WithMany(x => x.CursosInstrutor)
+                //.HasForeignKey(x => x.IdusuarioInstrutor);
+                .Map(m => m.MapKey("IdusuarioInstrutor"));
 
             modelBuilder.Conventions.Remove<ManyToManyCascadeDeleteConvention>();
 
@@ -102,17 +90,12 @@ namespace STV.DAL
             modelBuilder.Entity<Arquivo>()
                 .HasRequired(x => x.Material).WithOptional(x => x.Arquivo).WillCascadeOnDelete(true);
 
-
-            //modelBuilder.Entity<Material>()
-            //    .HasOptional(x => x.Arquivo).WithRequired(x => x.Material).WillCascadeOnDelete(true);
-
             modelBuilder.Entity<Atividade>()
                 .ToTable("Atividade")
                 .HasKey(x => x.Idatividade);
 
             modelBuilder.Entity<Atividade>()
                 .HasRequired(x => x.Unidade).WithMany(x => x.Atividades).HasForeignKey(x => x.Idunidade);
-            //.Map(m => m.MapKey("Idunidade"));
 
             modelBuilder.Entity<Questao>()
                 .ToTable("Questao")
@@ -120,11 +103,6 @@ namespace STV.DAL
 
             modelBuilder.Entity<Questao>()
                 .HasRequired(x => x.Atividade).WithMany(x => x.Questoes).HasForeignKey(x => x.Idatividade);
-                //.Map(m => m.MapKey("Idatividade"));
-
-            //modelBuilder.Entity<Questao>()
-            //    .HasRequired(x => x.Alternativa).WithRequiredDependent()
-            //    .Map(m => m.MapKey("IdalternativaCorreta"));
 
             modelBuilder.Entity<Alternativa>()
                 .ToTable("Alternativa")
@@ -132,8 +110,6 @@ namespace STV.DAL
 
             modelBuilder.Entity<Alternativa>()
                 .HasRequired(x => x.Questao).WithMany(x => x.Alternativas).HasForeignKey(x => x.Idquestao);
-            //.Map(m => m.MapKey("Idquestao"));
-
 
         }
 

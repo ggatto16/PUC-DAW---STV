@@ -244,6 +244,10 @@
     <Compile Include="Migrations\201607221941454_CursoUsuario.Designer.cs">
       <DependentUpon>201607221941454_CursoUsuario.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201607232329580_CursoInstrutor2.cs" />
+    <Compile Include="Migrations\201607232329580_CursoInstrutor2.Designer.cs">
+      <DependentUpon>201607232329580_CursoInstrutor2.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Alternativa.cs" />
@@ -414,6 +418,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201607221941454_CursoUsuario.resx">
       <DependentUpon>201607221941454_CursoUsuario.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201607232329580_CursoInstrutor2.resx">
+      <DependentUpon>201607232329580_CursoInstrutor2.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
