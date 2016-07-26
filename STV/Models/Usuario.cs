@@ -1,5 +1,6 @@
 namespace STV.Models
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
@@ -30,8 +31,10 @@ namespace STV.Models
 
         public DateTime Stamp { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<Curso> Cursos { get; set; }
 
+        [JsonIgnore]
         public virtual Departamento Departamento { get; set; }
 
     }

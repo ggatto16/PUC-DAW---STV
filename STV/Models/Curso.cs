@@ -1,5 +1,6 @@
 namespace STV.Models
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
@@ -36,6 +37,7 @@ namespace STV.Models
 
         public virtual ICollection<Unidade> Unidades { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<Usuario> Usuarios { get; set; }
     }
 }

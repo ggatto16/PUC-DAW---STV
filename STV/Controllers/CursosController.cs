@@ -12,17 +12,25 @@ using STV.ViewModels;
 using AutoMapper;
 using STV.DAL;
 using System.Web.Security;
+using STV.Auth;
 
 namespace STV.Controllers
 {
     public class CursosController : Controller
     {
         private STVDbContext db = new STVDbContext();
+        private Usuario UsuarioLogado;
+
+        public CursosController()
+        {
+            SessionContext auth = new SessionContext();
+            UsuarioLogado = auth.GetUserData();
+        }
 
         [Authorize]
         public async Task<ActionResult> MeusCursos()
         {
-            int Idusuario = Convert.ToInt16(FormsAuthentication.FormsCookieName);
+            int Idusuario = UsuarioLogado.Idusuario;
             var cursos = db.Curso.Where(x => x.Usuarios.Any(d => d.Idusuario == Idusuario));
 
             ViewBag.Idusuario = Idusuario;
@@ -32,9 +40,10 @@ namespace STV.Controllers
         [Authorize]
         public async Task<ActionResult> CursosDisponiveis()
         {
-            int Idusuario = Convert.ToInt16(Session["UsuarioLogadoID"]);
+            int Idusuario = UsuarioLogado.Idusuario;
 
-            int Iddepartamento = db.Usuario.Where(u => u.Idusuario == Idusuario).Select(u => u.Iddepartamento).FirstOrDefault();
+            //int Iddepartamento = db.Usuario.Where(u => u.Idusuario == Idusuario).Select(u => u.Iddepartamento).FirstOrDefault();
+            int Iddepartamento = UsuarioLogado.Iddepartamento;
 
             //Lista os cursos disponíveis de acordo com o departamento do usuário, exceto os cursos cujo instrutor é o próprio usuário
             var cursos = db.Curso.Where(x => x.Departamentos.Any(d => d.Iddepartamento == Iddepartamento) && x.IdusuarioInstrutor != Idusuario)

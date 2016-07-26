@@ -6,15 +6,18 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
 using STV.DAL;
+using STV.Auth;
 
 namespace STV.Controllers
 {
     public class HomeController : Controller
     {
 
+        SessionContext context = new SessionContext();
+
         public ActionResult Index()
         {
-            if (Session["UsuarioLogadoID"] != null && User.Identity.IsAuthenticated)
+            if (User.Identity.IsAuthenticated)
                 return View();
             else
                 return RedirectToAction("Login");
@@ -48,12 +51,32 @@ namespace STV.Controllers
             {
                 using (STVDbContext db = new STVDbContext())
                 {
-                    var v = db.Usuario.Where(a => a.Cpf.Equals(u.Cpf) && a.Senha.Equals(u.Senha)).FirstOrDefault();
-                    if (v != null)
+                    var usuarioAutenticado = db.Usuario
+                        .Where(a => a.Cpf.Equals(u.Cpf) && a.Senha.Equals(u.Senha))
+                        .Select(a => new 
+                        {
+                            Idusuario = a.Idusuario,
+                            Nome = a.Nome,
+                            Cpf = a.Cpf,
+                            Iddepartamento = a.Iddepartamento,
+                            Senha = a.Senha
+                        }).FirstOrDefault();
+
+                    if (usuarioAutenticado != null)
                     {
-                        FormsAuthentication.SetAuthCookie(v.Nome, false);
-                        Session["UsuarioLogadoID"] = v.Idusuario.ToString();
-                        Session["UsuarioLogadoNome"] = v.Nome.ToString();
+                        //FormsAuthentication.SetAuthCookie(usuarioAutenticado.Nome, false);
+                        //Session["UsuarioLogadoID"] = usuarioAutenticado.Idusuario.ToString();
+                        //Session["UsuarioLogadoNome"] = usuarioAutenticado.Nome.ToString();
+
+                        Usuario UsuarioLogado = new Usuario
+                        {
+                            Idusuario = usuarioAutenticado.Idusuario,
+                            Nome = usuarioAutenticado.Nome,
+                            Iddepartamento = usuarioAutenticado.Iddepartamento,
+                            Senha = usuarioAutenticado.Senha
+                        };
+
+                        context.SetAuthenticationToken(UsuarioLogado.Nome.ToString(), false, UsuarioLogado);
 
                         if (string.IsNullOrEmpty(returnUrl))
                             return RedirectToAction("Index");
