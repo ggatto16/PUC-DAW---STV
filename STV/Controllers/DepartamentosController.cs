@@ -9,7 +9,6 @@ using System.Web;
 using System.Web.Mvc;
 using STV.Models;
 using STV.DAL;
-using STV.DAL;
 
 namespace STV.Controllers
 {

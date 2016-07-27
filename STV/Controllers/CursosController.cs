@@ -46,8 +46,9 @@ namespace STV.Controllers
             int Iddepartamento = UsuarioLogado.Iddepartamento;
 
             //Lista os cursos disponíveis de acordo com o departamento do usuário, exceto os cursos cujo instrutor é o próprio usuário
-            var cursos = db.Curso.Where(x => x.Departamentos.Any(d => d.Iddepartamento == Iddepartamento) && x.IdusuarioInstrutor != Idusuario)
-                .Include(u => u.Usuarios);
+            var cursos = db.Curso.Where(x => x.Departamentos
+                            .Any(d => d.Iddepartamento == Iddepartamento) && x.IdusuarioInstrutor != Idusuario)
+                                .Include(u => u.Usuarios);
 
             ViewBag.Idusuario = Idusuario;
 

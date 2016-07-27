@@ -10,6 +10,7 @@ using STV.Auth;
 
 namespace STV.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
 
@@ -37,43 +38,42 @@ namespace STV.Controllers
             return View();
         }
 
-
+        [AllowAnonymous]
         public ActionResult Login()
         {
             return View();
         }
 
         [HttpPost]
+        [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public ActionResult Login(Usuario u, string returnUrl = "")
+        public ActionResult Login(Usuario Anonymous, string returnUrl = "")
         {
             if (ModelState.IsValid) 
             {
                 using (STVDbContext db = new STVDbContext())
                 {
                     var usuarioAutenticado = db.Usuario
-                        .Where(a => a.Cpf.Equals(u.Cpf) && a.Senha.Equals(u.Senha))
+                        .Where(a => a.Cpf.Equals(Anonymous.Cpf) && a.Senha.Equals(Anonymous.Senha))
                         .Select(a => new 
                         {
                             Idusuario = a.Idusuario,
                             Nome = a.Nome,
                             Cpf = a.Cpf,
                             Iddepartamento = a.Iddepartamento,
-                            Senha = a.Senha
+                            Senha = a.Senha,
+                            Roles = a.Roles
                         }).FirstOrDefault();
 
                     if (usuarioAutenticado != null)
                     {
-                        //FormsAuthentication.SetAuthCookie(usuarioAutenticado.Nome, false);
-                        //Session["UsuarioLogadoID"] = usuarioAutenticado.Idusuario.ToString();
-                        //Session["UsuarioLogadoNome"] = usuarioAutenticado.Nome.ToString();
-
                         Usuario UsuarioLogado = new Usuario
                         {
                             Idusuario = usuarioAutenticado.Idusuario,
                             Nome = usuarioAutenticado.Nome,
                             Iddepartamento = usuarioAutenticado.Iddepartamento,
-                            Senha = usuarioAutenticado.Senha
+                            Senha = usuarioAutenticado.Senha,
+                            Roles = usuarioAutenticado.Roles
                         };
 
                         context.SetAuthenticationToken(UsuarioLogado.Nome.ToString(), false, UsuarioLogado);
@@ -87,7 +87,7 @@ namespace STV.Controllers
                         ViewBag.Message = "CPF e/ou senha incorreto(s)";
                 }
             }
-            return View(u);
+            return View(Anonymous);
         }
 
         [HttpPost]

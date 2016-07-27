@@ -29,6 +29,11 @@ namespace STV.Migrations
             //      new Person { FullName = "Rowan Miller" }
             //    );
             //
+
+            context.Role.AddOrUpdate(x => x.Idrole,
+                new Role() { Nome = "Admin" }, 
+                new Role() { Nome = "Default" });
+
         }
 
     }

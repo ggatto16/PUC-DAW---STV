@@ -1,23 +1,14 @@
-namespace STV.Models
+﻿using STV.Models;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Web;
+
+namespace STV.ViewModels
 {
-    using Newtonsoft.Json;
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
-    using System.Data.Entity.Spatial;
-
-    public enum UserRoles
+    public class UsuarioVM
     {
-        Administrador = 1,
-        Padrao = 2 
-    };
-
-
-    [Table("Usuario")]
-    public partial class Usuario
-    {
-
         public int Idusuario { get; set; }
 
         [StringLength(15)]
@@ -44,5 +35,6 @@ namespace STV.Models
 
         public virtual ICollection<Role> Roles { get; set; }
 
+        public virtual ICollection<Role> RolesDisponiveis { get; set; }
     }
 }

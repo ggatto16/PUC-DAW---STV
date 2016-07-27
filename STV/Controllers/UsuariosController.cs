@@ -9,6 +9,8 @@ using System.Web;
 using System.Web.Mvc;
 using STV.Models;
 using STV.DAL;
+using AutoMapper;
+using STV.ViewModels;
 
 namespace STV.Controllers
 {
@@ -54,7 +56,8 @@ namespace STV.Controllers
         // GET: Usuarios/Create
         public ActionResult Create()
         {
-            ViewBag.iddepartamento = new SelectList(db.Departamento, "Iddepartamento", "Descricao");
+            ViewBag.Iddepartamento = new SelectList(db.Departamento, "Iddepartamento", "Descricao");
+            ViewBag.IdRole = new SelectList(db.Role, "Idrole", "Nome");
             return View();
         }
 
@@ -63,11 +66,12 @@ namespace STV.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Idusuario,Cpf,Nome,Email,Senha,Iddepartamento,Status,Stamp")] Usuario usuario)
+        public async Task<ActionResult> Create([Bind(Include = "Idusuario,Cpf,Nome,Email,Senha,Iddepartamento,Role")] Usuario usuario)
         {
             if (ModelState.IsValid)
             {
                 usuario.Stamp = DateTime.Now;
+                usuario.Status = false;
                 db.Usuario.Add(usuario);
                 await db.SaveChangesAsync();
                 return RedirectToAction("Index");
@@ -88,8 +92,14 @@ namespace STV.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.iddepartamento = new SelectList(db.Departamento, "Iddepartamento", "Descricao");
-            return View(usuario);
+            ViewBag.Iddepartamento = new SelectList(db.Departamento, "Iddepartamento", "Descricao");
+
+            var usuarioVM = Mapper.Map<Usuario, UsuarioVM>(usuario);
+
+            var roles = from r in db.Role select r;
+            usuarioVM.RolesDisponiveis = new List<Role>(db.Role.ToList());
+
+            return View(usuarioVM);
         }
 
         // POST: Usuarios/Edit/5
@@ -97,7 +107,7 @@ namespace STV.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "Idusuario,Cpf,Nome,Email,Senha,Iddepartamento,Status,Stamp")] Usuario usuario)
+        public async Task<ActionResult> Edit([Bind(Include = "Idusuario,Cpf,Nome,Email,Senha,Iddepartamento,Role")] Usuario usuario)
         {
             if (ModelState.IsValid)
             {

@@ -20,6 +20,7 @@ namespace STV.DAL
         public virtual DbSet<Questao> Questao { get; set; }
         public virtual DbSet<Alternativa> Alternativa { get; set; }
         public virtual DbSet<Arquivo> Arquivo { get; set; }
+        public virtual DbSet<Role> Role { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -111,6 +112,20 @@ namespace STV.DAL
 
             modelBuilder.Entity<Alternativa>()
                 .HasRequired(x => x.Questao).WithMany(x => x.Alternativas).HasForeignKey(x => x.Idquestao);
+
+            modelBuilder.Entity<Role>()
+                .ToTable("Role")
+                .HasKey(x => x.Idrole);
+
+            modelBuilder.Entity<Usuario>()
+                .HasMany(x => x.Roles)
+                .WithMany(x => x.Usuarios)
+                .Map(m =>
+                {
+                    m.MapLeftKey("Idusuario");
+                    m.MapRightKey("Idrole");
+                    m.ToTable("UsuarioRole");
+                });
 
         }
 

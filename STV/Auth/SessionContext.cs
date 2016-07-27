@@ -1,13 +1,13 @@
 ﻿using STV.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Web;
+using System.Web.Http;
 using System.Web.Script.Serialization;
 using System.Web.Security;
 
 namespace STV.Auth
 {
+    [Authorize]
     public class SessionContext
     {
         public void SetAuthenticationToken(string name, bool isPersistant, Usuario userData)
@@ -38,7 +38,6 @@ namespace STV.Auth
                 if (cookie != null)
                 {
                     FormsAuthenticationTicket ticket = FormsAuthentication.Decrypt(cookie.Value);
-
                     userData = new JavaScriptSerializer().Deserialize(ticket.UserData, typeof(Usuario)) as Usuario;
                 }
             }
