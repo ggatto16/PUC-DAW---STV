@@ -285,7 +285,8 @@
     <Compile Include="Startup.cs" />
     <Compile Include="ViewModels\AtividadeVM.cs" />
     <Compile Include="ViewModels\cursoVM.cs" />
-    <Compile Include="ViewModels\UsuarioVM.cs" />
+    <Compile Include="ViewModels\DadosUsuario.cs" />
+    <Compile Include="ViewModels\RolesAtribuidas.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\stvdb_diagram.png" />

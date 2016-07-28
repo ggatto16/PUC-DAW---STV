@@ -16,11 +16,6 @@ namespace STV.Mappers
             {
                 cfg.CreateMap<Curso, cursoVM>();
             });
-
-            Mapper.Initialize(cfg =>
-            {
-                cfg.CreateMap<Usuario, UsuarioVM>();
-            });
         }
     }
 

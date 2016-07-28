@@ -37,6 +37,7 @@ namespace STV.Models
 
         public virtual ICollection<Unidade> Unidades { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<Usuario> Usuarios { get; set; }
     }
 }

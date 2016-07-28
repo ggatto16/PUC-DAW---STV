@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -13,6 +14,7 @@ namespace STV.Models
 
         public string Nome { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<Usuario> Usuarios { get; set; }
     }
 }

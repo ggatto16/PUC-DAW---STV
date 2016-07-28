@@ -13,9 +13,11 @@ using AutoMapper;
 using STV.DAL;
 using System.Web.Security;
 using STV.Auth;
+using Microsoft.AspNet.Identity;
 
 namespace STV.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class CursosController : Controller
     {
         private STVDbContext db = new STVDbContext();
@@ -24,6 +26,7 @@ namespace STV.Controllers
         public CursosController()
         {
             SessionContext auth = new SessionContext();
+            //UsuarioLogado = Mapper.Map<DadosUsuario, Usuario>(auth.GetUserData());
             UsuarioLogado = auth.GetUserData();
         }
 

@@ -11,6 +11,7 @@ using STV.Models;
 using STV.DAL;
 using AutoMapper;
 using STV.ViewModels;
+using System.Data.Entity.Infrastructure;
 
 namespace STV.Controllers
 {
@@ -56,8 +57,10 @@ namespace STV.Controllers
         // GET: Usuarios/Create
         public ActionResult Create()
         {
+            var usuario = new Usuario();
+            usuario.Roles = new List<Role>();
+            CarregarRolesDisponiveis(usuario);
             ViewBag.Iddepartamento = new SelectList(db.Departamento, "Iddepartamento", "Descricao");
-            ViewBag.IdRole = new SelectList(db.Role, "Idrole", "Nome");
             return View();
         }
 
@@ -66,8 +69,18 @@ namespace STV.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Idusuario,Cpf,Nome,Email,Senha,Iddepartamento,Role")] Usuario usuario)
+        public async Task<ActionResult> Create([Bind(Include = "Idusuario,Cpf,Nome,Email,Senha,Iddepartamento,Role")] Usuario usuario, string[] rolesSelecionadas)
         {
+            if (rolesSelecionadas != null)
+            {
+                usuario.Roles = new List<Role>();
+                foreach (var role in rolesSelecionadas)
+                {
+                    var roleToAdd = db.Role.Find(int.Parse(role));
+                    usuario.Roles.Add(roleToAdd);
+                }
+            }
+
             if (ModelState.IsValid)
             {
                 usuario.Stamp = DateTime.Now;
@@ -84,22 +97,22 @@ namespace STV.Controllers
         public async Task<ActionResult> Edit(int? id)
         {
             if (id == null)
-            {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Usuario usuario = await db.Usuario.FindAsync(id);
+
+            Usuario usuario = await db.Usuario
+                .Include(u => u.Departamento)
+                .Include(r => r.Roles)
+                .Where(u => u.Idusuario == id)
+                .SingleAsync();
+                
             if (usuario == null)
-            {
                 return HttpNotFound();
-            }
-            ViewBag.Iddepartamento = new SelectList(db.Departamento, "Iddepartamento", "Descricao");
 
-            var usuarioVM = Mapper.Map<Usuario, UsuarioVM>(usuario);
+            CarregarRolesDisponiveis(usuario);
+            //CarregarDepartamentos(usuario.Iddepartamento);
+            ViewBag.Iddepartamento = new SelectList(db.Departamento, "Iddepartamento", "Descricao", usuario.Iddepartamento);
 
-            var roles = from r in db.Role select r;
-            usuarioVM.RolesDisponiveis = new List<Role>(db.Role.ToList());
-
-            return View(usuarioVM);
+            return View(usuario);
         }
 
         // POST: Usuarios/Edit/5
@@ -107,16 +120,81 @@ namespace STV.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "Idusuario,Cpf,Nome,Email,Senha,Iddepartamento,Role")] Usuario usuario)
+        //public async Task<ActionResult> Edit([Bind(Include = "Idusuario,Cpf,Nome,Email,Senha,Iddepartamento,Role")] Usuario usuario)
+        public async Task<ActionResult> Edit(int? id, string[] rolesSelecionadas)
         {
-            if (ModelState.IsValid)
+
+            if (id == null)
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            var usuarioToUpdate = await db.Usuario
+                  .Include(u => u.Departamento)
+                  .Include(u => u.Roles)
+                  .Where(i => i.Idusuario == id)
+                  .SingleAsync();
+
+            if (TryUpdateModel(usuarioToUpdate, "",
+                   new string[] { "Cpf", "Nome", "Email", "Senha", "Iddepartamento" }))
             {
-                usuario.Stamp = DateTime.Now;
-                db.Entry(usuario).State = EntityState.Modified;
-                await db.SaveChangesAsync();
-                return RedirectToAction("Index");
+                try
+                {
+                    AtualizarRolesUsuario(rolesSelecionadas, usuarioToUpdate);
+
+                    db.SaveChanges();
+
+                    return RedirectToAction("Index");
+                }
+                catch (RetryLimitExceededException /* dex */)
+                {
+                    //Log the error (uncomment dex variable name and add a line here to write a log.
+                    ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists, see your system administrator.");
+                }
             }
-            return View(usuario);
+
+            CarregarRolesDisponiveis(usuarioToUpdate);
+            //CarregarDepartamentos(usuarioToUpdate.Iddepartamento);
+            ViewBag.Iddepartamento = new SelectList(db.Departamento, "Iddepartamento", "Descricao", usuarioToUpdate.Iddepartamento);
+            return View(usuarioToUpdate);
+        }
+
+        private void AtualizarRolesUsuario(string[] rolesSelecionadas, Usuario usuarioToUpdate)
+        {
+            if (rolesSelecionadas == null)
+            {
+                usuarioToUpdate.Roles = new List<Role>();
+                return;
+            }
+
+            var rolesSelecionadasHS = new HashSet<string>(rolesSelecionadas);
+
+            var instructorCourses = new HashSet<int>
+                (usuarioToUpdate.Roles.Select(c => c.Idrole));
+
+            foreach (var role in db.Role)
+            {
+                if (rolesSelecionadasHS.Contains(role.Idrole.ToString()))
+                {
+                    if (!instructorCourses.Contains(role.Idrole))
+                    {
+                        usuarioToUpdate.Roles.Add(role);
+                    }
+                }
+                else
+                {
+                    if (instructorCourses.Contains(role.Idrole))
+                    {
+                        usuarioToUpdate.Roles.Remove(role);
+                    }
+                }
+            }
+        }
+
+        private void CarregarDepartamentos(object departamentoSelecionado = null)
+        {
+            var departmentosQuery = from d in db.Departamento
+                                   orderby d.Descricao
+                                   select d;
+            ViewBag.Iddepartamento = new SelectList(departmentosQuery, "Iddepartamento", "Descricao", departamentoSelecionado);
         }
 
         // GET: Usuarios/Delete/5
@@ -143,6 +221,23 @@ namespace STV.Controllers
             db.Usuario.Remove(usuario);
             await db.SaveChangesAsync();
             return RedirectToAction("Index");
+        }
+
+        private void CarregarRolesDisponiveis(Usuario usuario)
+        {
+            var allRoles = db.Role;
+            var usuarioRoles = new HashSet<int>(usuario.Roles.Select(c => c.Idrole));
+            var viewModel = new List<RolesAtribuidas>();
+            foreach (var role in allRoles)
+            {
+                viewModel.Add(new RolesAtribuidas
+                {
+                    Idrole = role.Idrole,
+                    Nome = role.Nome,
+                    Atribuida = usuarioRoles.Contains(role.Idrole)
+                });
+            }
+            ViewBag.Roles = viewModel;
         }
 
         protected override void Dispose(bool disposing)

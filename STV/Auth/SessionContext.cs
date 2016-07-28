@@ -14,7 +14,7 @@ namespace STV.Auth
         {
             string data = null;
             if (userData != null)
-                data = new JavaScriptSerializer().Serialize(userData);
+                data = Newtonsoft.Json.JsonConvert.SerializeObject(userData);
 
             FormsAuthenticationTicket ticket = new FormsAuthenticationTicket(1, name, DateTime.Now, DateTime.Now.AddHours(2), isPersistant, data);
 

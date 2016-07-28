@@ -29,7 +29,7 @@
                     <li>@Html.ActionLink("Departamentos", "Index", "Departamentos")</li>
                     <li>@Html.ActionLink("Usuários", "Index", "Usuarios")</li>
 
-                    @if (Request.IsAuthenticated)
+                    @if (Request.IsAuthenticated && User.IsInRole("Admin"))
                     {
                         <li>@Html.ActionLink("Cursos", "Index", "Cursos")</li>
                     }

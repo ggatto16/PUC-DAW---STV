@@ -43,6 +43,26 @@
         </dd>
 
         <dt>
+            @Html.DisplayNameFor(model => model.Roles)
+        </dt>
+
+        <dd>
+            @{
+                var tamanho = Model.Roles.Count();
+
+                for (var i = 0; i < tamanho; i++)
+                {
+                @Model.Roles.ElementAtOrDefault(i).Nome 
+                    if (i < tamanho - 1)
+                    {
+                        @Html.Raw(",");
+                    }
+
+                }
+            }
+        </dd>
+
+        <dt>
             @Html.DisplayNameFor(model => model.Status)
         </dt>
 
