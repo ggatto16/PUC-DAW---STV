@@ -6,9 +6,8 @@ using System.Web;
 
 namespace STV.Models
 {
-    public class Instrutor : Usuario
-    {
+    public class Aluno : Usuario
+    {     
         public virtual ICollection<Curso> Cursos { get; set; }
-
     }
 }

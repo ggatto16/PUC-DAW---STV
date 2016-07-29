@@ -233,37 +233,21 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="MediaStream.cs" />
-    <Compile Include="Migrations\201607181731016_teste-blob.cs" />
-    <Compile Include="Migrations\201607181731016_teste-blob.Designer.cs">
-      <DependentUpon>201607181731016_teste-blob.cs</DependentUpon>
+    <Compile Include="Migrations\201607291603568_Initial.cs" />
+    <Compile Include="Migrations\201607291603568_Initial.Designer.cs">
+      <DependentUpon>201607291603568_Initial.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201607181753456_tamanho.cs" />
-    <Compile Include="Migrations\201607181753456_tamanho.Designer.cs">
-      <DependentUpon>201607181753456_tamanho.cs</DependentUpon>
+    <Compile Include="Migrations\201607291807499_acerto1.cs" />
+    <Compile Include="Migrations\201607291807499_acerto1.Designer.cs">
+      <DependentUpon>201607291807499_acerto1.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201607221941454_CursoUsuario.cs" />
-    <Compile Include="Migrations\201607221941454_CursoUsuario.Designer.cs">
-      <DependentUpon>201607221941454_CursoUsuario.cs</DependentUpon>
+    <Compile Include="Migrations\201607291913572_acerto2.cs" />
+    <Compile Include="Migrations\201607291913572_acerto2.Designer.cs">
+      <DependentUpon>201607291913572_acerto2.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201607232329580_CursoInstrutor2.cs" />
-    <Compile Include="Migrations\201607232329580_CursoInstrutor2.Designer.cs">
-      <DependentUpon>201607232329580_CursoInstrutor2.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201607271543543_roles1.cs" />
-    <Compile Include="Migrations\201607271543543_roles1.Designer.cs">
-      <DependentUpon>201607271543543_roles1.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201607271604459_roles2.cs" />
-    <Compile Include="Migrations\201607271604459_roles2.Designer.cs">
-      <DependentUpon>201607271604459_roles2.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201607271613126_roles3.cs" />
-    <Compile Include="Migrations\201607271613126_roles3.Designer.cs">
-      <DependentUpon>201607271613126_roles3.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201607271903190_addRoles.cs" />
-    <Compile Include="Migrations\201607271903190_addRoles.Designer.cs">
-      <DependentUpon>201607271903190_addRoles.cs</DependentUpon>
+    <Compile Include="Migrations\201607291936398_acerto3.cs" />
+    <Compile Include="Migrations\201607291936398_acerto3.Designer.cs">
+      <DependentUpon>201607291936398_acerto3.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -273,6 +257,7 @@
     <Compile Include="Models\Curso.cs" />
     <Compile Include="Models\Departamento.cs" />
     <Compile Include="Models\IdentityModels.cs" />
+    <Compile Include="Models\Aluno.cs" />
     <Compile Include="Models\Instrutor.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\Material.cs" />
@@ -286,6 +271,7 @@
     <Compile Include="ViewModels\AtividadeVM.cs" />
     <Compile Include="ViewModels\cursoVM.cs" />
     <Compile Include="ViewModels\DadosUsuario.cs" />
+    <Compile Include="ViewModels\DepartamentosAtribuidos.cs" />
     <Compile Include="ViewModels\RolesAtribuidas.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -419,6 +405,7 @@
     <Content Include="Views\Materiais\ConteudoArquivo.cshtml" />
     <Content Include="Views\Cursos\CursosDisponiveis.cshtml" />
     <Content Include="Views\Cursos\MeusCursos.cshtml" />
+    <Content Include="Views\Cursos\MeusCursosGerenciaveis.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
@@ -430,31 +417,21 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\Arquivos\" />
+    <Folder Include="Views\TesteCursos\" />
+    <Folder Include="Views\TesteCurso\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201607181731016_teste-blob.resx">
-      <DependentUpon>201607181731016_teste-blob.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201607291603568_Initial.resx">
+      <DependentUpon>201607291603568_Initial.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201607181753456_tamanho.resx">
-      <DependentUpon>201607181753456_tamanho.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201607291807499_acerto1.resx">
+      <DependentUpon>201607291807499_acerto1.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201607221941454_CursoUsuario.resx">
-      <DependentUpon>201607221941454_CursoUsuario.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201607291913572_acerto2.resx">
+      <DependentUpon>201607291913572_acerto2.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201607232329580_CursoInstrutor2.resx">
-      <DependentUpon>201607232329580_CursoInstrutor2.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201607271543543_roles1.resx">
-      <DependentUpon>201607271543543_roles1.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201607271604459_roles2.resx">
-      <DependentUpon>201607271604459_roles2.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201607271613126_roles3.resx">
-      <DependentUpon>201607271613126_roles3.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201607271903190_addRoles.resx">
-      <DependentUpon>201607271903190_addRoles.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201607291936398_acerto3.resx">
+      <DependentUpon>201607291936398_acerto3.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

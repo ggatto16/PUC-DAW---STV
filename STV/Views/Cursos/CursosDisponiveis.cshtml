@@ -55,7 +55,14 @@
                 @Html.DisplayFor(modelItem => item.Palavraschave)
             </td>
             <td>
-                @if (cssLinha != "success")
+                @if (ViewBag.Gerenciar == true)
+                {
+                    @Html.ActionLink("Gerenciar", "Datails", "Cursos", new { Idcurso = item.Idcurso });
+                }
+                else
+                {
+
+                    if (cssLinha != "success")
                     {
                         @Html.ActionLink("Inscrever-se", "Inscrever", new { Idcurso = item.Idcurso });
                     }
@@ -63,10 +70,10 @@
                     {
                         <p>Já está inscrito!</p>
                     }
-        </td>
+                }
+            </td>
 
-    </tr>
+        </tr>
     }
 
 </table>
-

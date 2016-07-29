@@ -42,10 +42,10 @@
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.Idusuario, "Idusuario", htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.IdusuarioInstrutor, "Isntrutor", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.DropDownList("Idusuario", null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.Idusuario, "", new { @class = "text-danger" })
+                @Html.DropDownList("IdusuarioInstrutor", null, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.IdusuarioInstrutor, "", new { @class = "text-danger" })
             </div>
         </div>        
 
@@ -66,12 +66,32 @@
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.Stamp, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Stamp, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Stamp, "", new { @class = "text-danger" })
+            <div class="col-md-offset-2 col-md-10">
+                <table>
+                    <tr>
+                        @{
+                            int cnt = 0;
+                            List<STV.ViewModels.DepartamentosAtribuidos> departamentos = ViewBag.Departamentos;
+
+                            foreach (var departamento in departamentos)
+                            {
+                                if (cnt++ % 3 == 0)
+                                {
+                                    @:</tr><tr>
+                                }
+                                @:<td>
+                                    <input type="checkbox"
+                                           name="departamentosSelecionados"
+                                           value="@departamento.Iddepartamento"
+                                           @(Html.Raw(departamento.Atribuido ? "checked=\"checked\"" : "")) />
+                                        @departamento.Descricao
+                                    @:</td>
+                            }
+                            @:</tr>
+                        }
+                    </table>
+                </div>
             </div>
-        </div>
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">

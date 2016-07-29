@@ -31,8 +31,8 @@ namespace STV.Migrations
             //
 
             context.Role.AddOrUpdate(x => x.Idrole,
-                new Role() { Nome = "Admin" }, 
-                new Role() { Nome = "Default" });
+                new Role() { Idrole = 1, Nome = "Admin" }, 
+                new Role() { Idrole = 2, Nome = "Default" });
 
         }
 

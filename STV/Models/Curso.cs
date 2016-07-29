@@ -15,10 +15,14 @@ namespace STV.Models
         [StringLength(60)]
         public string Titulo { get; set; }
 
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-dd}")]
         [Column(TypeName = "date")]
+        [DataType(DataType.Date, ErrorMessage = "Data em formato inválido")]
         public DateTime? Dtinicial { get; set; }
 
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-dd}")]
         [Column(TypeName = "date")]
+        [DataType(DataType.Date, ErrorMessage = "Data em formato inválido")]
         public DateTime? Dtfinal { get; set; }
 
         public int IdusuarioInstrutor { get; set; }
@@ -33,7 +37,7 @@ namespace STV.Models
 
         public virtual ICollection<Departamento> Departamentos { get; set; }
 
-        public virtual Instrutor Instrutor { get; set; }
+        public virtual Usuario Instrutor { get; set; }
 
         public virtual ICollection<Unidade> Unidades { get; set; }
 

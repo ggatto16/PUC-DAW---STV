@@ -69,7 +69,7 @@ namespace STV.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Idusuario,Cpf,Nome,Email,Senha,Iddepartamento,Role")] Usuario usuario, string[] rolesSelecionadas)
+        public async Task<ActionResult> Create([Bind(Include = "Idusuario,Cpf,Nome,Email,Senha,Iddepartamento")] Usuario usuario, string[] rolesSelecionadas)
         {
             if (rolesSelecionadas != null)
             {
@@ -139,7 +139,7 @@ namespace STV.Controllers
                 try
                 {
                     AtualizarRolesUsuario(rolesSelecionadas, usuarioToUpdate);
-
+                    usuarioToUpdate.Stamp = DateTime.Now;
                     db.SaveChanges();
 
                     return RedirectToAction("Index");

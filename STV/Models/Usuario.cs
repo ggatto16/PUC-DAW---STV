@@ -38,11 +38,13 @@ namespace STV.Models
 
         public DateTime Stamp { get; set; }
 
-        public virtual ICollection<Curso> Cursos { get; set; }
-
         public virtual Departamento Departamento { get; set; }
 
         public virtual ICollection<Role> Roles { get; set; }
+
+        public virtual ICollection<Curso> Cursos { get; set; }
+
+        public virtual ICollection<Curso> CursosGerenciaveis { get; set; }
 
     }
 }

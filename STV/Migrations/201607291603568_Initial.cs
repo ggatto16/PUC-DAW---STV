@@ -3,7 +3,7 @@ namespace STV.Migrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class testeblob : DbMigration
+    public partial class Initial : DbMigration
     {
         public override void Up()
         {
@@ -70,25 +70,14 @@ namespace STV.Migrations
                         Titulo = c.String(maxLength: 60),
                         Dtinicial = c.DateTime(storeType: "date"),
                         Dtfinal = c.DateTime(storeType: "date"),
-                        Idusuario = c.Int(nullable: false),
+                        IdusuarioInstrutor = c.Int(nullable: false),
                         Categoria = c.String(maxLength: 30),
                         Palavraschave = c.String(maxLength: 120),
                         Stamp = c.DateTime(nullable: false),
                     })
                 .PrimaryKey(t => t.Idcurso)
-                .ForeignKey("dbo.Usuario", t => t.Idusuario, cascadeDelete: true)
-                .Index(t => t.Idusuario);
-            
-            CreateTable(
-                "dbo.Departamento",
-                c => new
-                    {
-                        Iddepartamento = c.Int(nullable: false, identity: true),
-                        Descricao = c.String(maxLength: 50),
-                        Status = c.Boolean(nullable: false),
-                        Stamp = c.DateTime(),
-                    })
-                .PrimaryKey(t => t.Iddepartamento);
+                .ForeignKey("dbo.Usuario", t => t.IdusuarioInstrutor)
+                .Index(t => t.IdusuarioInstrutor);
             
             CreateTable(
                 "dbo.Usuario",
@@ -102,10 +91,31 @@ namespace STV.Migrations
                         Iddepartamento = c.Int(nullable: false),
                         Status = c.Boolean(nullable: false),
                         Stamp = c.DateTime(nullable: false),
+                        Discriminator = c.String(nullable: false, maxLength: 128),
                     })
                 .PrimaryKey(t => t.Idusuario)
                 .ForeignKey("dbo.Departamento", t => t.Iddepartamento, cascadeDelete: true)
                 .Index(t => t.Iddepartamento);
+            
+            CreateTable(
+                "dbo.Departamento",
+                c => new
+                    {
+                        Iddepartamento = c.Int(nullable: false, identity: true),
+                        Descricao = c.String(maxLength: 50),
+                        Status = c.Boolean(nullable: false),
+                        Stamp = c.DateTime(),
+                    })
+                .PrimaryKey(t => t.Iddepartamento);
+            
+            CreateTable(
+                "dbo.Role",
+                c => new
+                    {
+                        Idrole = c.Int(nullable: false, identity: true),
+                        Nome = c.String(),
+                    })
+                .PrimaryKey(t => t.Idrole);
             
             CreateTable(
                 "dbo.Material",
@@ -128,11 +138,37 @@ namespace STV.Migrations
                         Blob = c.Binary(),
                         Nome = c.String(),
                         ContentType = c.String(),
-                        testeBlob = c.Binary(),
+                        Tamanho = c.Int(),
                     })
                 .PrimaryKey(t => t.Idmaterial)
                 .ForeignKey("dbo.Material", t => t.Idmaterial, cascadeDelete: true)
                 .Index(t => t.Idmaterial);
+            
+            CreateTable(
+                "dbo.UsuarioRole",
+                c => new
+                    {
+                        Idusuario = c.Int(nullable: false),
+                        Idrole = c.Int(nullable: false),
+                    })
+                .PrimaryKey(t => new { t.Idusuario, t.Idrole })
+                .ForeignKey("dbo.Usuario", t => t.Idusuario)
+                .ForeignKey("dbo.Role", t => t.Idrole)
+                .Index(t => t.Idusuario)
+                .Index(t => t.Idrole);
+            
+            CreateTable(
+                "dbo.CursoUsuario",
+                c => new
+                    {
+                        Idcurso = c.Int(nullable: false),
+                        Idusuario = c.Int(nullable: false),
+                    })
+                .PrimaryKey(t => new { t.Idcurso, t.Idusuario })
+                .ForeignKey("dbo.Curso", t => t.Idcurso)
+                .ForeignKey("dbo.Usuario", t => t.Idusuario)
+                .Index(t => t.Idcurso)
+                .Index(t => t.Idusuario);
             
             CreateTable(
                 "dbo.CursoDepartamento",
@@ -157,27 +193,38 @@ namespace STV.Migrations
             DropForeignKey("dbo.Material", "Idunidade", "dbo.Unidade");
             DropForeignKey("dbo.Arquivo", "Idmaterial", "dbo.Material");
             DropForeignKey("dbo.Unidade", "Idcurso", "dbo.Curso");
-            DropForeignKey("dbo.Curso", "Idusuario", "dbo.Usuario");
+            DropForeignKey("dbo.Curso", "IdusuarioInstrutor", "dbo.Usuario");
             DropForeignKey("dbo.CursoDepartamento", "Iddepartamento", "dbo.Departamento");
             DropForeignKey("dbo.CursoDepartamento", "Idcurso", "dbo.Curso");
+            DropForeignKey("dbo.CursoUsuario", "Idusuario", "dbo.Usuario");
+            DropForeignKey("dbo.CursoUsuario", "Idcurso", "dbo.Curso");
+            DropForeignKey("dbo.UsuarioRole", "Idrole", "dbo.Role");
+            DropForeignKey("dbo.UsuarioRole", "Idusuario", "dbo.Usuario");
             DropForeignKey("dbo.Usuario", "Iddepartamento", "dbo.Departamento");
             DropForeignKey("dbo.Questao", "IdalternativaCorreta", "dbo.Alternativa");
             DropIndex("dbo.CursoDepartamento", new[] { "Iddepartamento" });
             DropIndex("dbo.CursoDepartamento", new[] { "Idcurso" });
+            DropIndex("dbo.CursoUsuario", new[] { "Idusuario" });
+            DropIndex("dbo.CursoUsuario", new[] { "Idcurso" });
+            DropIndex("dbo.UsuarioRole", new[] { "Idrole" });
+            DropIndex("dbo.UsuarioRole", new[] { "Idusuario" });
             DropIndex("dbo.Arquivo", new[] { "Idmaterial" });
             DropIndex("dbo.Material", new[] { "Idunidade" });
             DropIndex("dbo.Usuario", new[] { "Iddepartamento" });
-            DropIndex("dbo.Curso", new[] { "Idusuario" });
+            DropIndex("dbo.Curso", new[] { "IdusuarioInstrutor" });
             DropIndex("dbo.Unidade", new[] { "Idcurso" });
             DropIndex("dbo.Atividade", new[] { "Idunidade" });
             DropIndex("dbo.Questao", new[] { "IdalternativaCorreta" });
             DropIndex("dbo.Questao", new[] { "Idatividade" });
             DropIndex("dbo.Alternativa", new[] { "Idquestao" });
             DropTable("dbo.CursoDepartamento");
+            DropTable("dbo.CursoUsuario");
+            DropTable("dbo.UsuarioRole");
             DropTable("dbo.Arquivo");
             DropTable("dbo.Material");
-            DropTable("dbo.Usuario");
+            DropTable("dbo.Role");
             DropTable("dbo.Departamento");
+            DropTable("dbo.Usuario");
             DropTable("dbo.Curso");
             DropTable("dbo.Unidade");
             DropTable("dbo.Atividade");

@@ -13,6 +13,8 @@ namespace STV.DAL
 
         public virtual DbSet<Departamento> Departamento { get; set; }
         public virtual DbSet<Usuario> Usuario { get; set; }
+        public virtual DbSet<Instrutor> Instrutor { get; set; }
+        public virtual DbSet<Aluno> Aluno { get; set; }
         public virtual DbSet<Curso> Curso { get; set; }
         public virtual DbSet<Unidade> Unidade { get; set; }
         public virtual DbSet<Material> Material { get; set; }
@@ -41,11 +43,20 @@ namespace STV.DAL
                 .ToTable("Curso")
                 .HasKey(x => x.Idcurso);
 
-            
+
+            //modelBuilder.Entity<Curso>()
+            //    .HasRequired(x => x.Instrutor).WithMany(x => x.CursosInstrutor)
+            //    .HasForeignKey(x => x.IdusuarioInstrutor).WillCascadeOnDelete(false);
+            //.Map(m => m.MapKey("IdusuarioInstrutor")).WillCascadeOnDelete(true);
+
+            //modelBuilder.Entity<Instrutor>()
+            //    .HasMany(x => x.CursosInstrutor).WithRequired(x => x.Instrutor)
+            //    .HasForeignKey(x => x.IdusuarioInstrutor).WillCascadeOnDelete(false);
+
             modelBuilder.Entity<Curso>()
-                .HasRequired(x => x.Instrutor).WithMany(x => x.CursosInstrutor)
-                .HasForeignKey(x => x.IdusuarioInstrutor);
-                //.Map(m => m.MapKey("IdusuarioInstrutor")).WillCascadeOnDelete(true);
+                .HasRequired(x => x.Instrutor).WithMany(x => x.CursosGerenciaveis)
+                .HasForeignKey(x => x.IdusuarioInstrutor).WillCascadeOnDelete(false);
+
 
             modelBuilder.Conventions.Remove<ManyToManyCascadeDeleteConvention>();
 

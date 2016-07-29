@@ -14,10 +14,11 @@ using STV.DAL;
 using System.Web.Security;
 using STV.Auth;
 using Microsoft.AspNet.Identity;
+using System.Data.Entity.Infrastructure;
 
 namespace STV.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin, Default")]
     public class CursosController : Controller
     {
         private STVDbContext db = new STVDbContext();
@@ -40,6 +41,17 @@ namespace STV.Controllers
             return View(await cursos.ToListAsync());
         }
 
+
+        public async Task<ActionResult> MeusCursosGerenciaveis()
+        {
+            int Idusuario = UsuarioLogado.Idusuario;
+            var cursos = db.Curso.Where(x => x.Instrutor.Idusuario == Idusuario);
+
+            ViewBag.Idusuario = Idusuario;
+            ViewBag.Gerenciar = true;
+            return View("CursosDisponiveis", await cursos.ToListAsync());
+        }
+
         [Authorize]
         public async Task<ActionResult> CursosDisponiveis()
         {
@@ -60,9 +72,9 @@ namespace STV.Controllers
 
         public async Task<ActionResult> Inscrever(int Idcurso)
         {
-            int Idusuario = Convert.ToInt16(Session["UsuarioLogadoID"]);
+            int Idusuario = UsuarioLogado.Idusuario;
             var curso = await db.Curso.FindAsync(Idcurso);
-            var usuario = await db.Usuario.FindAsync(Idusuario);
+            Usuario usuario = await db.Usuario.FindAsync(Idusuario);
 
             curso.Usuarios.Add(usuario);
 
@@ -70,6 +82,24 @@ namespace STV.Controllers
 
             return RedirectToAction("CursosDisponiveis");
         }
+
+        private void CarregarDepartamentos(Curso curso)
+        {
+            var allDepartamentos = db.Departamento;
+            var cursoDepartamentos = new HashSet<int>(curso.Departamentos.Select(c => c.Iddepartamento));
+            var viewModel = new List<DepartamentosAtribuidos>();
+            foreach (var departamento in allDepartamentos)
+            {
+                viewModel.Add(new DepartamentosAtribuidos
+                {
+                    Iddepartamento = departamento.Iddepartamento,
+                    Descricao = departamento.Descricao,
+                    Atribuido = cursoDepartamentos.Contains(departamento.Iddepartamento)
+                });
+            }
+            ViewBag.Departamentos = viewModel;
+        }
+
 
         // GET: Cursos
         public async Task<ActionResult> Index()
@@ -81,42 +111,49 @@ namespace STV.Controllers
         public async Task<ActionResult> Details(int? id, int? Idunidade)
         {
             if (id == null)
-            {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Curso curso = await db.Curso.FindAsync(id);
+
+            //Curso curso = await db.Curso.FindAsync(id);
+
+            Curso curso = await db.Curso
+                .Include(c => c.Instrutor)
+                .Include(c => c.Unidades)
+                .Where(c => c.Idcurso == id)
+                .SingleAsync();
+
+
             if (curso == null)
-            {
                 return HttpNotFound();
-            }
 
             ViewBag.UnidadeSelecionada = Idunidade;  //para reabrir o conteúdo
 
             //mesclando model curso com viewmodel cursoVM
-            var cursoVM = Mapper.Map<Curso, cursoVM>(curso);
+            //var cursoVM = Mapper.Map<Curso, cursoVM>(curso);
 
-            //listando as unidades do curso e complementando a viewmodel com esses dados
-            var unidadesdocurso = from u in db.Unidade where u.Curso.Idcurso == curso.Idcurso select u;
-            if (unidadesdocurso.Count() > 0) cursoVM.Unidades = new List<Unidade>();
-            foreach (var unidade in unidadesdocurso)
-            {
-                cursoVM.Unidades.Add(unidade);
-                var atividadesdaunidade = from a in db.Atividade where a.Idunidade == unidade.Idunidade select a;
-                if (atividadesdaunidade.Count() > 0) cursoVM.Atividades = new List<Atividade>();
-                foreach (var atividade in atividadesdaunidade)
-                {
-                    cursoVM.Atividades.Add(atividade);
-                }
-            }
-            //ViewBag.Unidades = viewModel;
+            ////listando as unidades do curso e complementando a viewmodel com esses dados
+            //var unidadesdocurso = from u in db.Unidade where u.Curso.Idcurso == curso.Idcurso select u;
+            //if (unidadesdocurso.Count() > 0) cursoVM.Unidades = new List<Unidade>();
+            //foreach (var unidade in unidadesdocurso)
+            //{
+            //    cursoVM.Unidades.Add(unidade);
+            //    var atividadesdaunidade = from a in db.Atividade where a.Idunidade == unidade.Idunidade select a;
+            //    if (atividadesdaunidade.Count() > 0) cursoVM.Atividades = new List<Atividade>();
+            //    foreach (var atividade in atividadesdaunidade)
+            //    {
+            //        cursoVM.Atividades.Add(atividade);
+            //    }
+            //}
 
-            return View(cursoVM);
+            return View(curso);
         }
 
         // GET: Cursos/Create
         public ActionResult Create()
         {
-            ViewBag.Idusuario = new SelectList(db.Usuario, "Idusuario", "Nome");
+            var curso = new Curso();
+            curso.Departamentos = new List<Departamento>();
+            CarregarDepartamentos(curso);
+            ViewBag.IdusuarioInstrutor = new SelectList(db.Usuario, "Idusuario", "Nome");
             return View();
         }
 
@@ -125,10 +162,21 @@ namespace STV.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Idcurso,Titulo,Dtinicial,Dtfinal,Idusuario,Categoria,Palavraschave,Stamp")] Curso curso)
+        public async Task<ActionResult> Create([Bind(Include = "Idcurso,Titulo,Dtinicial,Dtfinal,IdusuarioInstrutor,Categoria,Palavraschave")] Curso curso, string[] departamentosSelecionados)
         {
+            if (departamentosSelecionados != null)
+            {
+                curso.Departamentos = new List<Departamento>();
+                foreach (var departamento in departamentosSelecionados)
+                {
+                    var departamentoToAdd = db.Departamento.Find(int.Parse(departamento));
+                    curso.Departamentos.Add(departamentoToAdd);
+                }
+            }
+
             if (ModelState.IsValid)
             {
+                curso.Instrutor = db.Usuario.Find(curso.IdusuarioInstrutor);
                 curso.Stamp = DateTime.Now;
                 db.Curso.Add(curso);
                 await db.SaveChangesAsync();
@@ -142,15 +190,16 @@ namespace STV.Controllers
         public async Task<ActionResult> Edit(int? id)
         {
             if (id == null)
-            {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+
             Curso curso = await db.Curso.FindAsync(id);
+
             if (curso == null)
-            {
                 return HttpNotFound();
-            }
-            ViewBag.Idusuario = new SelectList(db.Usuario, "Idusuario", "Nome");
+
+            CarregarDepartamentos(curso);
+
+            ViewBag.IdusuarioInstrutor = new SelectList(db.Usuario, "Idusuario", "Nome");
             return View(curso);
         }
 
@@ -159,16 +208,67 @@ namespace STV.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "Idcurso,Titulo,Dtinicial,Dtfinal,Idusuario,Categoria,Palavraschave,Stamp")] Curso curso)
+        public async Task<ActionResult> Edit(int? id, string[] departamentosSelecionados)
         {
-            if (ModelState.IsValid)
+            var cursoToUpdate = await db.Curso
+                  .Include(u => u.Departamentos)
+                  .Include(u => u.Instrutor)
+                  .Where(i => i.Idcurso == id)
+                  .SingleAsync();
+
+            if (TryUpdateModel(cursoToUpdate, "",
+                   new string[] { "Titulo", "Dtinicial", "Dtfinal", "IdusuarioInstrutor", "Categoria", "Palavraschave" }))
             {
-                curso.Stamp = DateTime.Now;
-                db.Entry(curso).State = EntityState.Modified;
-                await db.SaveChangesAsync();
-                return RedirectToAction("Index");
+                try
+                {
+                    AtualizarVisibilidadeDepartamentos(departamentosSelecionados, cursoToUpdate);
+                    cursoToUpdate.Stamp = DateTime.Now;
+                    db.SaveChanges();
+
+                    return RedirectToAction("Index");
+                }
+                catch (RetryLimitExceededException /* dex */)
+                {
+                    //Log the error (uncomment dex variable name and add a line here to write a log.
+                    ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists, see your system administrator.");
+                }
             }
-            return View(curso);
+
+            CarregarDepartamentos(cursoToUpdate);
+            ViewBag.IdusuarioInstrutor = new SelectList(db.Usuario, "Idusuario", "Nome");
+            return View(cursoToUpdate);
+        }
+
+        private void AtualizarVisibilidadeDepartamentos(string[] departamentoSelecionados, Curso cursoToUpdate)
+        {
+            if (departamentoSelecionados == null)
+            {
+                cursoToUpdate.Departamentos = new List<Departamento>();
+                return;
+            }
+
+            var departamentoSelecionadosHS = new HashSet<string>(departamentoSelecionados);
+
+            var cursoDepartamentos = new HashSet<int>
+                (cursoToUpdate.Departamentos.Select(c => c.Iddepartamento));
+
+            foreach (var departamento in db.Departamento)
+            {
+                if (departamentoSelecionadosHS.Contains(departamento.Iddepartamento.ToString()))
+                {
+                    if (!cursoDepartamentos.Contains(departamento.Iddepartamento))
+                    {
+                        cursoToUpdate.Departamentos.Add(departamento);
+                    }
+                }
+                else
+                {
+                    if (cursoDepartamentos.Contains(departamento.Iddepartamento))
+                    {
+                        cursoToUpdate.Departamentos.Remove(departamento);
+                    }
+                }
+            }
         }
 
         // GET: Cursos/Delete/5

@@ -7,13 +7,13 @@ namespace STV.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class roles3 : IMigrationMetadata
+    public sealed partial class acerto2 : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(roles3));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(acerto2));
         
         string IMigrationMetadata.Id
         {
-            get { return "201607271613126_roles3"; }
+            get { return "201607291913572_acerto2"; }
         }
         
         string IMigrationMetadata.Source
