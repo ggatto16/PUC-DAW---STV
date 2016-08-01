@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - My ASP.NET Application</title>
+    <title>@ViewBag.Title - KD - Knowledge Database</title>
 
     @Styles.Render("~/Content/css")
 
@@ -21,26 +21,26 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                @Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+                @Html.ActionLink("KD - Knowledge Database", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                    <li>@Html.ActionLink("Departamentos", "Index", "Departamentos")</li>
-                    <li>@Html.ActionLink("Usuários", "Index", "Usuarios")</li>
-
-                    @if (Request.IsAuthenticated && User.IsInRole("Admin"))
-                    {
-                        <li>@Html.ActionLink("Cursos", "Index", "Cursos")</li>
+                                        
+                    @{
+                        if (Request.IsAuthenticated && User.IsInRole("Admin"))
+                        {
+                            <li>@Html.ActionLink("Departamentos", "Index", "Departamentos")</li>
+                            <li>@Html.ActionLink("Usuários", "Index", "Usuarios")</li>
+                            <li>@Html.ActionLink("Cursos", "Index", "Cursos")</li>
+                        }
+                        else if (Request.IsAuthenticated && User.IsInRole("Default"))
+                        {
+                            <li>@Html.ActionLink("Cursos Disponíveis", "CursosDisponiveis", "Cursos")</li>
+                            <li>@Html.ActionLink("Meus Cursos", "MeusCursos", "Cursos")</li>
+                        }
                     }
 
-                    <!--<li>@Html.ActionLink("Unidades", "Index", "Unidades")</li>
-                    <li>@Html.ActionLink("Materiais", "Index", "Materiais")</li>
-                    <li>@Html.ActionLink("Atividades", "Index", "Atividades")</li>
-                    <li>@Html.ActionLink("Questões", "Index", "Questoes")</li>
-                    <li>@Html.ActionLink("Alternativas", "Index", "Alternativas")</li>
-                    <li>@Html.ActionLink("About", "About", "Home")</li>
-                    <li>@Html.ActionLink("Contact", "Contact", "Home")</li>-->
                 </ul>
                 @Html.Partial("_LoginPartial")
             </div>

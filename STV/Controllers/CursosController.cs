@@ -102,6 +102,7 @@ namespace STV.Controllers
 
 
         // GET: Cursos
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Index()
         {
             return View(await db.Curso.ToListAsync());
@@ -148,6 +149,7 @@ namespace STV.Controllers
         }
 
         // GET: Cursos/Create
+        [Authorize(Roles = "Admin")]
         public ActionResult Create()
         {
             var curso = new Curso();
@@ -160,6 +162,7 @@ namespace STV.Controllers
         // POST: Cursos/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create([Bind(Include = "Idcurso,Titulo,Dtinicial,Dtfinal,IdusuarioInstrutor,Categoria,Palavraschave")] Curso curso, string[] departamentosSelecionados)
@@ -186,6 +189,7 @@ namespace STV.Controllers
             return View(curso);
         }
 
+        [Authorize(Roles = "Admin")]
         // GET: Cursos/Edit/5
         public async Task<ActionResult> Edit(int? id)
         {
@@ -206,6 +210,7 @@ namespace STV.Controllers
         // POST: Cursos/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(int? id, string[] departamentosSelecionados)
@@ -239,6 +244,7 @@ namespace STV.Controllers
             return View(cursoToUpdate);
         }
 
+        [Authorize(Roles = "Admin")]
         private void AtualizarVisibilidadeDepartamentos(string[] departamentoSelecionados, Curso cursoToUpdate)
         {
             if (departamentoSelecionados == null)
@@ -271,6 +277,7 @@ namespace STV.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin")]
         // GET: Cursos/Delete/5
         public async Task<ActionResult> Delete(int? id)
         {
@@ -287,6 +294,7 @@ namespace STV.Controllers
         }
 
         // POST: Cursos/Delete/5
+        [Authorize(Roles = "Admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)

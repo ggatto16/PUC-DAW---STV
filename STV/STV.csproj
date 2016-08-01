@@ -272,6 +272,7 @@
     <Compile Include="ViewModels\cursoVM.cs" />
     <Compile Include="ViewModels\DadosUsuario.cs" />
     <Compile Include="ViewModels\DepartamentosAtribuidos.cs" />
+    <Compile Include="ViewModels\RespostasAtividade.cs" />
     <Compile Include="ViewModels\RolesAtribuidas.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -406,6 +407,8 @@
     <Content Include="Views\Cursos\CursosDisponiveis.cshtml" />
     <Content Include="Views\Cursos\MeusCursos.cshtml" />
     <Content Include="Views\Cursos\MeusCursosGerenciaveis.cshtml" />
+    <Content Include="Views\Atividades\Atividade.cshtml" />
+    <Content Include="Views\Atividades\EditorTemplates\Questao.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

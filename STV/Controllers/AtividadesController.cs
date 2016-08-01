@@ -9,12 +9,42 @@ using System.Web;
 using System.Web.Mvc;
 using STV.Models;
 using STV.DAL;
+using Microsoft.Owin;
 
 namespace STV.Controllers
 {
+    [Authorize]
     public class AtividadesController : Controller
     {
         private STVDbContext db = new STVDbContext();
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> CarregarAtividade(Atividade atividade)
+        {
+            if (ModelState.IsValid)
+            {
+                db.Atividade.Add(atividade);
+                await db.SaveChangesAsync();
+                return VoltarParaListagem(atividade);
+            }
+
+            ViewBag.Idunidade = new SelectList(db.Unidade, "Idunidade", "Titulo", atividade.Idunidade);
+            return View(atividade);
+        }
+
+        public async Task<ActionResult> CarregarAtividade(int? id)
+        {
+            if (id == null)
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            Atividade atividade = await db.Atividade
+                .Include(a => a.Questoes)
+                .Where(a => a.Idatividade == id)
+                .SingleOrDefaultAsync();
+
+            return View("Atividade", atividade);
+        }
 
         // GET: Atividades
         public async Task<ActionResult> Index(int idunidade = 0)

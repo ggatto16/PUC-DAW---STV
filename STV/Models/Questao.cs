@@ -22,5 +22,8 @@
         public virtual Alternativa Alternativa { get; set; }
 
         public virtual ICollection<Alternativa> Alternativas { get; set; }
+
+        [NotMapped]
+        public int IdAlternativaSelecionada { get; set; }
     }
 }

@@ -15,6 +15,7 @@ using System.Data.Entity.Infrastructure;
 
 namespace STV.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class UsuariosController : Controller
     {
         private STVDbContext db = new STVDbContext();

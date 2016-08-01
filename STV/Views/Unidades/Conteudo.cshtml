@@ -60,7 +60,14 @@
             </td>
             <td>
                 @Html.ActionLink("Edit", "Edit", "Atividades", new { id = item.Idatividade }, null) |
-                @Html.ActionLink("Details", "Details", "Atividades", new { id = item.Idatividade }, null) |
+                @if (Request.IsAuthenticated && User.IsInRole("Default"))
+                {
+                    @Html.ActionLink("Fazer Atividade", "CarregarAtividade", "Atividades", new { id = item.Idatividade }, null);
+                }
+                else
+                {
+                    @Html.ActionLink("Details", "Details", "Atividades", new { id = item.Idatividade }, null);
+                }
                 @Html.ActionLink("Delete", "Delete", "Atividades", new { id = item.Idatividade }, null)
             </td>
         </tr>
