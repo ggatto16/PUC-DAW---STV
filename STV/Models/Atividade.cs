@@ -22,5 +22,7 @@
 
         public virtual ICollection<Questao> Questoes { get; set; }
 
+        public virtual ICollection<Nota> Notas { get; set; }
+
     }
 }

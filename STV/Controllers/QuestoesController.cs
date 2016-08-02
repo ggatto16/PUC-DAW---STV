@@ -9,12 +9,82 @@ using System.Web;
 using System.Web.Mvc;
 using STV.Models;
 using STV.DAL;
+using STV.Auth;
 
 namespace STV.Controllers
 {
     public class QuestoesController : Controller
     {
         private STVDbContext db = new STVDbContext();
+        private Usuario UsuarioLogado;
+
+        public QuestoesController()
+        {
+            SessionContext auth = new SessionContext();
+            UsuarioLogado = auth.GetUserData();
+        }
+
+        public async Task<ActionResult> CarregarQuestao(int? Idatividade)
+        {
+            if (Idatividade == null)
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            List<Questao> questoesDaAtividade = await db.Questao
+                .Where(a => a.Idatividade == Idatividade)
+                .OrderBy(q => q.Idquestao).ToListAsync();
+
+            List<Questao> QuestoesRespondidas = ViewBag.QuestoesRespondidas; //Não funcionou - usar uma prop na model(viewmodel)
+
+            Questao questao = new Questao();
+            if (QuestoesRespondidas != null)
+            {
+                IEnumerable<Questao> QuestoesNaoRespondidas = questoesDaAtividade.Except(QuestoesRespondidas);
+
+                questao = await db.Questao
+                    .Include(a => a.Alternativas)
+                    .Where(a => a.Idquestao == QuestoesNaoRespondidas.FirstOrDefault().Idquestao)
+                    .SingleOrDefaultAsync();
+            }
+            else
+                questao = questoesDaAtividade.FirstOrDefault();
+
+
+
+            return View("Questao", questao);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> SalvarResposta(Questao questaoToSave)
+        {
+            Questao questao = null;
+
+            if (ModelState.IsValid)
+            {
+                Resposta resposta = new Resposta
+                {
+                    Idusuario = UsuarioLogado.Idusuario,
+                    Idquestao = questaoToSave.Idquestao,
+                    Idalternativa = questaoToSave.IdAlternativaSelecionada
+                };
+
+                if (questaoToSave.Respondida)
+                    db.Entry(resposta).State = EntityState.Modified;
+                else
+                {
+                    db.Resposta.Add(resposta);
+                    ViewBag.QuestoesRespondidas = new List<Questao>();
+                    questao = await db.Questao.FindAsync(questaoToSave.Idquestao);
+                    questao.Respondida = true;
+                    ViewBag.QuestoesRespondidas.Add(questao);
+                }
+
+                await db.SaveChangesAsync();
+
+            }
+
+            return RedirectToAction("CarregarQuestao", new { Idatividade = questaoToSave.Idatividade });
+        }
 
         // GET: Questoes
         public async Task<ActionResult> Index()

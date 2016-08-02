@@ -18,32 +18,17 @@ namespace STV.Controllers
     {
         private STVDbContext db = new STVDbContext();
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> CarregarAtividade(Atividade atividade)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Atividade.Add(atividade);
-                await db.SaveChangesAsync();
-                return VoltarParaListagem(atividade);
-            }
-
-            ViewBag.Idunidade = new SelectList(db.Unidade, "Idunidade", "Titulo", atividade.Idunidade);
-            return View(atividade);
-        }
-
         public async Task<ActionResult> CarregarAtividade(int? id)
         {
             if (id == null)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
             Atividade atividade = await db.Atividade
-                .Include(a => a.Questoes)
+                .Include(a => a.Questoes.OrderBy(q => q.Idquestao))
                 .Where(a => a.Idatividade == id)
                 .SingleOrDefaultAsync();
 
-            return View("Atividade", atividade);
+            return RedirectToAction("CarregarQuestao", "Questoes", new { Idquestao = atividade.Questoes.First().Idquestao });
         }
 
         // GET: Atividades

@@ -46,5 +46,9 @@ namespace STV.Models
 
         public virtual ICollection<Curso> CursosGerenciaveis { get; set; }
 
+        public virtual ICollection<Nota> Notas { get; set; }
+
+        public virtual ICollection<Resposta> Respostas { get; set; }
+
     }
 }

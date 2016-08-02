@@ -62,7 +62,7 @@
                 @Html.ActionLink("Edit", "Edit", "Atividades", new { id = item.Idatividade }, null) |
                 @if (Request.IsAuthenticated && User.IsInRole("Default"))
                 {
-                    @Html.ActionLink("Fazer Atividade", "CarregarAtividade", "Atividades", new { id = item.Idatividade }, null);
+                    @Html.ActionLink("Fazer Atividade", "CarregarQuestao", "Questoes", new { Idatividade = item.Idatividade }, null);
                 }
                 else
                 {

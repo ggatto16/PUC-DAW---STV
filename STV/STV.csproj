@@ -249,6 +249,14 @@
     <Compile Include="Migrations\201607291936398_acerto3.Designer.cs">
       <DependentUpon>201607291936398_acerto3.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201608021458198_Notas.cs" />
+    <Compile Include="Migrations\201608021458198_Notas.Designer.cs">
+      <DependentUpon>201608021458198_Notas.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201608021508234_UsuarioQuestao].cs" />
+    <Compile Include="Migrations\201608021508234_UsuarioQuestao].Designer.cs">
+      <DependentUpon>201608021508234_UsuarioQuestao].cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Alternativa.cs" />
@@ -262,6 +270,8 @@
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\Material.cs" />
     <Compile Include="DAL\STVDbContext.cs" />
+    <Compile Include="Models\Resposta.cs" />
+    <Compile Include="Models\Nota.cs" />
     <Compile Include="Models\Questao.cs" />
     <Compile Include="Models\Role.cs" />
     <Compile Include="Models\Unidade.cs" />
@@ -407,8 +417,8 @@
     <Content Include="Views\Cursos\CursosDisponiveis.cshtml" />
     <Content Include="Views\Cursos\MeusCursos.cshtml" />
     <Content Include="Views\Cursos\MeusCursosGerenciaveis.cshtml" />
-    <Content Include="Views\Atividades\Atividade.cshtml" />
-    <Content Include="Views\Atividades\EditorTemplates\Questao.cshtml" />
+    <Content Include="Views\Questoes\Questao.cshtml" />
+    <Content Include="Views\Questoes\EditorTemplates\Questao.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
@@ -420,8 +430,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\Arquivos\" />
-    <Folder Include="Views\TesteCursos\" />
-    <Folder Include="Views\TesteCurso\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201607291603568_Initial.resx">
@@ -435,6 +443,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201607291936398_acerto3.resx">
       <DependentUpon>201607291936398_acerto3.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201608021458198_Notas.resx">
+      <DependentUpon>201608021458198_Notas.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201608021508234_UsuarioQuestao].resx">
+      <DependentUpon>201608021508234_UsuarioQuestao].cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

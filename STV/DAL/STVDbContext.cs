@@ -23,6 +23,8 @@ namespace STV.DAL
         public virtual DbSet<Alternativa> Alternativa { get; set; }
         public virtual DbSet<Arquivo> Arquivo { get; set; }
         public virtual DbSet<Role> Role { get; set; }
+        public virtual DbSet<Nota> Nota { get; set; }
+        public virtual DbSet<Resposta> Resposta { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -137,6 +139,24 @@ namespace STV.DAL
                     m.MapRightKey("Idrole");
                     m.ToTable("UsuarioRole");
                 });
+
+            modelBuilder.Entity<Nota>()
+                .HasKey(x => new { x.Idusuario, x.Idatividade });
+
+            modelBuilder.Entity<Nota>().HasRequired(x => x.Usuario).WithMany(x => x.Notas)
+                .HasForeignKey(x => x.Idusuario).WillCascadeOnDelete(true);
+
+            modelBuilder.Entity<Nota>().HasRequired(x => x.Atividade).WithMany(x => x.Notas)
+                .HasForeignKey(x => x.Idatividade).WillCascadeOnDelete(true);
+
+            modelBuilder.Entity<Resposta>()
+                .HasKey(x => new { x.Idusuario, x.Idquestao });
+
+            modelBuilder.Entity<Resposta>().HasRequired(x => x.Usuario).WithMany(x => x.Respostas)
+                .HasForeignKey(x => x.Idusuario).WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Resposta>().HasRequired(x => x.Questao).WithMany(x => x.Respostas)
+                .HasForeignKey(x => x.Idquestao).WillCascadeOnDelete(false);
 
         }
 

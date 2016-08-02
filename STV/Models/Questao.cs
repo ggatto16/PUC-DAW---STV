@@ -25,5 +25,10 @@
 
         [NotMapped]
         public int IdAlternativaSelecionada { get; set; }
+
+        [NotMapped]
+        public bool Respondida { get; set; }
+
+        public virtual ICollection<Resposta> Respostas { get; set; }
     }
 }
