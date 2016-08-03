@@ -257,6 +257,22 @@
     <Compile Include="Migrations\201608021508234_UsuarioQuestao].Designer.cs">
       <DependentUpon>201608021508234_UsuarioQuestao].cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201608031503306_numeroquestao.cs" />
+    <Compile Include="Migrations\201608031503306_numeroquestao.Designer.cs">
+      <DependentUpon>201608031503306_numeroquestao.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201608031945035_RealizadoOK.cs" />
+    <Compile Include="Migrations\201608031945035_RealizadoOK.Designer.cs">
+      <DependentUpon>201608031945035_RealizadoOK.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201608032009258_RealizadoOKOK.cs" />
+    <Compile Include="Migrations\201608032009258_RealizadoOKOK.Designer.cs">
+      <DependentUpon>201608032009258_RealizadoOKOK.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201608032022487_RemoveRealizado.cs" />
+    <Compile Include="Migrations\201608032022487_RemoveRealizado.Designer.cs">
+      <DependentUpon>201608032022487_RemoveRealizado.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Alternativa.cs" />
@@ -417,8 +433,7 @@
     <Content Include="Views\Cursos\CursosDisponiveis.cshtml" />
     <Content Include="Views\Cursos\MeusCursos.cshtml" />
     <Content Include="Views\Cursos\MeusCursosGerenciaveis.cshtml" />
-    <Content Include="Views\Questoes\Questao.cshtml" />
-    <Content Include="Views\Questoes\EditorTemplates\Questao.cshtml" />
+    <Content Include="Views\Atividades\Atividade.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
@@ -449,6 +464,18 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201608021508234_UsuarioQuestao].resx">
       <DependentUpon>201608021508234_UsuarioQuestao].cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201608031503306_numeroquestao.resx">
+      <DependentUpon>201608031503306_numeroquestao.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201608031945035_RealizadoOK.resx">
+      <DependentUpon>201608031945035_RealizadoOK.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201608032009258_RealizadoOKOK.resx">
+      <DependentUpon>201608032009258_RealizadoOKOK.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201608032022487_RemoveRealizado.resx">
+      <DependentUpon>201608032022487_RemoveRealizado.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

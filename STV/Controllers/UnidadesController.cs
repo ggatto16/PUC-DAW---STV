@@ -9,12 +9,21 @@ using System.Web;
 using System.Web.Mvc;
 using STV.Models;
 using STV.DAL;
+using STV.Auth;
 
 namespace STV.Controllers
 {
     public class UnidadesController : Controller
     {
         private STVDbContext db = new STVDbContext();
+
+        private Usuario UsuarioLogado;
+
+        public UnidadesController()
+        {
+            SessionContext auth = new SessionContext();
+            UsuarioLogado = auth.GetUserData();
+        }
 
         // GET: Unidades
         public async Task<ActionResult> Index(int idcurso = 0)
@@ -39,13 +48,27 @@ namespace STV.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            var unidade = await db.Unidade.FindAsync(idunidade);
+            var unidade = await db.Unidade
+                .Include(u => u.Atividades)
+                .Include(u => u.Materiais)
+                .SingleOrDefaultAsync();
 
-            var materiais = from m in db.Material where m.Idunidade == idunidade select m;
-            unidade.Materiais = await materiais.ToListAsync();
+            //var unidade = await db.Unidade.FindAsync(idunidade);
 
-            var atividades = from a in db.Atividade where a.Idunidade == idunidade select a;
-            unidade.Atividades = await atividades.ToListAsync();
+            //var materiais = from m in db.Material where m.Idunidade == idunidade select m;
+            //unidade.Materiais = await materiais.ToListAsync();
+
+            //var atividades = from a in db.Atividade where a.Idunidade == idunidade select a;
+            //unidade.Atividades = await atividades.ToListAsync();
+
+            foreach (var atividade in unidade.Atividades)
+            {
+                int respondidas = await db.Resposta
+                    .Where(r => r.Idusuario == UsuarioLogado.Idusuario && r.Questao.Idatividade == atividade.Idatividade)
+                    .CountAsync();
+
+                atividade.Realizado += atividade.PorcentagemQuestao * respondidas;
+            }
 
             return PartialView("Conteudo", unidade);
            

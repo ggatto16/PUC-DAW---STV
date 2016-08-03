@@ -10,6 +10,7 @@ using System.Web.Mvc;
 using STV.Models;
 using STV.DAL;
 using Microsoft.Owin;
+using STV.Auth;
 
 namespace STV.Controllers
 {
@@ -18,17 +19,71 @@ namespace STV.Controllers
     {
         private STVDbContext db = new STVDbContext();
 
-        public async Task<ActionResult> CarregarAtividade(int? id)
+        private Usuario UsuarioLogado;
+
+        public AtividadesController()
+        {
+            SessionContext auth = new SessionContext();
+            UsuarioLogado = auth.GetUserData();
+        }
+
+        public async Task<ActionResult> CarregarAtividade(int? id, int? index)
         {
             if (id == null)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
             Atividade atividade = await db.Atividade
-                .Include(a => a.Questoes.OrderBy(q => q.Idquestao))
                 .Where(a => a.Idatividade == id)
                 .SingleOrDefaultAsync();
 
-            return RedirectToAction("CarregarQuestao", "Questoes", new { Idquestao = atividade.Questoes.First().Idquestao });
+            if (index == null)
+            {
+                atividade.QuestaoToShow = atividade.Questoes.FirstOrDefault();
+                atividade.QuestaoToShow.Indice = 0;
+            }
+            else
+            {
+                atividade.QuestaoToShow = atividade.Questoes.ElementAtOrDefault((int)index + 1);
+                if (atividade.QuestaoToShow != null)
+                    atividade.QuestaoToShow.Indice = (int)index + 1;
+                else
+                    return RedirectToAction("Details", "Cursos", new { id = atividade.Unidade.Idcurso, Idunidade = atividade.Idunidade });
+            }
+
+            return View("Atividade", atividade);
+
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> SalvarResposta(Atividade atividade)
+        {
+            if (ModelState.IsValid)
+            {
+                Resposta resposta = null;
+                resposta = await db.Resposta.FindAsync(UsuarioLogado.Idusuario, atividade.QuestaoToShow.Idquestao);
+
+                if (resposta != null)
+                {
+                    resposta.Idalternativa = atividade.QuestaoToShow.IdAlternativaSelecionada;
+                    db.Resposta.Attach(resposta);
+                    db.Entry(resposta).Property(r => r.Idalternativa).IsModified = true;
+                }
+                else
+                {
+                    resposta = new Resposta
+                    {
+                        Idusuario = UsuarioLogado.Idusuario,
+                        Idquestao = atividade.QuestaoToShow.Idquestao,
+                        Idalternativa = atividade.QuestaoToShow.IdAlternativaSelecionada
+                    };
+                    db.Resposta.Add(resposta);
+                }
+
+                await db.SaveChangesAsync();
+            }
+
+            return RedirectToAction("CarregarAtividade", new { Id = atividade.Idatividade, index = atividade.QuestaoToShow.Indice });
         }
 
         // GET: Atividades

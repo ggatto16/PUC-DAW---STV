@@ -59,16 +59,26 @@
                 @Html.DisplayFor(modelItem => item.Descricao)
             </td>
             <td>
-                @Html.ActionLink("Edit", "Edit", "Atividades", new { id = item.Idatividade }, null) |
+                @Html.DisplayFor(modelItem => item.Realizado)% realizado
+            </td>
+            <td>
+                
                 @if (Request.IsAuthenticated && User.IsInRole("Default"))
                 {
-                    @Html.ActionLink("Fazer Atividade", "CarregarQuestao", "Questoes", new { Idatividade = item.Idatividade }, null);
+                    @Html.ActionLink("Responder", "CarregarAtividade", "Atividades", new { id = item.Idatividade }, null);
+                    @Html.Raw(" | ");
+                    @Html.ActionLink("Finalizar", "Finalizar", "Atividades", new { Idatividade = item.Idatividade }, null);
+
                 }
-                else
+                else if (Request.IsAuthenticated && User.IsInRole("Admin"))
                 {
-                    @Html.ActionLink("Details", "Details", "Atividades", new { id = item.Idatividade }, null);
+                    @Html.ActionLink("Edit", "Edit", "Atividades", new { id = item.Idatividade }, null)
+                    @Html.Raw(" | ");
+                    @Html.ActionLink("Details", "Details", "Atividades", new { id = item.Idatividade }, null)
+                    @Html.Raw(" | ");
+                    @Html.ActionLink("Delete", "Delete", "Atividades", new { id = item.Idatividade }, null)
                 }
-                @Html.ActionLink("Delete", "Delete", "Atividades", new { id = item.Idatividade }, null)
+                
             </td>
         </tr>
     }

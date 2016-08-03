@@ -17,6 +17,8 @@
 
         public string Descricao { get; set; }
 
+        public int? Numero { get; set; }
+
         public virtual Atividade Atividade { get; set; }
 
         public virtual Alternativa Alternativa { get; set; }
@@ -27,8 +29,9 @@
         public int IdAlternativaSelecionada { get; set; }
 
         [NotMapped]
-        public bool Respondida { get; set; }
+        public int? Indice { get; set; }
 
         public virtual ICollection<Resposta> Respostas { get; set; }
+
     }
 }

@@ -1,0 +1,38 @@
+﻿@model STV.Models.Atividade
+
+@{
+    ViewBag.Title = "Atividade";
+}
+
+<h2>Atividade</h2>
+
+
+@using (Html.BeginForm("SalvarResposta", "Atividades"))
+{
+    @Html.AntiForgeryToken()
+
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+    @Html.HiddenFor(model => model.QuestaoToShow.Idquestao)
+    @Html.HiddenFor(model => model.QuestaoToShow.Indice)
+    @Html.HiddenFor(model => model.Idatividade)
+
+    <h4> @Model.QuestaoToShow.Numero/@Model.Questoes.Count() - @Model.QuestaoToShow.Descricao </h4>
+
+    <div>
+        @foreach (var alternativa in Model.QuestaoToShow.Alternativas)
+        {
+            <div>
+                @Html.RadioButtonFor(modelItem => Model.QuestaoToShow.IdAlternativaSelecionada, alternativa.Idalternativa, (Model.QuestaoToShow.Respostas.Count() > 0 && alternativa.Idalternativa == Model.QuestaoToShow.Respostas.FirstOrDefault().Idalternativa) ? new { @checked = "checked" } : null) @alternativa.Descricao
+            </div>
+        }
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Salvar" class="btn btn-default" />
+        </div>
+    </div>
+}
+
+

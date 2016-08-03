@@ -24,5 +24,22 @@
 
         public virtual ICollection<Nota> Notas { get; set; }
 
+        [NotMapped]
+        public Questao QuestaoToShow { get; set; }
+
+        public decimal PorcentagemQuestao
+        {
+            get
+            {
+                if (Questoes != null)
+                    return (decimal)100 / Questoes.Count;
+                else
+                    return 0;
+            }
+        }
+
+        [NotMapped]
+        public decimal Realizado { get; set; } = 0;
+
     }
 }

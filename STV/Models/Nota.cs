@@ -16,6 +16,5 @@ namespace STV.Models
         public virtual  Usuario Usuario { get; set; }
 
         public virtual Atividade Atividade { get; set; }
-
     }
 }

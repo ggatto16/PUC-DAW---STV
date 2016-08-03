@@ -24,68 +24,6 @@ namespace STV.Controllers
             UsuarioLogado = auth.GetUserData();
         }
 
-        public async Task<ActionResult> CarregarQuestao(int? Idatividade)
-        {
-            if (Idatividade == null)
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-
-            List<Questao> questoesDaAtividade = await db.Questao
-                .Where(a => a.Idatividade == Idatividade)
-                .OrderBy(q => q.Idquestao).ToListAsync();
-
-            List<Questao> QuestoesRespondidas = ViewBag.QuestoesRespondidas; //Não funcionou - usar uma prop na model(viewmodel)
-
-            Questao questao = new Questao();
-            if (QuestoesRespondidas != null)
-            {
-                IEnumerable<Questao> QuestoesNaoRespondidas = questoesDaAtividade.Except(QuestoesRespondidas);
-
-                questao = await db.Questao
-                    .Include(a => a.Alternativas)
-                    .Where(a => a.Idquestao == QuestoesNaoRespondidas.FirstOrDefault().Idquestao)
-                    .SingleOrDefaultAsync();
-            }
-            else
-                questao = questoesDaAtividade.FirstOrDefault();
-
-
-
-            return View("Questao", questao);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> SalvarResposta(Questao questaoToSave)
-        {
-            Questao questao = null;
-
-            if (ModelState.IsValid)
-            {
-                Resposta resposta = new Resposta
-                {
-                    Idusuario = UsuarioLogado.Idusuario,
-                    Idquestao = questaoToSave.Idquestao,
-                    Idalternativa = questaoToSave.IdAlternativaSelecionada
-                };
-
-                if (questaoToSave.Respondida)
-                    db.Entry(resposta).State = EntityState.Modified;
-                else
-                {
-                    db.Resposta.Add(resposta);
-                    ViewBag.QuestoesRespondidas = new List<Questao>();
-                    questao = await db.Questao.FindAsync(questaoToSave.Idquestao);
-                    questao.Respondida = true;
-                    ViewBag.QuestoesRespondidas.Add(questao);
-                }
-
-                await db.SaveChangesAsync();
-
-            }
-
-            return RedirectToAction("CarregarQuestao", new { Idatividade = questaoToSave.Idatividade });
-        }
-
         // GET: Questoes
         public async Task<ActionResult> Index()
         {
@@ -141,7 +79,7 @@ namespace STV.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Idquestao,Idatividade,IdalternativaCorreta,Descricao")] Questao questao)
+        public async Task<ActionResult> Create([Bind(Include = "Idquestao,Idatividade,IdalternativaCorreta,Descricao,Numero")] Questao questao)
         {
             if (ModelState.IsValid)
             {
@@ -177,7 +115,7 @@ namespace STV.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "Idquestao,Idatividade,IdalternativaCorreta,Descricao")] Questao questao)
+        public async Task<ActionResult> Edit([Bind(Include = "Idquestao,Idatividade,IdalternativaCorreta,Descricao,Numero")] Questao questao)
         {
             if (ModelState.IsValid)
             {
