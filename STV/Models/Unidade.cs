@@ -18,6 +18,8 @@
         public string Titulo { get; set; }
 
         [Column(TypeName = "Date")]
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
         public DateTime? Dtabertura { get; set; }
 
         public bool Status { get; set; }

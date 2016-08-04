@@ -14,5 +14,16 @@
 
         public virtual Questao Questao { get; set; }
 
+        [NotMapped]
+        public bool IsCorreta
+        {
+            get
+            {
+                if (Questao != null)
+                    return Questao.IdalternativaCorreta == Idalternativa;
+                else
+                    return false;
+            }
+        }
     }
 }

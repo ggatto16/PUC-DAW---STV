@@ -31,6 +31,26 @@
             </div>
         </div>
 
+        @if (Model.Questao.Alternativa != null)
+        {
+            <div class="form-group">
+                <label class="control-label col-md-2">Alternativa correta:</label>
+                <div class="col-md-10">
+                    @Html.Label(Model.Questao.Alternativa.Descricao, htmlAttributes: new { @class = "control-label col-md-2" })
+                </div>
+            </div>
+        }
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.IsCorreta, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <div class="checkbox">
+                    @Html.EditorFor(model => model.IsCorreta)
+                    @Html.ValidationMessageFor(model => model.IsCorreta, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="Create" class="btn btn-default" />

@@ -10,7 +10,7 @@
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    
+
     <div class="form-horizontal">
         <h4>Alternativa</h4>
         <hr />
@@ -30,6 +30,23 @@
             <div class="col-md-10">
                 @Html.EditorFor(model => model.Descricao, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.Descricao, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2">Alternativa correta:</label>
+            <div class="col-md-10">
+                 @Html.Label(Model.Questao.Alternativa.Descricao, htmlAttributes: new { @class = "control-label col-md-2" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.IsCorreta, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <div class="checkbox">
+                    @Html.CheckBoxFor(model => model.IsCorreta, htmlAttributes: (Model.IsCorreta ? new { disabled = "disabled" } : null))
+                    @Html.ValidationMessageFor(model => model.IsCorreta, "", new { @class = "text-danger" })
+                </div>
             </div>
         </div>
 

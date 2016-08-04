@@ -12,7 +12,7 @@ using STV.DAL;
 
 namespace STV.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    //[Authorize(Roles = "Admin")]
     public class DepartamentosController : Controller
     {
         private STVDbContext db = new STVDbContext();

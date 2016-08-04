@@ -273,6 +273,18 @@
     <Compile Include="Migrations\201608032022487_RemoveRealizado.Designer.cs">
       <DependentUpon>201608032022487_RemoveRealizado.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201608041548294_DataAtividade.cs" />
+    <Compile Include="Migrations\201608041548294_DataAtividade.Designer.cs">
+      <DependentUpon>201608041548294_DataAtividade.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201608041740106_DateTime.cs" />
+    <Compile Include="Migrations\201608041740106_DateTime.Designer.cs">
+      <DependentUpon>201608041740106_DateTime.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201608041929213_DateTime2.cs" />
+    <Compile Include="Migrations\201608041929213_DateTime2.Designer.cs">
+      <DependentUpon>201608041929213_DateTime2.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Alternativa.cs" />
@@ -281,8 +293,6 @@
     <Compile Include="Models\Curso.cs" />
     <Compile Include="Models\Departamento.cs" />
     <Compile Include="Models\IdentityModels.cs" />
-    <Compile Include="Models\Aluno.cs" />
-    <Compile Include="Models\Instrutor.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\Material.cs" />
     <Compile Include="DAL\STVDbContext.cs" />
@@ -476,6 +486,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201608032022487_RemoveRealizado.resx">
       <DependentUpon>201608032022487_RemoveRealizado.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201608041548294_DataAtividade.resx">
+      <DependentUpon>201608041548294_DataAtividade.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201608041740106_DateTime.resx">
+      <DependentUpon>201608041740106_DateTime.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201608041929213_DateTime2.resx">
+      <DependentUpon>201608041929213_DateTime2.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

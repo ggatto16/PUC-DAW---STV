@@ -53,13 +53,6 @@ namespace STV.Controllers
                 .Include(u => u.Materiais)
                 .SingleOrDefaultAsync();
 
-            //var unidade = await db.Unidade.FindAsync(idunidade);
-
-            //var materiais = from m in db.Material where m.Idunidade == idunidade select m;
-            //unidade.Materiais = await materiais.ToListAsync();
-
-            //var atividades = from a in db.Atividade where a.Idunidade == idunidade select a;
-            //unidade.Atividades = await atividades.ToListAsync();
 
             foreach (var atividade in unidade.Atividades)
             {
@@ -68,6 +61,10 @@ namespace STV.Controllers
                     .CountAsync();
 
                 atividade.Realizado += atividade.PorcentagemQuestao * respondidas;
+
+                int nota = db.Nota.Where(n => n.Idusuario == UsuarioLogado.Idusuario && n.Idatividade == atividade.Idatividade).Count();
+                if (nota > 0)
+                    atividade.IsFinalizada = true;
             }
 
             return PartialView("Conteudo", unidade);

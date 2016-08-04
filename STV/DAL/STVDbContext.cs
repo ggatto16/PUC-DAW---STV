@@ -13,8 +13,6 @@ namespace STV.DAL
 
         public virtual DbSet<Departamento> Departamento { get; set; }
         public virtual DbSet<Usuario> Usuario { get; set; }
-        public virtual DbSet<Instrutor> Instrutor { get; set; }
-        public virtual DbSet<Aluno> Aluno { get; set; }
         public virtual DbSet<Curso> Curso { get; set; }
         public virtual DbSet<Unidade> Unidade { get; set; }
         public virtual DbSet<Material> Material { get; set; }

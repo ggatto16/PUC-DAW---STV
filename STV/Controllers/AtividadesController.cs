@@ -51,7 +51,6 @@ namespace STV.Controllers
             }
 
             return View("Atividade", atividade);
-
         }
 
         [HttpPost]
@@ -79,11 +78,52 @@ namespace STV.Controllers
                     };
                     db.Resposta.Add(resposta);
                 }
-
                 await db.SaveChangesAsync();
             }
 
             return RedirectToAction("CarregarAtividade", new { Id = atividade.Idatividade, index = atividade.QuestaoToShow.Indice });
+        }
+
+        public async Task<ActionResult> Finalizar(int? id)
+        {
+            if (id == null)
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            Atividade atividade = await db.Atividade
+                .Where(a => a.Idatividade == id)
+                .SingleOrDefaultAsync();
+
+            var corretas = db.Resposta
+                .Where(r => r.Idusuario == UsuarioLogado.Idusuario && r.Questao.Idatividade == atividade.Idatividade)
+                .OrderBy(r => r.Idquestao)
+                .Select(r => new { Idquestao = r.Idquestao, Idalternativa = r.Idalternativa })
+                .ToList();
+
+            var corretasHS = new HashSet<int>(corretas.Select(r => r.Idalternativa));
+
+            var respondidas = atividade.Questoes
+                .Select(q => new { Idquestao = q.Idquestao, Idalternativa = (int)q.IdalternativaCorreta })
+                .OrderBy(r => r.Idquestao)
+                .ToList();
+
+            var respondidasHS = new HashSet<int>(respondidas.Select(r => r.Idalternativa));
+
+            int total = atividade.Questoes.Count();
+            int certas = total - corretasHS.Except(respondidasHS).Count();
+            int valorQuestao = atividade.Valor / total;
+            int pontos = certas * valorQuestao;
+
+            Nota nota = new Nota
+            {
+                Idatividade = atividade.Idatividade,
+                Idusuario = UsuarioLogado.Idusuario,
+                Pontos = pontos
+            };
+
+            db.Nota.Add(nota);
+            await db.SaveChangesAsync();
+
+            return RedirectToAction("Details", "Cursos", new { id = atividade.Unidade.Idcurso, Idunidade = atividade.Idunidade });
         }
 
         // GET: Atividades
@@ -135,7 +175,7 @@ namespace STV.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Idatividade,Idunidade,Descricao,Valor")] Atividade atividade)
+        public async Task<ActionResult> Create([Bind(Include = "Idatividade,Idunidade,Descricao,Valor,Dtabertura,Dtencerramento")] Atividade atividade)
         {
             if (ModelState.IsValid)
             {
@@ -169,7 +209,7 @@ namespace STV.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "Idatividade,Idunidade,Descricao,Valor")] Atividade atividade)
+        public async Task<ActionResult> Edit([Bind(Include = "Idatividade,Idunidade,Descricao,Valor,Dtabertura,Dtencerramento")] Atividade atividade)
         {
             if (ModelState.IsValid)
             {

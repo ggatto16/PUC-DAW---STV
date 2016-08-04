@@ -53,10 +53,15 @@ namespace STV.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Idalternativa,Idquestao,Descricao")] Alternativa alternativa)
+        public async Task<ActionResult> Create([Bind(Include = "Idalternativa,Idquestao,Descricao,IsCorreta")] Alternativa alternativa)
         {
             if (ModelState.IsValid)
             {
+                var questao = await db.Questao.FindAsync(alternativa.Idquestao);
+                questao.IdalternativaCorreta = alternativa.Idalternativa;
+                db.Questao.Attach(questao);
+                db.Entry(questao).Property(q => q.IdalternativaCorreta).IsModified = true;
+
                 db.Alternativa.Add(alternativa);
                 await db.SaveChangesAsync();
                 return VoltarParaListagem(alternativa);
@@ -91,6 +96,11 @@ namespace STV.Controllers
         {
             if (ModelState.IsValid)
             {
+                var questao = await db.Questao.FindAsync(alternativa.Idquestao);
+                questao.IdalternativaCorreta = alternativa.Idalternativa;
+                db.Questao.Attach(questao);
+                db.Entry(questao).Property(q => q.IdalternativaCorreta).IsModified = true;
+
                 db.Entry(alternativa).State = EntityState.Modified;
                 await db.SaveChangesAsync();
                 return VoltarParaListagem(alternativa);
