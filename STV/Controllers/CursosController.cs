@@ -300,8 +300,10 @@ namespace STV.Controllers
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
             Curso curso = await db.Curso.FindAsync(id);
+            db.Entry(curso).Collection("Departamentos").Load();
             db.Curso.Remove(curso);
             await db.SaveChangesAsync();
+
             return RedirectToAction("Index");
         }
 

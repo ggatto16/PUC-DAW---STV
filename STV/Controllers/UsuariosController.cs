@@ -219,6 +219,7 @@ namespace STV.Controllers
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
             Usuario usuario = await db.Usuario.FindAsync(id);
+            db.Entry(usuario).Collection("Roles").Load();
             db.Usuario.Remove(usuario);
             await db.SaveChangesAsync();
             return RedirectToAction("Index");

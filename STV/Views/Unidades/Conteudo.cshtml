@@ -54,30 +54,34 @@
 
     @foreach (var item in Model.Atividades)
     {
+        bool encerrada = item.Dtencerramento < DateTime.Now;
+        bool aberta = item.Dtabertura < DateTime.Now;
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Descricao)
             </td>
             <td>
-                @if (item.Dtabertura < DateTime.Now)
+                @if (!encerrada)
                 {
                     @Html.Raw("Encerra em ") @Html.DisplayFor(modelItem => item.Dtencerramento);
                 }
                 else
                 {
-                    if (item.Dtencerramento > DateTime.Now)
+                    if (!aberta)
                     {
                         @Html.Raw("Inicia em ") @Html.DisplayFor(modelItem => item.Dtabertura);
                     }
-
                 }
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Realizado) @Html.Raw("% realizado")
+                @if (User.IsInRole("Default"))
+                {
+                    @Html.DisplayFor(modelItem => item.Realizado) @Html.Raw("% realizado")
+                }
             </td>
             <td>
 
-                @if (Request.IsAuthenticated && User.IsInRole("Default"))
+                @if (User.IsInRole("Default"))
                 {
                     if (item.IsFinalizada)
                     {
@@ -85,7 +89,7 @@
                     }
                     else
                     {
-                        if (item.Dtencerramento > DateTime.Now)
+                        if (!encerrada)
                         {
                             @Html.ActionLink("Responder", "CarregarAtividade", "Atividades", new { id = item.Idatividade }, null);
                             @Html.Raw(" | ");
@@ -97,10 +101,13 @@
                         }
                     }
                 }
-                else if (Request.IsAuthenticated && User.IsInRole("Admin"))
+                else if (User.IsInRole("Admin"))
                 {
-                    @Html.ActionLink("Edit", "Edit", "Atividades", new { id = item.Idatividade }, null)
-                    @Html.Raw(" | ");
+                    if (!encerrada)
+                    {
+                        @Html.ActionLink("Edit", "Edit", "Atividades", new { id = item.Idatividade }, null)
+                        @Html.Raw(" | ");
+                    }
                     @Html.ActionLink("Details", "Details", "Atividades", new { id = item.Idatividade }, null)
                     @Html.Raw(" | ");
                     @Html.ActionLink("Delete", "Delete", "Atividades", new { id = item.Idatividade }, null)

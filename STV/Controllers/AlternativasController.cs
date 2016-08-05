@@ -57,13 +57,18 @@ namespace STV.Controllers
         {
             if (ModelState.IsValid)
             {
-                var questao = await db.Questao.FindAsync(alternativa.Idquestao);
-                questao.IdalternativaCorreta = alternativa.Idalternativa;
-                db.Questao.Attach(questao);
-                db.Entry(questao).Property(q => q.IdalternativaCorreta).IsModified = true;
-
                 db.Alternativa.Add(alternativa);
                 await db.SaveChangesAsync();
+
+                if (alternativa.IsCorreta)
+                {
+                    var questao = await db.Questao.FindAsync(alternativa.Idquestao);
+                    questao.IdalternativaCorreta = alternativa.Idalternativa;
+                    db.Questao.Attach(questao);
+                    db.Entry(questao).Property(q => q.IdalternativaCorreta).IsModified = true;
+                    await db.SaveChangesAsync();
+                }
+
                 return VoltarParaListagem(alternativa);
             }
 
