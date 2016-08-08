@@ -49,10 +49,15 @@ namespace STV.Controllers
             }
 
             var unidade = await db.Unidade
-                .Include(u => u.Atividades)
-                .Include(u => u.Materiais)
+                //.Include(u => u.Atividades)
+                //.Include(u => u.Materiais)
+                .Where(u => u.Idunidade == idunidade)
                 .SingleOrDefaultAsync();
 
+            var atividades = db.Atividade
+                .Where(a => a.Idunidade == unidade.Idunidade && a.Questoes.Count() > 0).ToList();
+
+            unidade.Atividades = atividades;
 
             foreach (var atividade in unidade.Atividades)
             {

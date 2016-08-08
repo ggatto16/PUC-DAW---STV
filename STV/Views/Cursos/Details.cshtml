@@ -1,4 +1,4 @@
-﻿@model STV.Models.Curso 
+﻿@model STV.Models.Curso
 
 @{
     ViewBag.Title = "Details";
@@ -68,13 +68,33 @@
     <hr />
 
     <h3>Unidades</h3>
+
+    @if (User.IsInRole("Admin"))
+    {
+        @Html.ActionLink("Adicionar", "Create", "Unidades", new { id = Model.Idcurso })
+    }
     <table>
         @{
             foreach (var unidade in Model.Unidades)
             {
                 <tr>
                     <td>
-                        @Ajax.ActionLink(unidade.Titulo, "CarregarConteudo", "Unidades", new { idunidade = unidade.Idunidade }, new AjaxOptions { UpdateTargetId = "ConteudoUnidade", InsertionMode = InsertionMode.Replace, HttpMethod = "Get" })
+                        @if (unidade.Dtabertura < DateTime.Now)
+                        {
+                            @Ajax.ActionLink(unidade.Titulo, "CarregarConteudo", "Unidades", new { idunidade = unidade.Idunidade }, new AjaxOptions { UpdateTargetId = "ConteudoUnidade", InsertionMode = InsertionMode.Replace, HttpMethod = "Get" })
+                        }
+                        else
+                        {
+                            @Html.Raw("<td>" + unidade.Titulo + "</td><td>Abrirá em " + unidade.Dtabertura + "</td>");
+                        }
+                        @if (User.IsInRole("Admin"))
+                        {
+                            @Html.Raw("<td>")
+                            @Html.ActionLink("Edit", "Edit", "Unidades", new { id = unidade.Idunidade }, null)
+                            @Html.Raw("|")
+                            @Html.ActionLink("Delete", "Delete", "Unidades", new { id = unidade.Idunidade })
+                            @Html.Raw("</td>")
+                        }
                     </td>
                 </tr>
             }

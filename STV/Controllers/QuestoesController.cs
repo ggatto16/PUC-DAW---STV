@@ -27,7 +27,7 @@ namespace STV.Controllers
         // GET: Questoes
         public async Task<ActionResult> Index()
         {
-            var questao = db.Questao.Include(q => q.Alternativa).Include(q => q.Atividade);
+            var questao = db.Questao.Include(q => q.AlternativaCorreta).Include(q => q.Atividade);
             return View(await questao.ToListAsync());
         }
 

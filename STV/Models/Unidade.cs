@@ -17,9 +17,10 @@
         [Required]
         public string Titulo { get; set; }
 
-        [Column(TypeName = "Date")]
-        [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-dd}")]
+        [Column(TypeName = "date")]
+        [DataType(DataType.Date, ErrorMessage = "Data em formato inválido")]
+        [Required]
         public DateTime? Dtabertura { get; set; }
 
         public bool Status { get; set; }

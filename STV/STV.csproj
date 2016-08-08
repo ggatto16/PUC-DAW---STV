@@ -225,6 +225,7 @@
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\MateriaisController.cs" />
     <Compile Include="Controllers\MediaStreamController.cs" />
+    <Compile Include="Controllers\NotasController.cs" />
     <Compile Include="Controllers\QuestoesController.cs" />
     <Compile Include="Controllers\UnidadesController.cs" />
     <Compile Include="Controllers\UsuariosController.cs" />
@@ -284,6 +285,10 @@
     <Compile Include="Migrations\201608041929213_DateTime2.cs" />
     <Compile Include="Migrations\201608041929213_DateTime2.Designer.cs">
       <DependentUpon>201608041929213_DateTime2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201608081502267_requireddtabertura.cs" />
+    <Compile Include="Migrations\201608081502267_requireddtabertura.Designer.cs">
+      <DependentUpon>201608081502267_requireddtabertura.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -445,6 +450,7 @@
     <Content Include="Views\Cursos\MeusCursos.cshtml" />
     <Content Include="Views\Cursos\MeusCursosGerenciaveis.cshtml" />
     <Content Include="Views\Atividades\Atividade.cshtml" />
+    <Content Include="Views\Notas\MinhasNotas.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
@@ -496,6 +502,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201608041929213_DateTime2.resx">
       <DependentUpon>201608041929213_DateTime2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201608081502267_requireddtabertura.resx">
+      <DependentUpon>201608081502267_requireddtabertura.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

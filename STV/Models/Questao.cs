@@ -12,7 +12,7 @@
 
         public int Idatividade { get; set; }
 
-        [ForeignKey("Alternativa")]
+        [ForeignKey("AlternativaCorreta")]
         public int? IdalternativaCorreta { get; set; }
 
         public string Descricao { get; set; }
@@ -21,7 +21,7 @@
 
         public virtual Atividade Atividade { get; set; }
 
-        public virtual Alternativa Alternativa { get; set; }
+        public virtual Alternativa AlternativaCorreta { get; set; }
 
         public virtual ICollection<Alternativa> Alternativas { get; set; }
 
