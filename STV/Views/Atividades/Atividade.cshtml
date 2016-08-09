@@ -17,7 +17,7 @@
     @Html.HiddenFor(model => model.QuestaoToShow.Indice)
     @Html.HiddenFor(model => model.Idatividade)
 
-    <h4> @Model.QuestaoToShow.Numero/@Model.Questoes.Count() - @Model.QuestaoToShow.Descricao </h4>
+    <h4> @Model.QuestaoToShow.Numero - @Model.QuestaoToShow.Descricao </h4>
 
     <div>
         @foreach (var alternativa in Model.QuestaoToShow.Alternativas)

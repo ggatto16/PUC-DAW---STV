@@ -126,6 +126,8 @@ namespace STV.Controllers
             if (curso == null)
                 return HttpNotFound();
 
+            curso.NotaCursoAtual = await db.NotaCurso.FindAsync(UsuarioLogado.Idusuario, curso.Idcurso);
+
             ViewBag.UnidadeSelecionada = Idunidade;  //para reabrir o conteúdo
 
             //mesclando model curso com viewmodel cursoVM

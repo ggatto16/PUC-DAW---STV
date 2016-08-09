@@ -50,5 +50,7 @@ namespace STV.Models
 
         public virtual ICollection<Resposta> Respostas { get; set; }
 
+        public virtual ICollection<NotaCurso> NotasCursos { get; set; }
+
     }
 }

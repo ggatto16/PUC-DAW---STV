@@ -36,6 +36,11 @@ namespace STV
                         "~/Scripts/fileinput/fileinputSetup.js"));
 
             bundles.Add(new StyleBundle("~/Content/fileinput").Include("~/Content/fileinput.min.css"));
+
+            bundles.Add(new StyleBundle("~/Content/stars").Include(
+                      "~/Content/star-rating.css",
+                      "~/Content/star-off.svg",
+                      "~/Content/star-on.svg"));
         }
     }
 }

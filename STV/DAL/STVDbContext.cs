@@ -23,9 +23,11 @@ namespace STV.DAL
         public virtual DbSet<Role> Role { get; set; }
         public virtual DbSet<Nota> Nota { get; set; }
         public virtual DbSet<Resposta> Resposta { get; set; }
+        public virtual DbSet<NotaCurso> NotaCurso { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
+            modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
 
             modelBuilder.Entity<Departamento>()
                 .ToTable("Departamento")
@@ -42,16 +44,6 @@ namespace STV.DAL
             modelBuilder.Entity<Curso>()
                 .ToTable("Curso")
                 .HasKey(x => x.Idcurso);
-
-
-            //modelBuilder.Entity<Curso>()
-            //    .HasRequired(x => x.Instrutor).WithMany(x => x.CursosInstrutor)
-            //    .HasForeignKey(x => x.IdusuarioInstrutor).WillCascadeOnDelete(false);
-            //.Map(m => m.MapKey("IdusuarioInstrutor")).WillCascadeOnDelete(true);
-
-            //modelBuilder.Entity<Instrutor>()
-            //    .HasMany(x => x.CursosInstrutor).WithRequired(x => x.Instrutor)
-            //    .HasForeignKey(x => x.IdusuarioInstrutor).WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Curso>()
                 .HasRequired(x => x.Instrutor).WithMany(x => x.CursosGerenciaveis)
@@ -155,6 +147,15 @@ namespace STV.DAL
 
             modelBuilder.Entity<Resposta>().HasRequired(x => x.Questao).WithMany(x => x.Respostas)
                 .HasForeignKey(x => x.Idquestao).WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<NotaCurso>()
+                .HasKey(x => new { x.Idusuario, x.Idcurso });
+
+            modelBuilder.Entity<NotaCurso>().HasRequired(x => x.Usuario).WithMany(x => x.NotasCursos)
+                .HasForeignKey(x => x.Idusuario).WillCascadeOnDelete(true);
+
+            modelBuilder.Entity<NotaCurso>().HasRequired(x => x.Curso).WithMany(x => x.NotasCurso)
+                .HasForeignKey(x => x.Idcurso).WillCascadeOnDelete(true);
 
         }
 

@@ -43,5 +43,11 @@ namespace STV.Models
 
         [JsonIgnore]
         public virtual ICollection<Usuario> Usuarios { get; set; }
+
+        public virtual ICollection<NotaCurso> NotasCurso { get; set; }
+
+        [NotMapped]
+        public virtual NotaCurso NotaCursoAtual { get; set; }
+       
     }
 }
