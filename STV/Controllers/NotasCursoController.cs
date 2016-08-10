@@ -30,22 +30,24 @@ namespace STV.Controllers
             if (Idcurso == null)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
-            NotaCurso NotaCurso = new NotaCurso
-            {
-                Idcurso = (int)Idcurso,
-                Idusuario = UsuarioLogado.Idusuario,
-                Pontos = nota
-            };
-
             var notaAtual = await db.NotaCurso.FindAsync(UsuarioLogado.Idusuario, Idcurso);
 
-            if(notaAtual != null)
+            if (notaAtual != null)
             {
-                db.NotaCurso.Attach(NotaCurso);
-                db.Entry(NotaCurso).Property(q => q.Pontos).IsModified = true;
+                notaAtual.Pontos = nota;
+                db.NotaCurso.Attach(notaAtual);
+                db.Entry(notaAtual).Property(q => q.Pontos).IsModified = true;
             }
             else
-                db.NotaCurso.Add(NotaCurso);
+            {
+                var novaNota = new NotaCurso
+                {
+                    Idcurso = (int)Idcurso,
+                    Idusuario = UsuarioLogado.Idusuario,
+                    Pontos = nota
+                };
+                db.NotaCurso.Add(novaNota);
+            }
 
             await db.SaveChangesAsync();
 

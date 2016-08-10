@@ -91,9 +91,28 @@ namespace STV.Controllers
             return View(unidade);
         }
 
-        // GET: Unidades/Create
-        public ActionResult Create()
+        private bool Autorizarado (int? Idcurso)
         {
+            var curso = db.Curso
+                .Where(c => c.IdusuarioInstrutor == UsuarioLogado.Idusuario && c.Idcurso == Idcurso)
+                .SingleOrDefault();
+
+            return curso == null ? false : true;
+        }
+
+        public ActionResult NaoAutorizado()
+        {
+            return View();
+        }
+
+        // GET: Unidades/Create
+        public ActionResult Create(int? Idcurso)
+        {
+            if (Idcurso == null)
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            if (!Autorizarado(Idcurso)) return View("NaoAutorizado");
+
             ViewBag.Idcurso = new SelectList(db.Curso, "Idcurso", "Titulo");
             return View();
         }
@@ -103,8 +122,10 @@ namespace STV.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Idunidade,Idcurso,Titulo,Dtabertura,Status,Stamp")] Unidade unidade)
+        public async Task<ActionResult> Create([Bind(Include = "Idunidade,Idcurso,Titulo,Dtabertura,Status")] Unidade unidade)
         {
+            if (!Autorizarado(unidade.Idcurso)) return View("NaoAutorizado");
+
             if (ModelState.IsValid)
             {
                 unidade.Stamp = DateTime.Now;
@@ -120,14 +141,15 @@ namespace STV.Controllers
         public async Task<ActionResult> Edit(int? id)
         {
             if (id == null)
-            {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+            
             Unidade unidade = await db.Unidade.FindAsync(id);
             if (unidade == null)
-            {
                 return HttpNotFound();
-            }
+
+            Autorizarado(unidade.Idcurso);
+            if (!Autorizarado(unidade.Idcurso)) return View("NaoAutorizado");
+
             ViewBag.Idcurso = new SelectList(db.Curso, "Idcurso", "Titulo");
             return View(unidade);
         }
@@ -137,8 +159,10 @@ namespace STV.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "Idunidade,Idcurso,Titulo,Dtabertura,Status,Stamp")] Unidade unidade)
+        public async Task<ActionResult> Edit([Bind(Include = "Idunidade,Idcurso,Titulo,Dtabertura,Status")] Unidade unidade)
         {
+            if (!Autorizarado(unidade.Idcurso)) return View("NaoAutorizado");
+
             if (ModelState.IsValid)
             {
                 unidade.Stamp = DateTime.Now;
@@ -153,14 +177,15 @@ namespace STV.Controllers
         public async Task<ActionResult> Delete(int? id)
         {
             if (id == null)
-            {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+            
             Unidade unidade = await db.Unidade.FindAsync(id);
+
             if (unidade == null)
-            {
                 return HttpNotFound();
-            }
+
+            if (!Autorizarado(unidade.Idcurso)) return View("NaoAutorizado");
+
             return View(unidade);
         }
 
@@ -170,6 +195,7 @@ namespace STV.Controllers
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
             Unidade unidade = await db.Unidade.FindAsync(id);
+            if (!Autorizarado(unidade.Idcurso)) return View("NaoAutorizado");
             db.Unidade.Remove(unidade);
             await db.SaveChangesAsync();
             return RedirectToAction("Index");

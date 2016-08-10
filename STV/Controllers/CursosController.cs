@@ -130,6 +130,12 @@ namespace STV.Controllers
 
             ViewBag.UnidadeSelecionada = Idunidade;  //para reabrir o conteúdo
 
+            //Verificar se é instrutor
+            var cursoVerify = await db.Curso
+                .Where(c => c.IdusuarioInstrutor == UsuarioLogado.Idusuario && c.Idcurso == id)
+                .SingleOrDefaultAsync();
+            ViewBag.Gerenciar = cursoVerify != null ? true : false;
+
             //mesclando model curso com viewmodel cursoVM
             //var cursoVM = Mapper.Map<Curso, cursoVM>(curso);
 

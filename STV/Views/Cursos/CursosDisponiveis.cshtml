@@ -61,7 +61,7 @@
             <td>
                 @if (ViewBag.Gerenciar == true)
                 {
-                    @Html.ActionLink("Gerenciar", "Datails", "Cursos", new { Idcurso = item.Idcurso });
+                    @Html.ActionLink("Gerenciar", "Details", "Cursos", new { id = item.Idcurso }, null);
                 }
                 else
                 {

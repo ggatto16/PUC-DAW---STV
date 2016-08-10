@@ -48,6 +48,9 @@ namespace STV.Models
 
         [NotMapped]
         public virtual NotaCurso NotaCursoAtual { get; set; }
-       
+
+        [NotMapped]
+        public bool IsInstutor { get; set; }
+
     }
 }

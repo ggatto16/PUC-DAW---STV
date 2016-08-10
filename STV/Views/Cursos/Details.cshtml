@@ -57,7 +57,7 @@
                 @Html.DisplayFor(model => model.Palavraschave)
             </dd>
 
-            @if (User.IsInRole("Default"))
+            @if (User.IsInRole("Default") && !ViewBag.Gerenciar)
             {
                 <dt>
                     @Html.DisplayName("Minha Avaliação")
@@ -65,21 +65,16 @@
 
                 <dd>
                     <span class="starRating">
-                        @Html.RadioButton("rating", "10", Model.NotaCursoAtual.Pontos == 10 ? true : false)
-                        @*<input id="@Html.Raw(Model.Idcurso + "-1")" type="radio" name="@Html.Raw("rating")" value="10">*@
-                        <label for="rating">5</label>
-                        @Html.RadioButton("rating", "8", Model.NotaCursoAtual.Pontos == 8 ? true : false)
-                        @*<input id="@Html.Raw(Model.Idcurso + "-2")" type="radio" name="@Html.Raw("rating")" value="8">*@
-                        <label for="rating">4</label>
-                        @Html.RadioButton("rating", "6", Model.NotaCursoAtual.Pontos == 6 ? true : false)
-                        @*<input id="@Html.Raw(Model.Idcurso + "-3")" type="radio" name="@Html.Raw("rating")" value="6">*@
-                        <label for="rating">3</label>
-                        @Html.RadioButton("rating", "4", Model.NotaCursoAtual.Pontos == 4 ? true : false)
-                        @*<input id="@Html.Raw(Model.Idcurso + "-4")" type="radio" name="@Html.Raw("rating")" value="4"*@
-                        <label for="rating">2</label>
-                        @Html.RadioButton("rating", "2", Model.NotaCursoAtual.Pontos == 2 ? true : false)
-                        @*<input id="@Html.Raw(Model.Idcurso + "-5")" type="radio" name="@Html.Raw("rating")" value="2">*@
-                        <label for="rating">1</label>
+                        @Html.RadioButton("rating", "10", Model.NotaCursoAtual.Pontos == 10 ? true : false, new { id = "rating10" })
+                        <label for="rating10">5</label>
+                        @Html.RadioButton("rating", "8", Model.NotaCursoAtual.Pontos == 8 ? true : false, new { id = "rating8" })
+                        <label for="rating8">4</label>
+                        @Html.RadioButton("rating", "6", Model.NotaCursoAtual.Pontos == 6 ? true : false, new { id = "rating6" })
+                        <label for="rating6">3</label>
+                        @Html.RadioButton("rating", "4", Model.NotaCursoAtual.Pontos == 4 ? true : false, new { id = "rating4" })
+                        <label for="rating4">2</label>
+                        @Html.RadioButton("rating", "2", Model.NotaCursoAtual.Pontos == 2 ? true : false, new { id = "rating2" })
+                        <label for="rating2">1</label>
                     </span>
 
                     <span id="Avaliado" style="display: none">
@@ -98,9 +93,9 @@
 
     <h3>Unidades</h3>
 
-    @if (User.IsInRole("Admin"))
+    @if (User.IsInRole("Admin") || ViewBag.Gerenciar)
     {
-        @Html.ActionLink("Adicionar", "Create", "Unidades", new { id = Model.Idcurso })
+        @Html.ActionLink("Adicionar", "Create", "Unidades", new { Idcurso = Model.Idcurso }, null)
     }
     <table>
         @{
@@ -116,7 +111,7 @@
                         {
                             @Html.Raw("<td>" + unidade.Titulo + "</td><td>Abrirá em " + unidade.Dtabertura + "</td>");
                         }
-                        @if (User.IsInRole("Admin"))
+                        @if (User.IsInRole("Admin") || ViewBag.Gerenciar)
                         {
                             @Html.Raw("<td>")
                             @Html.ActionLink("Edit", "Edit", "Unidades", new { id = unidade.Idunidade }, null)
@@ -142,8 +137,7 @@
     <script>
 
         $(document).ready(function () {
-
-            $("input[name=rating]:radio").change(function () {
+            $(':radio[name=rating]').change(function () {
                 var nota = $('input[name=rating]:checked').val();
                 Avaliar($('#Idcurso').val(), nota);
             });
@@ -161,15 +155,16 @@
         function Avaliar(Idcurso, nota) {
             $.ajax({
                 url: '@Url.Action("Avaliar", "NotasCurso")',
-                type: 'GET',
-                dataType: 'json',
+                type: 'POST',
                 cache: false,
                 data: { Idcurso: Idcurso, nota: nota },
-                success: function (data) {
-                    $('#Avaliado:hidden:first').fadeIn("slow");
-                }
+            })
+            .done(function () {
+                $('#Avaliado').fadeIn("slow");
             });
         }
 
     </script>
 }
+
+                  
