@@ -31,12 +31,12 @@
             </div>
         </div>
 
-        @if (Model.Questao.Alternativa != null)
+        @if (Model.Questao.AlternativaCorreta != null)
         {
             <div class="form-group">
                 <label class="control-label col-md-2">Alternativa correta:</label>
                 <div class="col-md-10">
-                    @Html.Label(Model.Questao.Alternativa.Descricao, htmlAttributes: new { @class = "control-label col-md-2" })
+                    @Html.Label(Model.Questao.AlternativaCorreta.Descricao, htmlAttributes: new { @class = "control-label col-md-2" })
                 </div>
             </div>
         }
