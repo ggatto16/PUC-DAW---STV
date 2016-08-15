@@ -5,6 +5,7 @@
 }
 
 @section MeusEstilos {
+    @Styles.Render("~/Content/css")
     @Styles.Render("~/Content/stars")
 }
 
@@ -105,7 +106,7 @@
                     <td>
                         @if (unidade.Dtabertura < DateTime.Now)
                         {
-                            @Ajax.ActionLink(unidade.Titulo, "CarregarConteudo", "Unidades", new { idunidade = unidade.Idunidade }, new AjaxOptions { UpdateTargetId = "ConteudoUnidade", InsertionMode = InsertionMode.Replace, HttpMethod = "Get" })
+                            @Ajax.ActionLink(unidade.Titulo, "CarregarConteudo", "Unidades", new { idunidade = unidade.Idunidade }, new AjaxOptions { UpdateTargetId = "ConteudoUnidade", InsertionMode = InsertionMode.Replace, HttpMethod = "Get", LoadingElementId = "divCarregando" })
                         }
                         else
                         {
@@ -128,6 +129,10 @@
 
 <div class="col-md-6">
     <div id="ConteudoUnidade"></div>
+</div>
+
+<div id="divCarregando" class="loader">
+    Carregando
 </div>
 
 @section scripts {
