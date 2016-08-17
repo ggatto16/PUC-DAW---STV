@@ -36,6 +36,8 @@ namespace STV.Models
 
         public bool Status { get; set; }
 
+        public virtual ICollection<Medalha> Medalhas { get; set; }
+
         public DateTime Stamp { get; set; }
 
         public virtual Departamento Departamento { get; set; }
@@ -51,6 +53,8 @@ namespace STV.Models
         public virtual ICollection<Resposta> Respostas { get; set; }
 
         public virtual ICollection<NotaCurso> NotasCursos { get; set; }
+
+        public virtual ICollection<Material> MateriaisConsultados { get; set; }
 
     }
 }

@@ -34,5 +34,7 @@ namespace STV.Models
 
         public virtual Arquivo Arquivo { get; set; }
 
+        public virtual ICollection<Usuario> UsuariosConsulta { get; set; }
+
     }
 }

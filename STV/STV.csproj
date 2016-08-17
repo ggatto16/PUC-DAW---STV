@@ -295,9 +295,13 @@
     <Compile Include="Migrations\201608091331552_NotasCurso.Designer.cs">
       <DependentUpon>201608091331552_NotasCurso.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201608091832554_Correcao1.cs" />
-    <Compile Include="Migrations\201608091832554_Correcao1.Designer.cs">
-      <DependentUpon>201608091832554_Correcao1.cs</DependentUpon>
+    <Compile Include="Migrations\201608171510499_MaterialUsuario.cs" />
+    <Compile Include="Migrations\201608171510499_MaterialUsuario.Designer.cs">
+      <DependentUpon>201608171510499_MaterialUsuario.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201608171612448_UsuarioMedalha.cs" />
+    <Compile Include="Migrations\201608171612448_UsuarioMedalha.Designer.cs">
+      <DependentUpon>201608171612448_UsuarioMedalha.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -314,6 +318,7 @@
     <Compile Include="Models\Resposta.cs" />
     <Compile Include="Models\Nota.cs" />
     <Compile Include="Models\Questao.cs" />
+    <Compile Include="Models\Medalha.cs" />
     <Compile Include="Models\Role.cs" />
     <Compile Include="Models\Unidade.cs" />
     <Compile Include="Models\Usuario.cs" />
@@ -523,8 +528,11 @@
     <EmbeddedResource Include="Migrations\201608091331552_NotasCurso.resx">
       <DependentUpon>201608091331552_NotasCurso.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201608091832554_Correcao1.resx">
-      <DependentUpon>201608091832554_Correcao1.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201608171510499_MaterialUsuario.resx">
+      <DependentUpon>201608171510499_MaterialUsuario.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201608171612448_UsuarioMedalha.resx">
+      <DependentUpon>201608171612448_UsuarioMedalha.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

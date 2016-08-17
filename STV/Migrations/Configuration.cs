@@ -31,10 +31,19 @@ namespace STV.Migrations
             //
 
             context.Role.AddOrUpdate(x => x.Idrole,
-                new Role() { Idrole = 1, Nome = "Admin" }, 
+                new Role() { Idrole = 1, Nome = "Admin" },
                 new Role() { Idrole = 2, Nome = "Default" });
 
-        }
+            context.Medalha.AddOrUpdate(x => x.Idmedalha,
+                new Medalha() { Idmedalha = 1, Descricao = "Sortudo" },
+                new Medalha() { Idmedalha = 2, Descricao = "Nerd" },
+                new Medalha() { Idmedalha = 3, Descricao = "Gênio" },
+                new Medalha() { Idmedalha = 5, Descricao = "Interessado" },
+                new Medalha() { Idmedalha = 6, Descricao = "Estudioso" },
+                new Medalha() { Idmedalha = 7, Descricao = "Bronze" },
+                new Medalha() { Idmedalha = 8, Descricao = "Prata" },
+                new Medalha() { Idmedalha = 9, Descricao = "Ouro" }
+        ); }
 
     }
 }

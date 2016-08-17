@@ -34,7 +34,7 @@
                 </dt>
 
                 <dd>
-                    @Ajax.ActionLink(Model.Arquivo.Nome, "MostrarVideo", "Materiais", new { Id= Model.Idmaterial }, new AjaxOptions { UpdateTargetId = "ConteudoMaterial", InsertionMode = InsertionMode.Replace, HttpMethod = "Get" })
+                    @Ajax.ActionLink(Model.Arquivo.Nome, "MostrarArquivo", "Materiais", new { Id= Model.Idmaterial }, new AjaxOptions { UpdateTargetId = "ConteudoMaterial", InsertionMode = InsertionMode.Replace, HttpMethod = "Get", LoadingElementId = "divCarregando" })
                 </dd>
             }
         </dl>

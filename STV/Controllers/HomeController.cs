@@ -19,7 +19,12 @@ namespace STV.Controllers
         public ActionResult Index()
         {
             if (User.Identity.IsAuthenticated)
+            {
+
+
                 return View();
+
+            }
             else
                 return RedirectToAction("Login");
         }
@@ -62,7 +67,8 @@ namespace STV.Controllers
                             Cpf = a.Cpf,
                             Iddepartamento = a.Iddepartamento,
                             Senha = a.Senha,
-                            Roles = a.Roles
+                            Roles = a.Roles,
+                            Medalhas = a.Medalhas
                         }).FirstOrDefault();
 
                     if (usuarioAutenticado != null)
@@ -73,7 +79,8 @@ namespace STV.Controllers
                             Nome = usuarioAutenticado.Nome,
                             Iddepartamento = usuarioAutenticado.Iddepartamento,
                             Senha = usuarioAutenticado.Senha,
-                            Roles = usuarioAutenticado.Roles
+                            Roles = usuarioAutenticado.Roles,
+                            Medalhas = usuarioAutenticado.Medalhas
                         };
 
                         context.SetAuthenticationToken(UsuarioLogado.Nome.ToString(), false, UsuarioLogado);
@@ -96,6 +103,11 @@ namespace STV.Controllers
         {
             FormsAuthentication.SignOut();
             return RedirectToAction("Login");
+        }
+
+        private Medalha VerificarMedalhas()
+        {
+            return new Medalha();
         }
 
     }

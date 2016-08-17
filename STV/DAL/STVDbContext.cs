@@ -24,6 +24,7 @@ namespace STV.DAL
         public virtual DbSet<Nota> Nota { get; set; }
         public virtual DbSet<Resposta> Resposta { get; set; }
         public virtual DbSet<NotaCurso> NotaCurso { get; set; }
+        public virtual DbSet<Medalha> Medalha { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -156,6 +157,29 @@ namespace STV.DAL
 
             modelBuilder.Entity<NotaCurso>().HasRequired(x => x.Curso).WithMany(x => x.NotasCurso)
                 .HasForeignKey(x => x.Idcurso).WillCascadeOnDelete(true);
+
+            modelBuilder.Entity<Material>()
+                .HasMany(x => x.UsuariosConsulta)
+                .WithMany(x => x.MateriaisConsultados)
+                .Map(m =>
+                {
+                    m.MapLeftKey("Idmaterial");
+                    m.MapRightKey("Idusuario");
+                    m.ToTable("MaterialUsuario");
+                });
+
+            modelBuilder.Entity<Medalha>()
+                .HasKey(x => x.Idmedalha);
+
+            modelBuilder.Entity<Usuario>()
+                .HasMany(x => x.Medalhas)
+                .WithMany(x => x.Usuarios)
+                .Map(m =>
+                {
+                    m.MapLeftKey("Idusuario");
+                    m.MapRightKey("Idmedalha");
+                    m.ToTable("UsuarioMedalha");
+                });
 
         }
 

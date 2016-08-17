@@ -26,7 +26,7 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                                        
+
                     @{
                         if (Request.IsAuthenticated && User.IsInRole("Admin"))
                         {
@@ -55,6 +55,11 @@
     <div class="container body-content">
         @RenderBody()
     </div>
+
+    <div id="divCarregando" class="loader-div">
+        <div class="loader"></div>
+    </div>
+
     <div class="container">
         <footer>
             <hr />

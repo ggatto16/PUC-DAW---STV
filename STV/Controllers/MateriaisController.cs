@@ -10,11 +10,21 @@ using System.Web.Mvc;
 using STV.Models;
 using System.IO;
 using STV.DAL;
+using STV.Auth;
+
 namespace STV.Controllers
 {
     public class MateriaisController : Controller
     {
         private STVDbContext db = new STVDbContext();
+
+        private Usuario UsuarioLogado;
+
+        public MateriaisController()
+        {
+            SessionContext auth = new SessionContext();
+            UsuarioLogado = auth.GetUserData();
+        }
 
         // GET: Materiais
         public async Task<ActionResult> Index(int idunidade = 0)
@@ -84,9 +94,23 @@ namespace STV.Controllers
         }
 
         // GET: Tipo
-        public async Task<ActionResult> MostrarVideo(int Id)
+        public async Task<ActionResult> MostrarArquivo(int Id)
         {
             var material = await db.Material.FindAsync(Id);
+
+            if (material != null)
+            {
+                var usuarioToUpdate = await db.Usuario
+                      .Include(u => u.MateriaisConsultados)
+                      .Where(i => i.Idusuario == UsuarioLogado.Idusuario)
+                      .SingleAsync();
+
+                if (!usuarioToUpdate.MateriaisConsultados.Contains(material))
+                {
+                    usuarioToUpdate.MateriaisConsultados.Add(material);
+                    db.SaveChanges();
+                }
+            }
 
             GetArquivoInfo(ref material);
 
