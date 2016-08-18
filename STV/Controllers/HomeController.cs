@@ -7,14 +7,22 @@ using System.Web.Mvc;
 using System.Web.Security;
 using STV.DAL;
 using STV.Auth;
+using System.Data.Entity;
 
 namespace STV.Controllers
 {
     [Authorize]
     public class HomeController : Controller
     {
+        private STVDbContext db = new STVDbContext();
+        SessionContext auth = new SessionContext();
 
-        SessionContext context = new SessionContext();
+        private Usuario UsuarioLogado;
+
+        public HomeController()
+        {    
+            UsuarioLogado = auth.GetUserData();
+        }
 
         public ActionResult Index()
         {
@@ -67,8 +75,7 @@ namespace STV.Controllers
                             Cpf = a.Cpf,
                             Iddepartamento = a.Iddepartamento,
                             Senha = a.Senha,
-                            Roles = a.Roles,
-                            Medalhas = a.Medalhas
+                            Roles = a.Roles
                         }).FirstOrDefault();
 
                     if (usuarioAutenticado != null)
@@ -80,10 +87,10 @@ namespace STV.Controllers
                             Iddepartamento = usuarioAutenticado.Iddepartamento,
                             Senha = usuarioAutenticado.Senha,
                             Roles = usuarioAutenticado.Roles,
-                            Medalhas = usuarioAutenticado.Medalhas
+                            Medalhas = AtribuirMedalhas(usuarioAutenticado.Idusuario)
                         };
 
-                        context.SetAuthenticationToken(UsuarioLogado.Nome.ToString(), false, UsuarioLogado);
+                        auth.SetAuthenticationToken(UsuarioLogado.Nome.ToString(), false, UsuarioLogado);
 
                         if (string.IsNullOrEmpty(returnUrl))
                             return RedirectToAction("Index");
@@ -105,9 +112,110 @@ namespace STV.Controllers
             return RedirectToAction("Login");
         }
 
-        private Medalha VerificarMedalhas()
+        private ICollection<Medalha> AtribuirMedalhas(int Idusuario)
         {
-            return new Medalha();
+            var notas = db.Nota.Include(n => n.Atividade)
+            .Where(n => n.Idusuario == Idusuario && n.Atividade.Dtencerramento < DateTime.Now);
+
+
+            var usuario = db.Usuario.Find(Idusuario);
+            List<Medalha> medalhas = db.Medalha.ToList();
+
+            foreach (Medalha m in medalhas)
+            {
+                bool valeMedalha = false;
+                int notaAtividade;
+
+                switch ((Medalhas)m.Idmedalha)
+                {
+                    //acertou todas as questoões de uma atividade
+                    case Medalhas.Sortudo:
+
+                        if (usuario.Medalhas.Contains(m)) break;
+
+                        foreach (var nota in notas)
+                        {
+                            if (nota.Atividade.Valor != nota.Pontos)
+                                continue;
+                            else
+                            {
+                                usuario.Medalhas.Add(m);
+                                break;
+                            }
+                        }
+                        break;
+
+                    //acertou todas as questoes de todas as atividade de uma unidade
+                    case Medalhas.Nerd:
+
+                        if (usuario.Medalhas.Contains(m)) break;
+
+                        var unidadesUsuario = db.Unidade.Include(u => u.Atividades)
+                            .Where(u => u.Curso.Usuarios.Any(c => c.Idusuario == usuario.Idusuario));
+
+                        foreach (var unidade in unidadesUsuario)
+                        {
+                            foreach (var atv in unidade.Atividades)
+                            {
+                                notaAtividade = notas.Where(n => n.Atividade.Idatividade == atv.Idatividade
+                                    && n.Idusuario == usuario.Idusuario && n.Atividade.Dtencerramento < DateTime.Now)
+                                    .Select(n => new { Pontos = n.Pontos }).Single().Pontos;
+
+                                if (atv.Valor != notaAtividade)
+                                {
+                                    valeMedalha = false;
+                                    break;
+                                }
+                                else
+                                    valeMedalha = true;
+                            }
+                            if (!valeMedalha) break;
+                        }
+                        if (valeMedalha) usuario.Medalhas.Add(m);
+                        break;
+
+                    //acertou todas as questoes de todas as atividade de um curso
+                    case Medalhas.Genio:
+
+                        if (usuario.Medalhas.Contains(m)) break;
+
+                        var cursosUsuario = db.Curso.Include(c => c.Unidades)
+                            .Where(u => u.Usuarios.Any(x => x.Idusuario == usuario.Idusuario));
+
+                        foreach (var curso in cursosUsuario)
+                        {
+                            foreach (var uni in curso.Unidades)
+                            {
+                                foreach (var atv in uni.Atividades)
+                                {
+                                    notaAtividade = notas.Where(n => n.Atividade.Idatividade == atv.Idatividade
+                                        && n.Idusuario == usuario.Idusuario && n.Atividade.Dtencerramento < DateTime.Now)
+                                        .Select(n => new { Pontos = n.Pontos }).Single().Pontos;
+
+                                    if (atv.Valor != notaAtividade)
+                                    {
+                                        valeMedalha = false;
+                                        break;
+                                    }
+                                    else
+                                        valeMedalha = true;
+                                }
+                                if (!valeMedalha) break;
+                            }
+                            if (!valeMedalha) break;
+                        }
+
+                        if (valeMedalha) usuario.Medalhas.Add(m);
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+
+            db.Usuario.Attach(usuario);
+            db.SaveChanges();
+            return usuario.Medalhas;
         }
 
     }

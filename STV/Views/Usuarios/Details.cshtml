@@ -63,6 +63,26 @@
         </dd>
 
         <dt>
+            @Html.DisplayNameFor(model => model.Medalhas)
+        </dt>
+
+        <dd>
+            @{
+                tamanho = Model.Medalhas.Count();
+
+                for (var i = 0; i < tamanho; i++)
+                {
+                    @Model.Medalhas.ElementAtOrDefault(i).Descricao
+                    if (i < tamanho - 1)
+                    {
+                        @Html.Raw(",");
+                    }
+
+                }
+            }
+        </dd>
+
+        <dt>
             @Html.DisplayNameFor(model => model.Status)
         </dt>
 
