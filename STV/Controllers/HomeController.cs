@@ -151,7 +151,7 @@ namespace STV.Controllers
                         if (usuario.Medalhas.Contains(m)) break;
 
                         var unidadesUsuario = db.Unidade.Include(u => u.Atividades)
-                            .Where(u => u.Curso.Usuarios.Any(c => c.Idusuario == usuario.Idusuario));
+                            .Where(u => u.Curso.Usuarios.Any(c => c.Idusuario == usuario.Idusuario)).ToList();
 
                         foreach (var unidade in unidadesUsuario)
                         {
@@ -180,7 +180,7 @@ namespace STV.Controllers
                         if (usuario.Medalhas.Contains(m)) break;
 
                         var cursosUsuario = db.Curso.Include(c => c.Unidades)
-                            .Where(u => u.Usuarios.Any(x => x.Idusuario == usuario.Idusuario));
+                            .Where(u => u.Usuarios.Any(x => x.Idusuario == usuario.Idusuario)).ToList();
 
                         foreach (var curso in cursosUsuario)
                         {
