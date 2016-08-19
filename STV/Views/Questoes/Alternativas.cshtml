@@ -36,7 +36,7 @@
             <td>
                 @Html.ActionLink("Edit", "Edit", "Alternativas", new { id = item.Idalternativa }, null) |
                 @Html.ActionLink("Details", "Details", "Alternativas", new { id = item.Idalternativa }, null) |
-                @Ajax.ActionLink("Excluir", "Delete", "Alternativas", new { id = item.Idalternativa }, new AjaxOptions { UpdateTargetId = "Alternativas", InsertionMode = InsertionMode.Replace, HttpMethod = "Get" })
+                @Ajax.ActionLink("Excluir", "Delete", "Alternativas", new { id = item.Idalternativa }, new AjaxOptions { UpdateTargetId = "Alternativas", InsertionMode = InsertionMode.Replace, HttpMethod = "Get", OnBegin = "onBeginAjax", OnComplete = "onCompleteAjax" })
             </td>
         </tr>
     }

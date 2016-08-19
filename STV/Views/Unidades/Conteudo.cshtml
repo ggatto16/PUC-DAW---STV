@@ -35,7 +35,7 @@
             <td>
                 @Html.ActionLink("Edit", "Edit", "Materiais", new { id = item.Idmaterial }, null) |
                 @Html.ActionLink("Details", "Details", "Materiais", new { id = item.Idmaterial }, null) |
-                @Ajax.ActionLink("Excluir", "Delete", "Materiais", new { id = item.Idmaterial }, new AjaxOptions { UpdateTargetId = "ConteudoUnidade", InsertionMode = InsertionMode.Replace, HttpMethod = "Get" })
+                @Ajax.ActionLink("Excluir", "Delete", "Materiais", new { id = item.Idmaterial }, new AjaxOptions { UpdateTargetId = "ConteudoUnidade", InsertionMode = InsertionMode.Replace, HttpMethod = "Get", OnBegin = "onBeginAjax", OnComplete = "onCompleteAjax" })
             </td>
         </tr>
     }

@@ -12,6 +12,7 @@ using STV.DAL;
 using AutoMapper;
 using STV.ViewModels;
 using System.Data.Entity.Infrastructure;
+using MvcRazorToPdf;
 
 namespace STV.Controllers
 {
@@ -19,6 +20,12 @@ namespace STV.Controllers
     public class UsuariosController : Controller
     {
         private STVDbContext db = new STVDbContext();
+
+        public ActionResult PDF(int id)
+        {
+            Usuario usuario = db.Usuario.Find(id);
+            return new PdfActionResult("PDF", usuario);
+        }
 
         // GET: Usuarios
         public async Task<ActionResult> Index(string cpf, string nome)

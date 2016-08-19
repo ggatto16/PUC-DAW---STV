@@ -11,6 +11,17 @@
 
     @Scripts.Render("~/bundles/modernizr")
 
+    <script>
+        function onBeginAjax() {
+        $('#divCarregando').fadeIn();
+        }
+
+        function onCompleteAjax() {
+        $('#divCarregando').fadeOut();
+        }
+    </script>
+
+
 </head>
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top">

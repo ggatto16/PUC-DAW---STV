@@ -105,7 +105,7 @@
                     <td>
                         @if (unidade.Dtabertura < DateTime.Now)
                         {
-                            @Ajax.ActionLink(unidade.Titulo, "CarregarConteudo", "Unidades", new { idunidade = unidade.Idunidade }, new AjaxOptions { UpdateTargetId = "ConteudoUnidade", InsertionMode = InsertionMode.Replace, HttpMethod = "Get", LoadingElementId = "divCarregando" })
+                            @Ajax.ActionLink(unidade.Titulo, "CarregarConteudo", "Unidades", new { idunidade = unidade.Idunidade }, new AjaxOptions { UpdateTargetId = "ConteudoUnidade", InsertionMode = InsertionMode.Replace, HttpMethod = "Get", OnBegin = "onBeginAjax", OnComplete = "onCompleteAjax" })
                         }
                         else
                         {
@@ -133,6 +133,7 @@
 @section scripts {
 
     @Scripts.Render("~/bundles/jqueryval")
+}
 
     <script>
 
@@ -162,7 +163,7 @@
             .done(function () {
                 $('#Avaliado').fadeIn("slow");
             });
-        }
+        };
 
     </script>
 }

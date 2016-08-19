@@ -61,7 +61,7 @@
                         </td>
                         <td>
                             @Html.ActionLink("Edit", "Edit", "Questoes" ,new { id = questao.Idquestao }, null) |
-                            @Ajax.ActionLink("Mostrar Alternativas", "CarregarAlternativas", "Questoes", new { Idquestao = questao.Idquestao }, new AjaxOptions { UpdateTargetId = "Alternativas", InsertionMode = InsertionMode.Replace, HttpMethod = "Get", LoadingElementId="divCarregando" }) |
+                            @Ajax.ActionLink("Mostrar Alternativas", "CarregarAlternativas", "Questoes", new { Idquestao = questao.Idquestao }, new AjaxOptions { UpdateTargetId = "Alternativas", InsertionMode = InsertionMode.Replace, HttpMethod = "Get", OnBegin = "onBeginAjax", OnComplete = "onCompleteAjax" }) |
                             @Html.ActionLink("Delete", "Delete", "Questoes", new { id = questao.Idquestao }, null)
                         </td>
                     </tr>

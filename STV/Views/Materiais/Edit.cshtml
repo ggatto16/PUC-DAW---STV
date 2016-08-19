@@ -54,7 +54,7 @@
                     @Html.LabelFor(model => model.Arquivo.Nome, "Idarquivo", htmlAttributes: new { @class = "control-label col-md-2" })
                     <div class="col-md-10">
                         @Html.ActionLink(Model.Arquivo.Nome, "Index", "Arquivos", new { id = Model.Arquivo.Idmaterial }, new { target = "_blank" })
-                        @Ajax.ActionLink("Excluir", "ExcluirArquivo", "Materiais", new { id = Model.Arquivo.Idmaterial }, new AjaxOptions { HttpMethod = "Delete", OnSuccess = "RemoverArquivo();", OnFailure = "$('#divErroArquivo').text('Algo deu errado');" }, null)
+                        @Ajax.ActionLink("Excluir", "ExcluirArquivo", "Materiais", new { id = Model.Arquivo.Idmaterial }, new AjaxOptions { HttpMethod = "Delete", OnSuccess = "RemoverArquivo();", OnFailure = "$('#divErroArquivo').text('Algo deu errado');", OnBegin = "onBeginAjax", OnComplete = "onCompleteAjax" }, null)
 
                     </div>
                 </div>
