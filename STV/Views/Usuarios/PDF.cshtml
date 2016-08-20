@@ -1,6 +1,11 @@
 ﻿@model STV.Models.Usuario
 
-@Model.Nome 
+@{
+    ViewBag.Title = "PDF";
+    Layout = "~/Views/Shared/_PdfLayout.cshtml";
+}
 
-<p>hahahahaha</p>
+<h2>PDF</h2>
+
+@Model.Nome
 

@@ -375,6 +375,8 @@
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
+    <None Include="Properties\PublishProfiles\stvkd - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\stvkd - Web Deploy %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\stvkd - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-2.2.4.intellisense.js" />
     <Content Include="Scripts\fileinput\fileinputSetup.js" />
@@ -481,6 +483,7 @@
     <Content Include="Views\Cursos\MeusCursosGerenciaveis.cshtml" />
     <Content Include="Views\Atividades\Atividade.cshtml" />
     <Content Include="Views\Notas\MinhasNotas.cshtml" />
+    <Content Include="Views\Shared\_PdfLayout.cshtml" />
     <Content Include="Views\Usuarios\PDF.cshtml" />
   </ItemGroup>
   <ItemGroup>
@@ -562,7 +565,7 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>True</UseIIS>
+          <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>51723</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
