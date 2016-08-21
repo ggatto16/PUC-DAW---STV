@@ -279,7 +279,11 @@ namespace STV.Controllers
                 {
                     if (cursoDepartamentos.Contains(departamento.Iddepartamento))
                     {
-                        cursoToUpdate.Departamentos.Remove(departamento);
+                        var user = cursoToUpdate.Usuarios.Where(x => x.Iddepartamento == departamento.Iddepartamento).FirstOrDefault();
+                        if (user == null)
+                            cursoToUpdate.Departamentos.Remove(departamento);
+                        else
+                            cursoToUpdate.departamentosQueJaContemInscritos.Add(user.Departamento);
                     }
                 }
             }

@@ -64,5 +64,8 @@ namespace STV.Models
         [NotMapped]
         public bool IsInstutor { get; set; }
 
+        [NotMapped]
+        public virtual ICollection<Departamento> departamentosQueJaContemInscritos { get; set; }
+
     }
 }
