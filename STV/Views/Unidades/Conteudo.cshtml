@@ -1,4 +1,4 @@
-﻿@model STV.Models.Unidade
+﻿@model STV.ViewModels.UnidadeVM
 
 <h3> Conteúdo - @Html.DisplayFor(item => item.Titulo)</h3>
 
@@ -52,7 +52,7 @@
 
 <table class="table">
 
-    @foreach (var item in Model.Atividades)
+    @foreach (var item in Model.AtividadesVM)
     {
         bool encerrada = item.Dtencerramento < DateTime.Now;
         bool aberta = item.Dtabertura < DateTime.Now;

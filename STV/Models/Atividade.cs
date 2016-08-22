@@ -1,10 +1,10 @@
-﻿namespace STV.Models
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace STV.Models
 {
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
-    using System.Data.Entity.Spatial;
 
     [Table("Atividade")]
     public partial class Atividade
@@ -34,25 +34,25 @@
 
         public virtual ICollection<Nota> Notas { get; set; }
 
-        [NotMapped]
-        public Questao QuestaoToShow { get; set; }
+        //[NotMapped]
+        //public Questao QuestaoToShow { get; set; }
 
-        public decimal PorcentagemQuestao
-        {
-            get
-            {
-                if (Questoes != null && Questoes.Count > 0)
-                    return (decimal)100 / Questoes.Count;
-                else
-                    return 0;
-            }
-        }
+        //public decimal PorcentagemQuestao
+        //{
+        //    get
+        //    {
+        //        if (Questoes != null && Questoes.Count > 0)
+        //            return (decimal)100 / Questoes.Count;
+        //        else
+        //            return 0;
+        //    }
+        //}
 
-        [NotMapped]
-        public decimal Realizado { get; set; } = 0;
+        //[NotMapped]
+        //public decimal Realizado { get; set; } = 0;
 
-        [NotMapped]
-        public bool IsFinalizada { get; set; }
+        //[NotMapped]
+        //public bool IsFinalizada { get; set; }
 
     }
 }

@@ -1,11 +1,13 @@
-﻿namespace STV.Models
+﻿using STV.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+
+namespace STV.ViewModels
 {
-    using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
-
-    public partial class Alternativa
+    public class AlternativaVM
     {
-
         public int Idalternativa { get; set; }
 
         public int Idquestao { get; set; }
@@ -14,6 +16,6 @@
 
         public virtual Questao Questao { get; set; }
 
-
+        public bool IsCorreta { get; set; }
     }
 }

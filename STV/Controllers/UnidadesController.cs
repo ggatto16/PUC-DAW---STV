@@ -10,6 +10,8 @@ using System.Web.Mvc;
 using STV.Models;
 using STV.DAL;
 using STV.Auth;
+using AutoMapper;
+using STV.ViewModels;
 
 namespace STV.Controllers
 {
@@ -53,13 +55,15 @@ namespace STV.Controllers
                 //.Include(u => u.Materiais)
                 .Where(u => u.Idunidade == idunidade)
                 .SingleOrDefaultAsync();
+            var unidadeVM = Mapper.Map<Unidade, UnidadeVM>(unidade);
 
             var atividades = db.Atividade
                 .Where(a => a.Idunidade == unidade.Idunidade && a.Questoes.Count() > 0).ToList();
+            var atividadesVM = Mapper.Map<IEnumerable<Atividade>, IEnumerable<AtividadeVM>>(atividades);
 
-            unidade.Atividades = atividades;
+            unidadeVM.AtividadesVM = atividadesVM;
 
-            foreach (var atividade in unidade.Atividades)
+            foreach (var atividade in unidadeVM.AtividadesVM)
             {
                 int respondidas = await db.Resposta
                     .Where(r => r.Idusuario == UsuarioLogado.Idusuario && r.Questao.Idatividade == atividade.Idatividade)
@@ -72,7 +76,7 @@ namespace STV.Controllers
                     atividade.IsFinalizada = true;
             }
 
-            return PartialView("Conteudo", unidade);
+            return PartialView("Conteudo", unidadeVM);
            
         }
 

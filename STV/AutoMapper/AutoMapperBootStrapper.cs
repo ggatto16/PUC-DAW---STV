@@ -1,10 +1,7 @@
 ﻿using AutoMapper;
+using STV.AutoMapper;
 using STV.Models;
 using STV.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace STV.Mappers
 {
@@ -15,6 +12,8 @@ namespace STV.Mappers
             Mapper.Initialize(cfg =>
             {
                 cfg.CreateMap<Curso, cursoVM>();
+                cfg.AddProfile<DomainToViewModelMappingProfile>();
+                cfg.AddProfile<ViewModelToDomainMappingProfile>();
             });
         }
     }

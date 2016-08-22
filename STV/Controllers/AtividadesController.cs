@@ -11,6 +11,8 @@ using STV.Models;
 using STV.DAL;
 using Microsoft.Owin;
 using STV.Auth;
+using AutoMapper;
+using STV.ViewModels;
 
 namespace STV.Controllers
 {
@@ -36,26 +38,28 @@ namespace STV.Controllers
                 .Where(a => a.Idatividade == id)
                 .SingleOrDefaultAsync();
 
+            var AtividadeModel = Mapper.Map<Atividade, AtividadeVM>(atividade);
+
             if (index == null)
             {
-                atividade.QuestaoToShow = atividade.Questoes.FirstOrDefault();
-                atividade.QuestaoToShow.Indice = 0;
+                AtividadeModel.QuestaoToShow = atividade.Questoes.FirstOrDefault();
+                AtividadeModel.QuestaoToShow.Indice = 0;
             }
             else
             {
-                atividade.QuestaoToShow = atividade.Questoes.ElementAtOrDefault((int)index + 1);
-                if (atividade.QuestaoToShow != null)
-                    atividade.QuestaoToShow.Indice = (int)index + 1;
+                AtividadeModel.QuestaoToShow = atividade.Questoes.ElementAtOrDefault((int)index + 1);
+                if (AtividadeModel.QuestaoToShow != null)
+                    AtividadeModel.QuestaoToShow.Indice = (int)index + 1;
                 else
                     return RedirectToAction("Details", "Cursos", new { id = atividade.Unidade.Idcurso, Idunidade = atividade.Idunidade });
             }
 
-            return View("Atividade", atividade);
+            return View("Atividade", AtividadeModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> SalvarResposta(Atividade atividade)
+        public async Task<ActionResult> SalvarResposta(AtividadeVM atividade)
         {
             if (ModelState.IsValid)
             {

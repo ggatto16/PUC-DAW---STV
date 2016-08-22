@@ -1,8 +1,8 @@
-﻿using STV.Models;
+﻿using Newtonsoft.Json;
+using STV.Models;
 using System;
 using System.Web;
 using System.Web.Http;
-using System.Web.Script.Serialization;
 using System.Web.Security;
 
 namespace STV.Auth
@@ -14,7 +14,7 @@ namespace STV.Auth
         {
             string data = null;
             if (userData != null)
-                data = Newtonsoft.Json.JsonConvert.SerializeObject(userData);
+                data = JsonConvert.SerializeObject(userData);
 
             FormsAuthenticationTicket ticket = new FormsAuthenticationTicket(1, name, DateTime.Now, DateTime.Now.AddHours(2), isPersistant, data);
 
@@ -38,11 +38,12 @@ namespace STV.Auth
                 if (cookie != null)
                 {
                     FormsAuthenticationTicket ticket = FormsAuthentication.Decrypt(cookie.Value);
-                    userData = new JavaScriptSerializer().Deserialize(ticket.UserData, typeof(Usuario)) as Usuario;
+                    userData = JsonConvert.DeserializeObject(ticket.UserData, typeof(Usuario)) as Usuario;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
+                throw;
             }
 
             return userData;

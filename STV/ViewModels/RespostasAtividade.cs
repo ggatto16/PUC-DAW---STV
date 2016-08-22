@@ -6,26 +6,20 @@ using STV.Models;
 
 namespace STV.ViewModels
 {
-    public class AtividadeVM
-    {
-        public ICollection<QuestaoVM> Questoes { get; set; }
-    }
+    //public class AtividadeVM
+    //{
+    //    public ICollection<QuestaoVM> Questoes { get; set; }
+    //}
 
-    public class QuestaoVM
-    {
-        public int Idquestao { get; set; }
+    //public class QuestaoVM
+    //{
+    //    public int Idquestao { get; set; }
 
-        public string Descricao { get; set; }
+    //    public string Descricao { get; set; }
 
-        public int IdAlternativaSelecionada { get; set; }
+    //    public int IdAlternativaSelecionada { get; set; }
 
-        public ICollection<AlternativaVM> Alternativas { get; set; }
-    }
+    //    public ICollection<AlternativaVM> Alternativas { get; set; }
+    //}
 
-    public class AlternativaVM
-    {
-        public int Idalternativa { get; set; }
-
-        public string Descricao { get; set; }        
-    }
 }

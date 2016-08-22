@@ -1,21 +1,15 @@
+﻿using STV.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Data.Entity.Spatial;
 
-namespace STV.Models
+namespace STV.ViewModels
 {
-    public enum UserRoles
+
+    public class UsuarioVM
     {
-        Administrador = 1,
-        Padrao = 2 
-    };
-
-
-    [Table("Usuario")]
-    public partial class Usuario
-    {
-
         public int Idusuario { get; set; }
 
         [StringLength(15)]
@@ -53,6 +47,6 @@ namespace STV.Models
         public virtual ICollection<NotaCurso> NotasCursos { get; set; }
 
         public virtual ICollection<Material> MateriaisConsultados { get; set; }
-
     }
+
 }

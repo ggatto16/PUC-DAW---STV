@@ -9,6 +9,8 @@ using System.Web;
 using System.Web.Mvc;
 using STV.Models;
 using STV.DAL;
+using STV.ViewModels;
+using AutoMapper;
 
 namespace STV.Controllers
 {
@@ -45,7 +47,8 @@ namespace STV.Controllers
             Alternativa alternativa = new Alternativa();
             alternativa.Idquestao = Idquestao;
             alternativa.Questao = await db.Questao.FindAsync(Idquestao);
-            return View(alternativa);
+            var alternativaVM = Mapper.Map<Alternativa, AlternativaVM>(alternativa);
+            return View(alternativaVM);
         }
 
         // POST: Alternativas/Create
@@ -53,23 +56,25 @@ namespace STV.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Idalternativa,Idquestao,Descricao,IsCorreta")] Alternativa alternativa)
+        public async Task<ActionResult> Create([Bind(Include = "Idalternativa,Idquestao,Descricao,IsCorreta")] AlternativaVM alternativa)
         {
             if (ModelState.IsValid)
             {
-                db.Alternativa.Add(alternativa);
+                var ModelAlternativa = Mapper.Map<AlternativaVM, Alternativa>(alternativa);
+
+                db.Alternativa.Add(ModelAlternativa);
                 await db.SaveChangesAsync();
 
                 if (alternativa.IsCorreta)
                 {
-                    var questao = await db.Questao.FindAsync(alternativa.Idquestao);
-                    questao.IdalternativaCorreta = alternativa.Idalternativa;
+                    var questao = await db.Questao.FindAsync(ModelAlternativa.Idquestao);
+                    questao.IdalternativaCorreta = ModelAlternativa.Idalternativa;
                     db.Questao.Attach(questao);
                     db.Entry(questao).Property(q => q.IdalternativaCorreta).IsModified = true;
                     await db.SaveChangesAsync();
                 }
 
-                return VoltarParaListagem(alternativa);
+                return VoltarParaListagemVM(alternativa);
             }
 
             ViewBag.Idquestao = new SelectList(db.Questao, "Idquestao", "Descricao", alternativa.Idquestao);
@@ -80,16 +85,17 @@ namespace STV.Controllers
         public async Task<ActionResult> Edit(int? id)
         {
             if (id == null)
-            {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+            
             Alternativa alternativa = await db.Alternativa.FindAsync(id);
+
             if (alternativa == null)
-            {
                 return HttpNotFound();
-            }
+
+            var alternativaVM = Mapper.Map<Alternativa, AlternativaVM>(alternativa);
+
             ViewBag.Idquestao = new SelectList(db.Questao, "Idquestao", "Descricao", alternativa.Idquestao);
-            return View(alternativa);
+            return View(alternativaVM);
         }
 
         // POST: Alternativas/Edit/5
@@ -97,18 +103,23 @@ namespace STV.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "Idalternativa,Idquestao,Descricao")] Alternativa alternativa)
+        public async Task<ActionResult> Edit([Bind(Include = "Idalternativa,Idquestao,Descricao, IsCorreta")] AlternativaVM alternativa)
         {
             if (ModelState.IsValid)
             {
-                var questao = await db.Questao.FindAsync(alternativa.Idquestao);
-                questao.IdalternativaCorreta = alternativa.Idalternativa;
-                db.Questao.Attach(questao);
-                db.Entry(questao).Property(q => q.IdalternativaCorreta).IsModified = true;
+                var ModelAlternativa = Mapper.Map<AlternativaVM, Alternativa>(alternativa);
 
-                db.Entry(alternativa).State = EntityState.Modified;
+                if (alternativa.IsCorreta)
+                {
+                    var questao = await db.Questao.FindAsync(ModelAlternativa.Idquestao);
+                    questao.IdalternativaCorreta = ModelAlternativa.Idalternativa;
+                    db.Entry(questao).Property(q => q.IdalternativaCorreta).IsModified = true;
+                }
+
+                db.Entry(ModelAlternativa).State = EntityState.Modified;
                 await db.SaveChangesAsync();
-                return VoltarParaListagem(alternativa);
+
+                return VoltarParaListagemVM(alternativa);
             }
             ViewBag.Idquestao = new SelectList(db.Questao, "Idquestao", "Descricao", alternativa.Idquestao);
             return View(alternativa);
@@ -142,6 +153,19 @@ namespace STV.Controllers
 
         //Retorna para a tela principal da Atividade
         private RedirectToRouteResult VoltarParaListagem (Alternativa alternativa)
+        {
+            try
+            {
+                Questao questao = db.Questao.Find(alternativa.Idquestao);
+                return RedirectToAction("Details", "Atividades", new { id = questao.Idatividade, Idquestao = alternativa.Idquestao });
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        private RedirectToRouteResult VoltarParaListagemVM(AlternativaVM alternativa)
         {
             try
             {
