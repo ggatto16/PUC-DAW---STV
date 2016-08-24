@@ -133,7 +133,6 @@
 @section scripts {
 
     @Scripts.Render("~/bundles/jqueryval")
-}
 
     <script>
 
@@ -155,7 +154,7 @@
 
         function Avaliar(Idcurso, nota) {
             $.ajax({
-                url: '@Url.Action("Avaliar", "NotasCurso")',
+                url: '@Url.Action("Avaliar", "NotasCurso", null)',
                 type: 'POST',
                 cache: false,
                 data: { Idcurso: Idcurso, nota: nota },
@@ -167,4 +166,4 @@
 
     </script>
 
-                  
+}      

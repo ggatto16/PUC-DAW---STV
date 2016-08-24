@@ -57,8 +57,18 @@ namespace STV.Controllers
                 .SingleOrDefaultAsync();
             var unidadeVM = Mapper.Map<Unidade, UnidadeVM>(unidade);
 
-            var atividades = db.Atividade
-                .Where(a => a.Idunidade == unidade.Idunidade && a.Questoes.Count() > 0).ToList();
+            IEnumerable<Atividade> atividades;
+            if (User.IsInRole("Admin"))
+            {
+                atividades = db.Atividade
+                    .Where(a => a.Idunidade == unidade.Idunidade).ToList();
+            }
+            else
+            {
+                atividades = db.Atividade
+                    .Where(a => a.Idunidade == unidade.Idunidade && a.Questoes.Count() > 0).ToList();
+            }
+
             var atividadesVM = Mapper.Map<IEnumerable<Atividade>, IEnumerable<AtividadeVM>>(atividades);
 
             unidadeVM.AtividadesVM = atividadesVM;
