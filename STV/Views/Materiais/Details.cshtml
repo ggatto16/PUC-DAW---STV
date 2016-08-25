@@ -34,7 +34,14 @@
                 </dt>
 
                 <dd>
-                    @Ajax.ActionLink(Model.Arquivo.Nome, "MostrarArquivo", "Materiais", new { Id= Model.Idmaterial }, new AjaxOptions { UpdateTargetId = "ConteudoMaterial", InsertionMode = InsertionMode.Replace, HttpMethod = "Get", OnBegin = "onBeginAjax", OnComplete = "onCompleteAjax" })
+                    @if (Model.Arquivo.ContentType.Substring(0, 5) == "video" || Model.Arquivo.ContentType.Substring(0, 5) == "image")
+                    {
+                        @Ajax.ActionLink(Model.Arquivo.Nome, "MostrarArquivo", "Materiais", new { Id = Model.Idmaterial }, new AjaxOptions { UpdateTargetId = "ConteudoMaterial", InsertionMode = InsertionMode.Replace, HttpMethod = "Get", OnBegin = "onBeginAjax", OnComplete = "onCompleteAjax" });
+                    }
+                    else
+                    {
+                        @Html.ActionLink(Model.Arquivo.Nome, "BaixarArquivo", new { Id = Model.Idmaterial }, new { target = "_blank" });
+                    }
                 </dd>
             }
         </dl>

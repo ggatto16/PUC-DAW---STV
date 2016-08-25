@@ -111,21 +111,55 @@ namespace STV.Controllers
                     db.SaveChanges();
                 }
             }
+            else
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
             GetArquivoInfo(ref material);
 
-            if (material.Tipo == TipoMaterial.Imagem)
+            switch (material.Tipo)
             {
-                var blobArquivo = await db.Arquivo.Where(a => a.Idmaterial == Id)
-                    .Select(a => new
-                    {
-                        Blob = a.Blob
-                    }).SingleAsync();
-                material.Arquivo.Blob = blobArquivo.Blob;
+                case TipoMaterial.Nenhum:
+                    break;
+                case TipoMaterial.Video:
+                    break;
+                case TipoMaterial.Arquivo:
+
+                    break;
+
+                case TipoMaterial.Link:
+                    break;
+
+                case TipoMaterial.Imagem:
+                    var blobArquivo = await db.Arquivo.Where(a => a.Idmaterial == Id)
+                        .Select(a => new
+                        {
+                            Blob = a.Blob
+                        }).SingleAsync();
+                    material.Arquivo.Blob = blobArquivo.Blob;
+                    break;
+
+                default:
+                    break;
             }
+
 
             return PartialView("ConteudoArquivo", material);
         }
+
+        public ActionResult BaixarArquivo(int Id)
+        {
+            var blobArquivo = db.Arquivo.Where(a => a.Idmaterial == Id)
+                .Select(a => new
+                {
+                    Blob = a.Blob,
+                    Nome = a.Nome,
+                    ContentType = a.ContentType
+                }).Single();
+
+            Response.AppendHeader("Content-Disposition", "inline; filename=" + blobArquivo.Nome);
+            return File(blobArquivo.Blob, blobArquivo.ContentType);
+        }
+
 
         // GET: Materiais/Create
         public ActionResult Create(int Idunidade)
@@ -145,7 +179,7 @@ namespace STV.Controllers
         {
             if (ModelState.IsValid)
             {
-                //using (var transaction = db.Database.BeginTransaction())
+                //using (var dbContextTransaction = db.Database.BeginTransaction())
                 //{
                 //    try
                 //    {
@@ -164,13 +198,15 @@ namespace STV.Controllers
                         arquivo.Idmaterial);
 
                         await upload.InputStream.CopyToAsync(blob, 65536);
-                        //transaction.Commit();
+
+                        //dbContextTransaction.Commit();
+
 
                         return VoltarParaListagem(material);
                 //    }
                 //    catch (Exception)
                 //    {
-                //        transaction.Rollback();
+                //        dbContextTransaction.Rollback();
                 //        throw;
                 //    }
                 //}
@@ -217,39 +253,39 @@ namespace STV.Controllers
                 //{
                 //    try
                 //    {
-                        GetUploadInfo(ref material, upload);
+                GetUploadInfo(ref material, upload);
 
-                        if (material.Arquivo != null) db.Arquivo.Add(material.Arquivo);
+                if (material.Arquivo != null) db.Arquivo.Add(material.Arquivo);
 
-                        db.Entry(material).State = EntityState.Modified;
-                        await db.SaveChangesAsync();
+                db.Entry(material).State = EntityState.Modified;
+                await db.SaveChangesAsync();
 
-                        if (material.Arquivo != null)
-                        {
-                            var arquivo = await db.Arquivo.FindAsync(material.Idmaterial);
+                if (material.Arquivo != null)
+                {
+                    var arquivo = await db.Arquivo.FindAsync(material.Idmaterial);
 
-                            //Grava o conteúdo do arquivo no banco de dados
-                            VarbinaryStream blob = new VarbinaryStream(
-                            db.Database.Connection.ConnectionString,
-                            "Arquivo",
-                            "Blob",
-                            "Idmaterial",
-                            arquivo.Idmaterial);
+                    //Grava o conteúdo do arquivo no banco de dados
+                    VarbinaryStream blob = new VarbinaryStream(
+                    db.Database.Connection.ConnectionString,
+                    "Arquivo",
+                    "Blob",
+                    "Idmaterial",
+                    arquivo.Idmaterial);
 
-                            await upload.InputStream.CopyToAsync(blob, 65536);
-                        }
+                    await upload.InputStream.CopyToAsync(blob, 65536);
+                }
 
-                        //transaction.Commit();
+                //transaction.Commit();
 
-                        return VoltarParaListagem(material);
-                    //}
+                return VoltarParaListagem(material);
+                //}
 
-                    //catch (Exception ex)
-                    //{
-                    //    transaction.Rollback();
-                    //    ModelState.AddModelError("", ex.Message);
-                    //    ViewBag.Idunidade = new SelectList(db.Unidade, "Idunidade", "Titulo");
-                    //}
+                //catch (Exception ex)
+                //{
+                //    transaction.Rollback();
+                //    ModelState.AddModelError("", ex.Message);
+                //    ViewBag.Idunidade = new SelectList(db.Unidade, "Idunidade", "Titulo");
+                //}
                 //}
             }
             return View(material);
@@ -350,10 +386,17 @@ namespace STV.Controllers
             {
                 if (upload != null && upload.ContentLength > 0)
                 {
+                    //teste myme
+                    string myme = upload.ContentType;
+                    if (Path.GetExtension(upload.FileName) == "docx")
+                    {
+                        myme = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+                    }
+
                     var arquivo = new Arquivo
                     {
                         Nome = Path.GetFileName(upload.FileName),
-                        ContentType = upload.ContentType,
+                        ContentType = myme,
                         Idmaterial = material.Idmaterial,
                         Tamanho = upload.ContentLength
                     };
