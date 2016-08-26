@@ -124,6 +124,8 @@ namespace STV.Controllers
                     break;
                 case TipoMaterial.Arquivo:
 
+                    BaixarArquivo(Id);
+
                     break;
 
                 case TipoMaterial.Link:
@@ -313,8 +315,10 @@ namespace STV.Controllers
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
             Material material = await db.Material.FindAsync(id);
+            db.Entry(material).Collection("UsuariosConsulta").Load(); //Para remover também a referência
             db.Material.Remove(material);
             await db.SaveChangesAsync();
+
             return VoltarParaListagem(material);
         }
 

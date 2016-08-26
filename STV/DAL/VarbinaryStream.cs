@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Data.SqlClient;
@@ -8,6 +9,8 @@ namespace STV.DAL
 {
     public class VarbinaryStream : Stream
     {
+        private STVDbContext db = new STVDbContext();
+        private List<SqlParameter> parameters;
 
         private SqlConnection _Connection;
 
@@ -67,7 +70,7 @@ namespace STV.DAL
                 }
                 catch (Exception e)
                 {
-                    // log errors here
+                    throw new Exception(e.Message + " - CS=" + _Connection.ConnectionString);
                 }
             }
         }
@@ -77,45 +80,67 @@ namespace STV.DAL
         {
             try
             {
-                if (_Connection.State != ConnectionState.Open)
-                    _Connection.Open();
+                //if (_Connection.State != ConnectionState.Open)
+                //    _Connection.Open();
+
+                parameters = new List<SqlParameter>();
 
                 if (_Offset == 0)
                 {
                     // for the first write we just send the bytes to the Column
-                    SqlCommand cmd = new SqlCommand(
+                    //SqlCommand cmd = new SqlCommand(
+                    //                        @"UPDATE [dbo].[" + _TableName + @"]
+                    //                            SET [" + _BinaryColumn + @"] = @firstchunk 
+                    //                                WHERE [" + _KeyColumn + "] = @id",
+                    //                                    _Connection);
+
+                    //cmd.Parameters.Add(new SqlParameter("@firstchunk", buffer));
+                    //cmd.Parameters.Add(new SqlParameter("@id", _KeyValue));
+
+                    //cmd.ExecuteNonQuery();
+
+                    parameters.Add(new SqlParameter("@firstchunk", buffer));
+                    parameters.Add(new SqlParameter("@id", _KeyValue));
+
+                    db.Database.ExecuteSqlCommand(
                                             @"UPDATE [dbo].[" + _TableName + @"]
                                                 SET [" + _BinaryColumn + @"] = @firstchunk 
                                                     WHERE [" + _KeyColumn + "] = @id",
-                                                        _Connection);
-
-                    cmd.Parameters.Add(new SqlParameter("@firstchunk", buffer));
-                    cmd.Parameters.Add(new SqlParameter("@id", _KeyValue));
-
-                    cmd.ExecuteNonQuery();
+                                                        parameters.ToArray());
 
                     _Offset = count;
                 }
                 else
                 {
                     // for all updates after the first one we use the TSQL command .WRITE() to append the data in the database
-                    SqlCommand cmd = new SqlCommand(
+                    //SqlCommand cmd = new SqlCommand(
+                    //                        @"UPDATE [dbo].[" + _TableName + @"]
+                    //                            SET [" + _BinaryColumn + @"].WRITE(@chunk, NULL, @length)
+                    //                                WHERE [" + _KeyColumn + "] = @id",
+                    //                                    _Connection);
+
+                    //cmd.Parameters.Add(new SqlParameter("@chunk", buffer));
+                    //cmd.Parameters.Add(new SqlParameter("@length", count));
+                    //cmd.Parameters.Add(new SqlParameter("@id", _KeyValue));
+
+                    //cmd.ExecuteNonQuery();
+
+                    parameters.Add(new SqlParameter("@chunk", buffer));
+                    parameters.Add(new SqlParameter("@length", count));
+                    parameters.Add(new SqlParameter("@id", _KeyValue));
+
+                    db.Database.ExecuteSqlCommand(
                                             @"UPDATE [dbo].[" + _TableName + @"]
-                                                SET [" + _BinaryColumn + @"].WRITE(@chunk, NULL, @length)
-                                                    WHERE [" + _KeyColumn + "] = @id",
-                                                        _Connection);
-
-                    cmd.Parameters.Add(new SqlParameter("@chunk", buffer));
-                    cmd.Parameters.Add(new SqlParameter("@length", count));
-                    cmd.Parameters.Add(new SqlParameter("@id", _KeyValue));
-
-                    cmd.ExecuteNonQuery();
+                                                SET [" + _BinaryColumn + @"].WRITE(@chunk, NULL, @length)
+                                                    WHERE [" + _KeyColumn + "] = @id",
+                                                        parameters.ToArray());
 
                     _Offset += count;
                 }
             }
             catch (Exception e)
             {
+                throw new Exception(e.Message + " - CS=" + _Connection.ConnectionString);
                 // log errors here
             }
         }
