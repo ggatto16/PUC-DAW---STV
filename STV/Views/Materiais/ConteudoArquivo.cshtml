@@ -14,8 +14,12 @@
     else if (Model.Tipo == STV.Models.TipoMaterial.Imagem)
     {
         var base64 = Convert.ToBase64String(Model.Arquivo.Blob);
-        var imgSrc = String.Format("data:" + Model.Arquivo.ContentType + ";base64,{0}", base64);
+        var imgSrc = string.Format("data:" + Model.Arquivo.ContentType + ";base64,{0}", base64);
         <img src="@imgSrc" style="max-height:250px"/>
+    }
+    else if (Model.Tipo == STV.Models.TipoMaterial.Link)
+    {
+        <a href="@Model.URL" >@Model.URL</a>
     }
     else
     {

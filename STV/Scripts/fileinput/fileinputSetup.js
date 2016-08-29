@@ -42,7 +42,7 @@ function PrepararFileUpload(tipoID) {
                 allowedFileExtensions: ['doc', 'docx', 'xls', 'xlsx', 'pdf', 'rar', 'zip', 'txt', 'ppt', 'pptx', 'exe'],
                 maxFileSize: 307200
             });
-            break;
+            break;            
 
         case "4":
             $("#Arquivo").fileinput({

@@ -8,10 +8,20 @@
 
 <div class="form-horizontal">
     <div class="form-group">
-        <div class="col-md-10">
-            <input id="Arquivo" name="upload" class="file-loading" type="file" />
-            @Html.ValidationMessageFor(model => model.Arquivo.Nome,"", new { @class = "text-danger" })
-
-        </div>
+            @if (ViewBag.Tipo == STV.Models.TipoMaterial.Link)
+            {
+                @Html.LabelFor(model => model.URL, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.URL, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.URL, "", new { @class = "text-danger" })
+                </div>
+            }
+            else
+            {
+                <div class="col-md-10">
+                    <input id="Arquivo" name="upload" class="file-loading" type="file" />
+                    @Html.ValidationMessageFor(model => model.Arquivo.Nome, "", new { @class = "text-danger" })
+                </div>
+            }
     </div>
 </div>

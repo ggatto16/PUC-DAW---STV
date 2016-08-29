@@ -44,6 +44,19 @@
                     }
                 </dd>
             }
+            else
+            {
+                if (Model.URL != string.Empty)
+                {
+                    <dt>
+                        @Html.DisplayNameFor(model => model.URL)
+                    </dt>
+
+                    <dd>
+                        <a href="@Model.URL" target="_blank">@Model.URL</a>
+                    </dd>
+                }
+            }
         </dl>
     </div>
     <p>

@@ -317,6 +317,10 @@
     <Compile Include="Migrations\201608171612448_UsuarioMedalha.Designer.cs">
       <DependentUpon>201608171612448_UsuarioMedalha.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201608291507046_URL-Material.cs" />
+    <Compile Include="Migrations\201608291507046_URL-Material.Designer.cs">
+      <DependentUpon>201608291507046_URL-Material.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Alternativa.cs" />
@@ -554,6 +558,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201608171612448_UsuarioMedalha.resx">
       <DependentUpon>201608171612448_UsuarioMedalha.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201608291507046_URL-Material.resx">
+      <DependentUpon>201608291507046_URL-Material.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

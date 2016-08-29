@@ -90,6 +90,7 @@ namespace STV.Controllers
         // GET: Tipo
         public ActionResult CarregarTipo(int Idtipo)
         {
+            ViewBag.Tipo = (TipoMaterial)Idtipo;
             return PartialView("Upload");
         }
 
@@ -118,16 +119,6 @@ namespace STV.Controllers
 
             switch (material.Tipo)
             {
-                case TipoMaterial.Nenhum:
-                    break;
-                case TipoMaterial.Video:
-                    break;
-                case TipoMaterial.Arquivo:
-
-                    BaixarArquivo(Id);
-
-                    break;
-
                 case TipoMaterial.Link:
                     break;
 
@@ -148,7 +139,7 @@ namespace STV.Controllers
             return PartialView("ConteudoArquivo", material);
         }
 
-        public ActionResult BaixarArquivo(int Id)
+        public FileResult BaixarArquivo(int Id)
         {
             var blobArquivo = db.Arquivo.Where(a => a.Idmaterial == Id)
                 .Select(a => new
@@ -177,7 +168,7 @@ namespace STV.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Idmaterial,Idunidade,Descricao,Tipo")] Material material, HttpPostedFileBase upload)
+        public async Task<ActionResult> Create([Bind(Include = "Idmaterial,Idunidade,Descricao,Tipo,URL")] Material material, HttpPostedFileBase upload)
         {
             if (ModelState.IsValid)
             {
@@ -185,24 +176,33 @@ namespace STV.Controllers
                 //{
                 //    try
                 //    {
+                        
                         db.Material.Add(material);
-                        GetUploadInfo(ref material, upload);
-                        await db.SaveChangesAsync();
 
-                        var arquivo = await db.Arquivo.FindAsync(material.Idmaterial);
+                        if (material.Tipo == TipoMaterial.Arquivo || material.Tipo == TipoMaterial.Imagem || material.Tipo == TipoMaterial.Video)
+                        {
+                            GetUploadInfo(ref material, upload);
 
-                        //Grava o conteúdo do arquivo no banco de dados
-                        VarbinaryStream blob = new VarbinaryStream(
-                        db.Database.Connection.ConnectionString,
-                        "Arquivo",
-                        "Blob",
-                        "Idmaterial",
-                        arquivo.Idmaterial);
+                            await db.SaveChangesAsync();
 
-                        await upload.InputStream.CopyToAsync(blob, 65536);
+                            var arquivo = await db.Arquivo.FindAsync(material.Idmaterial);
 
-                        //dbContextTransaction.Commit();
+                            //Grava o conteúdo do arquivo no banco de dados
+                            VarbinaryStream blob = new VarbinaryStream(
+                            db.Database.Connection.ConnectionString,
+                            "Arquivo",
+                            "Blob",
+                            "Idmaterial",
+                            arquivo.Idmaterial);
 
+                            await upload.InputStream.CopyToAsync(blob, 65536);
+
+                            //dbContextTransaction.Commit();
+                        }
+                        else
+                        {
+                            await db.SaveChangesAsync();
+                        }
 
                         return VoltarParaListagem(material);
                 //    }
@@ -230,6 +230,7 @@ namespace STV.Controllers
 
                 GetArquivoInfo(ref material);
 
+                ViewBag.URL = material.URL;
                 ViewBag.Idunidade = new SelectList(db.Unidade, "Idunidade", "Titulo");
 
                 return View(material);
@@ -246,7 +247,7 @@ namespace STV.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "Idmaterial,Idunidade,Descricao,Tipo")] Material material, HttpPostedFileBase upload)
+        public async Task<ActionResult> Edit([Bind(Include = "Idmaterial,Idunidade,Descricao,Tipo,URL")] Material material, HttpPostedFileBase upload)
         {
 
             if (ModelState.IsValid)
@@ -255,6 +256,7 @@ namespace STV.Controllers
                 //{
                 //    try
                 //    {
+
                 GetUploadInfo(ref material, upload);
 
                 if (material.Arquivo != null) db.Arquivo.Add(material.Arquivo);
@@ -292,6 +294,7 @@ namespace STV.Controllers
             }
             return View(material);
         }
+
 
         // GET: Materiais/Delete/5
         public async Task<ActionResult> Delete(int? id)
