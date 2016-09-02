@@ -1,18 +1,18 @@
-﻿$(function () {
-    $('#Tipo').change(function () {
-        var tipoID = $(this).val();
-        $.ajax({
-            url: 'http://' + window.location.host + '/Materiais/CarregarTipo',
-            type: 'GET',
-            data: { Idtipo: tipoID },
-            cache: false,
-            success: function (result) {
-                $('#container').html(result);
-                PrepararFileUpload(tipoID);
-            }
-        });
-    });
-});
+﻿//$(function () {
+//    $('#Tipo').change(function () {
+//        var tipoID = $(this).val();
+//        $.ajax({
+//            url: 'http://' + window.location.host + '/Materiais/CarregarTipo',
+//            type: 'GET',
+//            data: { Idtipo: tipoID, URL: "@Html.Raw(Model.URL)"  },
+//            cache: false,
+//            success: function (result) {
+//                $('#container').html(result);
+//                PrepararFileUpload(tipoID);
+//            }
+//        });
+//    });
+//});
 
 function PrepararFileUpload(tipoID) {
 

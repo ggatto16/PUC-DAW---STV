@@ -88,9 +88,10 @@ namespace STV.Controllers
         }
 
         // GET: Tipo
-        public ActionResult CarregarTipo(int Idtipo)
+        public ActionResult CarregarTipo(int Idtipo, string url)
         {
             ViewBag.Tipo = (TipoMaterial)Idtipo;
+            ViewBag.URL = url;
             return PartialView("Upload");
         }
 

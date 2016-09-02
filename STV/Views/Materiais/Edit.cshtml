@@ -23,6 +23,7 @@
             <hr />
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
             @Html.HiddenFor(model => model.Idmaterial)
+            @Html.HiddenFor(model => model.Idunidade)
 
             <div class="form-group">
                 @Html.LabelFor(model => model.Descricao, htmlAttributes: new { @class = "control-label col-md-2" })
@@ -86,6 +87,22 @@
     @Scripts.Render("~/bundles/fileinputSetup")
 
     <script>
+
+        $(function () {
+            $('#Tipo').change(function () {
+                var tipoID = $(this).val();
+                $.ajax({
+                    url: 'http://' + window.location.host + '/Materiais/CarregarTipo',
+                    type: 'GET',
+                    data: { Idtipo: tipoID, url: '@Model.URL' },
+                    cache: false,
+                    success: function (result) {
+                        $('#container').html(result);
+                        PrepararFileUpload(tipoID);
+                    }
+                });
+            });
+        });
 
         $(document).ready(function () {
             $("select[id^='Tipo']").change();
