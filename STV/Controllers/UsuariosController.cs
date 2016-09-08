@@ -26,6 +26,7 @@ namespace STV.Controllers
         {
             Usuario usuario = db.Usuario.Find(id);
             return new PdfActionResult("PDF", usuario);
+            //return View("PDF", usuario);
         }
 
         // GET: Usuarios

@@ -7,5 +7,39 @@
 
 <h2>PDF</h2>
 
-@Model.Nome
+<div style="position:relative;">
 
+    @foreach (var curso in Model.Cursos)
+    {
+        <div class="row">
+            <div class="col-md-5">
+                @Html.DisplayFor(modelItem => curso.Titulo)
+            </div>
+        </div>
+        foreach (var unidade in curso.Unidades)
+        {
+            <div class="row">
+                <div class="col-md-4 col-md-offset-1">
+                    @Html.DisplayFor(modelItem => unidade.Titulo)
+                </div>
+            </div>
+            foreach (var atividade in unidade.Atividades)
+            {
+                var nota = Model.Notas.Where(n => n.Idatividade == atividade.Idatividade);
+                string nota2 = string.Empty;
+                if (nota.Count() > 0)
+                {
+                    nota2 = nota.FirstOrDefault().Pontos.ToString();
+                }
+                <div class="row">
+                    <div class="col-md-1 col-md-offset-2">
+                        @Html.DisplayFor(modelItem => atividade.Descricao)
+                    </div>
+                    <div class="col-md-1">
+                        @Html.Raw(nota2)
+                    </div>
+                </div>
+            }
+        }
+    }
+</div>

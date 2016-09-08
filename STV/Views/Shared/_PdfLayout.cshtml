@@ -9,31 +9,13 @@
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>MvcRazorToPdf</title>
-    <style>
-        html {
-            font-family: Arial;
-        }
 
-        h1 {
-            color: blue;
-        }
+    @Styles.Render("~/Content/css")
 
-        table {
-            border: 1px solid black;
-            border-spacing: 0px;
-        }
+    @RenderSection("MeusEstilos", required: false)
 
-            table tr th {
-                background-color: gray;
-                color: white;
-                padding: 2px;
-            }
+    @Scripts.Render("~/bundles/modernizr")
 
-            table tr td {
-                margin: 0px;
-                padding: 2px;
-            }
-    </style>
 </head>
 <body>
     @RenderBody()
