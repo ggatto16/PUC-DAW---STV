@@ -16,6 +16,17 @@
 
     @Scripts.Render("~/bundles/modernizr")
 
+    <style>
+        tbody tr:nth-child(odd) {
+            background-color:  #f5f5f0;
+        }
+        th, td {
+            border-bottom: 1px solid #ddd;
+            padding: 7px;
+        }
+
+    </style>
+
 </head>
 <body>
     @RenderBody()

@@ -5,41 +5,99 @@
     Layout = "~/Views/Shared/_PdfLayout.cshtml";
 }
 
-<h2>PDF</h2>
+<div style="text-align: center; width: 100%; overflow: hidden;">
+    <h5><i>Knowledge Database - Training System</i></h5>
+    <h2>Relatório de Acompanhamento de Aluno</h2>
+    <h3>@Model.Nome</h3>
+</div>
 
 <div style="position:relative;">
 
     @foreach (var curso in Model.Cursos)
     {
-        <div class="row">
+        <hr />
+        <div style="padding: 10px 0px 10px 0px; width: 100%; overflow: hidden;">
             <div class="col-md-5">
-                @Html.DisplayFor(modelItem => curso.Titulo)
+                <strong>Curso: </strong> @Html.DisplayFor(modelItem => curso.Titulo)
             </div>
         </div>
         foreach (var unidade in curso.Unidades)
         {
-            <div class="row">
-                <div class="col-md-4 col-md-offset-1">
-                    @Html.DisplayFor(modelItem => unidade.Titulo)
+            <div style="padding-left: 20px; width: 100%; overflow: hidden;">
+                <div class="col-md-5">
+                    <strong>Unidade: </strong> @Html.DisplayFor(modelItem => unidade.Titulo)
                 </div>
             </div>
-            foreach (var atividade in unidade.Atividades)
-            {
-                var nota = Model.Notas.Where(n => n.Idatividade == atividade.Idatividade);
-                string nota2 = string.Empty;
-                if (nota.Count() > 0)
-                {
-                    nota2 = nota.FirstOrDefault().Pontos.ToString();
-                }
-                <div class="row">
-                    <div class="col-md-1 col-md-offset-2">
-                        @Html.DisplayFor(modelItem => atividade.Descricao)
-                    </div>
-                    <div class="col-md-1">
-                        @Html.Raw(nota2)
-                    </div>
-                </div>
-            }
+            <div style="padding-left: 50px; padding-top: 10px; width: 100%; overflow: hidden;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Atividade</th>
+                            <th style="text-align: right;">Valor</th>
+                            <th style="text-align: right;">Nota</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var atividade in unidade.Atividades)
+                        {
+                            var nota = Model.Notas.Where(n => n.Idatividade == atividade.Idatividade);
+                            string nota2 = string.Empty;
+                            if (nota.Count() > 0)
+                            {
+                                nota2 = nota.FirstOrDefault().Pontos.ToString();
+                            }
+                            <tr>
+                                <td style="width: 50%;">
+                                    @Html.DisplayFor(modelItem => atividade.Descricao)
+                                </td>
+                                <td style="width: 10%; text-align: right;">
+                                    @Html.DisplayFor(modelItem => atividade.Valor)
+                                </td>
+                                <td style="width: 10%; text-align: right;">
+                                    @Html.Raw(nota2)
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div style="padding-left: 50px; padding-top: 10px; width: 100%; overflow: hidden;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Material</th>
+                            <th style="text-align: center;">Visualizado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var material in unidade.Materiais)
+                        {
+                            var mat = Model.MateriaisConsultados.Where(m => m.Idmaterial == material.Idmaterial);
+                            bool visualizado = false;
+                            if (mat.Count() > 0)
+                            {
+                                visualizado = true;
+                            }
+                            <tr>
+                                <td style="width: 50%;">
+                                    @Html.DisplayFor(modelItem => material.Descricao)
+                                </td>
+                                <td style="width: 20%; text-align: center;">
+                                    @if (visualizado)
+                                    {
+                                        @Html.Raw("V");
+                                    }
+                                    else
+                                    {
+                                        @Html.Raw("X");
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
         }
     }
 </div>
