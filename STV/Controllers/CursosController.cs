@@ -79,7 +79,7 @@ namespace STV.Controllers
                 document.Open();
                 document.SetPageSize(PageSize.A4);
                 document.NewPage();
-                Image imagem = Image.GetInstance(@"C:\Users\Gabriel Gatto\Desktop\STV_Git\PUC-DAW---STV\STV\Images\bg-certificado.jpg");
+                Image imagem = Image.GetInstance(Server.MapPath(@"..\..\Images\bg-certificado.jpg"));
                 //PdfContentByte canvas = writer.DirectContentUnder;
                 imagem.ScaleAbsolute(PageSize.A4);
                 imagem.SetAbsolutePosition(0, 0);

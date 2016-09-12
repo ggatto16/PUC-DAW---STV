@@ -25,8 +25,11 @@ namespace STV.Controllers
         public ActionResult PDF(int id)
         {
             Usuario usuario = db.Usuario.Find(id);
-            return new PdfActionResult("PDF", usuario);
-            //return View("PDF", usuario);
+
+            var RelatorioUsuario = Mapper.Map<Usuario, RelatorioUsuario>(usuario);
+
+            return new PdfActionResult("PDF", RelatorioUsuario);
+            //return View("PDF", RelatorioUsuario);
 
             //return new PdfActionResult(usuario, (writer, document) =>
             //{
