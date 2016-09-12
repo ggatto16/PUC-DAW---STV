@@ -368,6 +368,9 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="Images\bg-certificado.jpg" />
+    <Content Include="Images\GreenCheck.jpg" />
+    <Content Include="Images\RedX.jpg" />
     <Content Include="Scripts\ai.0.22.19-build00125.js" />
     <Content Include="Scripts\ai.0.22.19-build00125.min.js" />
     <Content Include="ApplicationInsights.config">
@@ -495,6 +498,7 @@
     <Content Include="Views\Notas\MinhasNotas.cshtml" />
     <Content Include="Views\Shared\_PdfLayout.cshtml" />
     <Content Include="Views\Usuarios\PDF.cshtml" />
+    <Content Include="Views\Cursos\Certificado.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

@@ -1,0 +1,93 @@
+﻿@model STV.Models.Curso
+
+@{
+    ViewBag.Title = "Certificado";
+    Layout = "~/Views/Shared/_PdfLayout.cshtml";
+}
+
+@section MeusEstilos {
+    <style>
+
+        .Nome {
+            padding: 380px 0px 0px 0px;
+            font-family: "Kunstler Script";
+            font-size: 500%;
+            color: #003366;
+            text-align: center;
+            position: absolute;
+            width: 590px;
+            vertical-align: middle;
+        }
+
+        .Curso {
+            padding: 600px 0px 0px 20px;
+            font-family: "Arial";
+            color: #003366;
+            font-size: 100%;
+            text-align: center;
+            position: absolute;
+            width: 570px;
+        }
+
+        .Instrutor {
+            padding: 737px 0px 0px 0px;
+            font-family: "Arial";
+            color: #003366;
+            font-size: 100%;
+            text-align: center;
+            position: absolute;
+            width: 464px;
+        }
+
+        .Aluno {
+            padding: 855px 0px 0px 0px;
+            font-family: "Arial";
+            color: #003366;
+            font-size: 100%;
+            text-align: center;
+            position: absolute;
+            width: 464px;
+        }
+
+        .Data {
+            padding: 930px 0px 0px 0px;
+            font-family: "Freestyle Script";
+            color: #003366;
+            font-size: 200%;
+            text-align: center;
+            position: absolute;
+            width: 393px;
+        }
+
+        .LabelData {
+            padding: 973px 0px 0px 0px;
+            font-family: "Arial";
+            color: #003366;
+            font-size: 100%;
+            text-align: center;
+            position: absolute;
+            width: 393px;
+        }
+    </style>   
+}
+
+<div>
+    <div class="Nome">
+        <b>Gabriel Roberto Gatto Teste da Silva Sauro</b>
+    </div>
+    <div class="Curso">
+        <b>Pela conclusão do curso Curso Teste por meio da plataforma de aprendizagem virtual KD (Knowkedge Database).</b>
+    </div>
+    <div class="Instrutor">
+        <b>Instrutor Gabriel Gatto</b>
+    </div>
+    <div class="Aluno">
+        <b>Aluno Gabriel Gatto</b>
+    </div>
+    <div class="Data">
+        <b>11/09/2016</b>
+    </div>
+    <div class="LabelData">
+        <b>Data</b>
+    </div>
+</div>

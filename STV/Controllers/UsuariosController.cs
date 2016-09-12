@@ -27,6 +27,13 @@ namespace STV.Controllers
             Usuario usuario = db.Usuario.Find(id);
             return new PdfActionResult("PDF", usuario);
             //return View("PDF", usuario);
+
+            //return new PdfActionResult(usuario, (writer, document) =>
+            //{
+            //    document.SetPageSize(PageSize.A4.Rotate());
+            //    document.NewPage();
+
+            //});
         }
 
         // GET: Usuarios

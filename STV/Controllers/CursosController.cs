@@ -15,6 +15,12 @@ using System.Web.Security;
 using STV.Auth;
 using Microsoft.AspNet.Identity;
 using System.Data.Entity.Infrastructure;
+using MvcRazorToPdf;
+using iTextSharp.text;
+using iTextSharp.text.pdf;
+using System.IO;
+using iTextSharp.text.html.simpleparser;
+using System.Text;
 
 namespace STV.Controllers
 {
@@ -29,6 +35,82 @@ namespace STV.Controllers
             SessionContext auth = new SessionContext();
             //UsuarioLogado = Mapper.Map<DadosUsuario, Usuario>(auth.GetUserData());
             UsuarioLogado = auth.GetUserData();
+        }
+
+        public ActionResult Certificado(int id)
+        {
+            Curso curso = db.Curso.Find(id);
+            //return new PdfActionResult("Certificado", curso);
+            //return View("Certificado", curso);
+
+            StringBuilder HTMLString = new StringBuilder();
+            HTMLString.Append("    <div class='cert'>");
+            HTMLString.Append("< div class='Nome'>");
+
+            HTMLString.Append("<b>Gabriel Gatto</b>");
+            HTMLString.Append("</div>");
+            HTMLString.Append("< div class='Curso'>");
+
+            HTMLString.Append("<b>Pela conclusão do curso Curso Teste por meio da plataforma de aprendizagem virtual KD(Knowkedge Database).</b>");
+            HTMLString.Append("</div>");
+            HTMLString.Append("< div class='Instrutor'>");
+
+            HTMLString.Append("<b>Instrutor Gabriel Roberto Gatto da Silva Sauro</b>");
+            HTMLString.Append(" </div>    ");
+            HTMLString.Append("< div class='Aluno'>");
+
+            HTMLString.Append("<b>Aluno Gabriel Roberto Gatto da Silva Sauro</b>");
+            HTMLString.Append("</div>   ");
+            HTMLString.Append("< div class='Data'>");
+
+            HTMLString.Append("<b>11/09/2016</b>");
+            HTMLString.Append("</div>");
+            HTMLString.Append("< div class='LabelData'>");
+
+            HTMLString.Append("<b>Data</b>");
+            HTMLString.Append("</div>");
+            HTMLString.Append("</div>");
+
+            //string css = @".Curso,.Nome{color:#036;text-align:center;position:absolute}.Nome{padding:310px 0 0;font-family:'Kunstler Script';font-size:500%;width:590px;vertical-align:middle}.Curso{padding:110px 0 0 20px;font-family:Arial;font-size:100%;width:570px}.Aluno,.Instrutor{font-family:Arial;font-size:100%;width:410px;color:#036;text-align:center;position:absolute}.Instrutor{padding:145px 0 0}.Aluno{padding:100px 0 0}.Data{padding:57px 0 0;font-family:'Freestyle Script';color:#036;font-size:200%;text-align:center;position:absolute;width:320px} .LabelData{padding:0px 0 0;font-family:'Arial';color:#036;font-size:100%;text-align:center;position:absolute;width:320px}";
+            string css = @".Nome{padding:320px 0 50px;font-family:'Kunstler Script';font-size:400%;color:#036;text-align:center;position:absolute;width:500px;height:535px;overflow-y:hidden;}.Curso{padding:0px 0 0 20px;font-family:'Arial';color:#036;font-size:100%;text-align:center;position:absolute;width:580px;height:60px;overflow-y:hidden;}.Instrutor{padding:127px 0 0;font-family:'Arial';color:#036;font-size:100%;text-align:center;position:absolute;width:410px}.Aluno{padding:100px 0 0;font-family:'Arial';color:#036;font-size:100%;text-align:center;position:absolute;width:410px}.Data{padding:57px 0 0;font-family:'Freestyle Script';color:#036;font-size:200%;text-align:center;position:absolute;width:320px}.LabelData{padding:0;font-family:'Arial';color:#036;font-size:100%;text-align:center;position:absolute;width:320px}";
+
+            return new PdfActionResult(curso, (writer, document) =>
+            {
+                document.Open();
+                document.SetPageSize(PageSize.A4);
+                document.NewPage();
+                Image imagem = Image.GetInstance(@"C:\Users\Gabriel Gatto\Desktop\STV_Git\PUC-DAW---STV\STV\Images\bg-certificado.jpg");
+                //PdfContentByte canvas = writer.DirectContentUnder;
+                imagem.ScaleAbsolute(PageSize.A4);
+                imagem.SetAbsolutePosition(0, 0);
+                //canvas.SaveState();
+                //PdfGState state = new PdfGState();
+                //state.FillOpacity = 0.6f;
+                //canvas.SetGState(state);
+                //canvas.AddImage(imagem);
+                //canvas.RestoreState();
+                document.Add(imagem);
+
+                //List<IElement> htmlarraylist = HTMLWorker.ParseToList(new StringReader(HTMLString.ToString()), null);
+                //for (int k = 0; k < htmlarraylist.Count; k++)
+                //{
+                //    document.Add((IElement)htmlarraylist[k]);
+                //}
+
+                using (var msCss = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(css)))
+                {
+                    using (var msHtml = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(HTMLString.ToString())))
+                    {
+
+                        //Parse the HTML
+                        iTextSharp.tool.xml.XMLWorkerHelper.GetInstance().ParseXHtml(writer, document, msHtml, msCss);
+                    }
+                }
+
+
+                document.Close();
+
+            });
         }
 
         [Authorize]

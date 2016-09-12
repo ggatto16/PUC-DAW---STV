@@ -86,11 +86,11 @@
                                 <td style="width: 20%; text-align: center;">
                                     @if (visualizado)
                                     {
-                                        @Html.Raw("V");
+                                        <img src="@Server.MapPath("~/Images/GreenCheck.jpg")" />
                                     }
                                     else
                                     {
-                                        @Html.Raw("X");
+                                        <img src="@Server.MapPath("~/Images/RedX.jpg")" />
                                     }
                                 </td>
                             </tr>
