@@ -47,24 +47,6 @@ namespace STV.Models
         public virtual ICollection<NotaCurso> NotasCurso { get; set; }
 
         [NotMapped]
-        NotaCurso _NotaCursoAtual;
-
-        [NotMapped]
-        public virtual NotaCurso NotaCursoAtual {
-            get
-            {
-                return (_NotaCursoAtual == null) ? new NotaCurso() : _NotaCursoAtual;
-            }
-            set
-            {
-                _NotaCursoAtual = value;
-            }
-        }
-
-        [NotMapped]
-        public bool IsInstutor { get; set; }
-
-        [NotMapped]
         public virtual ICollection<Departamento> departamentosQueJaContemInscritos { get; set; }
 
     }

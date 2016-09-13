@@ -1,5 +1,6 @@
 ﻿namespace STV.ViewModels
 {
+    using Newtonsoft.Json;
     using STV.Models;
     using System;
     using System.Collections.Generic;
@@ -7,39 +8,51 @@
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    public class cursoVM
+    public class DetalhesCurso
     {
-        [Key]
         public int Idcurso { get; set; }
 
-        [StringLength(60)]
         public string Titulo { get; set; }
 
-        [Column(TypeName = "date")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-dd}")]
         public DateTime? Dtinicial { get; set; }
 
-        [Column(TypeName = "date")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-dd}")]
         public DateTime? Dtfinal { get; set; }
 
-        public int? Idusuario { get; set; }
+        public int IdusuarioInstrutor { get; set; }
 
-        [StringLength(30)]
         public string Categoria { get; set; }
 
-        [StringLength(120)]
         public string Palavraschave { get; set; }
 
-        public int? Iddepartamento { get; set; }
+        public virtual ICollection<Departamento> Departamentos { get; set; }
 
-        public DateTime Stamp { get; set; }
+        public virtual Usuario Instrutor { get; set; }
 
-        public virtual Departamento Departamento { get; set; }
+        public virtual ICollection<Unidade> Unidades { get; set; }
 
-        public virtual Usuario Usuario { get; set; }
+        public virtual ICollection<Usuario> Usuarios { get; set; }
 
-        public ICollection<Unidade> Unidades { get; set; }
+        public virtual ICollection<NotaCurso> NotasCurso { get; set; }
 
-        public ICollection<Atividade> Atividades { get; set; }
+        NotaCurso _NotaCursoAtual;
+
+        public virtual NotaCurso NotaCursoAtual
+        {
+            get
+            {
+                return (_NotaCursoAtual == null) ? new NotaCurso() : _NotaCursoAtual;
+            }
+            set
+            {
+                _NotaCursoAtual = value;
+            }
+        }
+
+        public bool IsInstutor { get; set; }
+
+        public virtual ICollection<Departamento> departamentosQueJaContemInscritos { get; set; }
     }
 
 }

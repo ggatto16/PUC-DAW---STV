@@ -342,6 +342,7 @@
     <Compile Include="Models\Usuario.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="Utils\RequestExtensions.cs" />
     <Compile Include="ViewModels\RelatorioUsuario.cs" />
     <Compile Include="ViewModels\UnidadeVM.cs" />
     <Compile Include="ViewModels\AtividadeVM.cs" />

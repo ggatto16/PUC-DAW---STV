@@ -11,7 +11,6 @@ namespace STV.Mappers
         {
             Mapper.Initialize(cfg =>
             {
-                cfg.CreateMap<Curso, cursoVM>();
                 cfg.AddProfile<DomainToViewModelMappingProfile>();
                 cfg.AddProfile<ViewModelToDomainMappingProfile>();
             });

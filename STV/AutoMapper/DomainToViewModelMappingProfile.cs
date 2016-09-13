@@ -13,6 +13,7 @@ namespace STV.AutoMapper
             CreateMap<Unidade, UnidadeVM>();
             CreateMap<Atividade, AtividadeVM>();
             CreateMap<Usuario, RelatorioUsuario>();
+            CreateMap<Curso, DetalhesCurso>();
         }
     }
 }

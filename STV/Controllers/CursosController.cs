@@ -1,26 +1,22 @@
-﻿using System;
+﻿using AutoMapper;
+using iTextSharp.text;
+using MvcRazorToPdf;
+using STV.Auth;
+using STV.DAL;
+using STV.Models;
+using STV.Utils;
+using STV.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Net;
-using System.Web;
-using System.Web.Mvc;
-using STV.Models;
-using STV.ViewModels;
-using AutoMapper;
-using STV.DAL;
-using System.Web.Security;
-using STV.Auth;
-using Microsoft.AspNet.Identity;
 using System.Data.Entity.Infrastructure;
-using MvcRazorToPdf;
-using iTextSharp.text;
-using iTextSharp.text.pdf;
 using System.IO;
-using iTextSharp.text.html.simpleparser;
+using System.Linq;
+using System.Net;
 using System.Text;
+using System.Threading.Tasks;
+using System.Web.Mvc;
 
 namespace STV.Controllers
 {
@@ -71,49 +67,58 @@ namespace STV.Controllers
             HTMLString.Append("</div>");
             HTMLString.Append("</div>");
 
-            //string css = @".Curso,.Nome{color:#036;text-align:center;position:absolute}.Nome{padding:310px 0 0;font-family:'Kunstler Script';font-size:500%;width:590px;vertical-align:middle}.Curso{padding:110px 0 0 20px;font-family:Arial;font-size:100%;width:570px}.Aluno,.Instrutor{font-family:Arial;font-size:100%;width:410px;color:#036;text-align:center;position:absolute}.Instrutor{padding:145px 0 0}.Aluno{padding:100px 0 0}.Data{padding:57px 0 0;font-family:'Freestyle Script';color:#036;font-size:200%;text-align:center;position:absolute;width:320px} .LabelData{padding:0px 0 0;font-family:'Arial';color:#036;font-size:100%;text-align:center;position:absolute;width:320px}";
-            string css = @".Nome{padding:320px 0 50px;font-family:'Kunstler Script';font-size:400%;color:#036;text-align:center;position:absolute;width:500px;height:535px;overflow-y:hidden;}.Curso{padding:0px 0 0 20px;font-family:'Arial';color:#036;font-size:100%;text-align:center;position:absolute;width:580px;height:60px;overflow-y:hidden;}.Instrutor{padding:127px 0 0;font-family:'Arial';color:#036;font-size:100%;text-align:center;position:absolute;width:410px}.Aluno{padding:100px 0 0;font-family:'Arial';color:#036;font-size:100%;text-align:center;position:absolute;width:410px}.Data{padding:57px 0 0;font-family:'Freestyle Script';color:#036;font-size:200%;text-align:center;position:absolute;width:320px}.LabelData{padding:0;font-family:'Arial';color:#036;font-size:100%;text-align:center;position:absolute;width:320px}";
+            string css = @".Nome{padding:320px 0 50px;font-family:'Kunstler Script';font-size:400%;color:#036;text-align:center;position:absolute;width:500px;height:535px;overflow-y:hidden;}.Curso{padding:0px 0 0 20px;font-family:'Arial';color:#036;font-size:100%;text-align:center;position:absolute;width:580px;height:60px;overflow-y:hidden;}.Instrutor{padding:127px 0 0;font-family:'Arial';color:#036;font-size:100%;text-align:center;position:absolute;width:410px}.Aluno{padding:100px 0 0;font-family:'Arial';color:#036;font-size:100%;text-align:center;position:absolute;width:410px}.Data{padding:57px 0 0;font-family:'Freestyle Script';color:#036;font-size:200%;text-align:center;position:absolute;width:320px}.LabelData{padding:0;font-family:'Arial';color:#036;font-size:100%;text-align:center;position:absolute;width:320px}"; 
 
-            return new PdfActionResult(curso, (writer, document) =>
+            if (RequestExtensions.IsMobileBrowser(Request.UserAgent))
             {
-                document.Open();
-                document.SetPageSize(PageSize.A4);
-                document.NewPage();
-                Image imagem = Image.GetInstance(Server.MapPath(@"..\..\Images\bg-certificado.jpg"));
-                //PdfContentByte canvas = writer.DirectContentUnder;
-                imagem.ScaleAbsolute(PageSize.A4);
-                imagem.SetAbsolutePosition(0, 0);
-                //canvas.SaveState();
-                //PdfGState state = new PdfGState();
-                //state.FillOpacity = 0.6f;
-                //canvas.SetGState(state);
-                //canvas.AddImage(imagem);
-                //canvas.RestoreState();
-                document.Add(imagem);
-
-                //List<IElement> htmlarraylist = HTMLWorker.ParseToList(new StringReader(HTMLString.ToString()), null);
-                //for (int k = 0; k < htmlarraylist.Count; k++)
-                //{
-                //    document.Add((IElement)htmlarraylist[k]);
-                //}
-
-                using (var msCss = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(css)))
+                return new PdfActionResult(curso, (writer, document) =>
                 {
-                    using (var msHtml = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(HTMLString.ToString())))
+                    document.Open();
+                    document.SetPageSize(PageSize.A4);
+                    document.NewPage();
+                    Image imagem = Image.GetInstance(Server.MapPath(@"..\..\Images\bg-certificado.jpg"));
+                    imagem.ScaleAbsolute(PageSize.A4);
+                    imagem.SetAbsolutePosition(0, 0);
+                    document.Add(imagem);
+
+                    using (var msCss = new MemoryStream(Encoding.UTF8.GetBytes(css)))
                     {
-
-                        //Parse the HTML
-                        iTextSharp.tool.xml.XMLWorkerHelper.GetInstance().ParseXHtml(writer, document, msHtml, msCss);
+                        using (var msHtml = new MemoryStream(Encoding.UTF8.GetBytes(HTMLString.ToString())))
+                        {
+                            iTextSharp.tool.xml.XMLWorkerHelper.GetInstance().ParseXHtml(writer, document, msHtml, msCss);
+                        }
                     }
-                }
+                    document.Close();
 
+                })
+                {
+                    FileDownloadName = "Certificado.pdf"
+                };
+            }
+            else
+            {
+                return new PdfActionResult(curso, (writer, document) =>
+                {
+                    document.Open();
+                    document.SetPageSize(PageSize.A4);
+                    document.NewPage();
+                    Image imagem = Image.GetInstance(Server.MapPath(@"..\..\Images\bg-certificado.jpg"));
+                    imagem.ScaleAbsolute(PageSize.A4);
+                    imagem.SetAbsolutePosition(0, 0);
+                    document.Add(imagem);
 
-                document.Close();
-
-            });
+                    using (var msCss = new MemoryStream(Encoding.UTF8.GetBytes(css)))
+                    {
+                        using (var msHtml = new MemoryStream(Encoding.UTF8.GetBytes(HTMLString.ToString())))
+                        {
+                            iTextSharp.tool.xml.XMLWorkerHelper.GetInstance().ParseXHtml(writer, document, msHtml, msCss);
+                        }
+                    }
+                    document.Close();
+                });
+            }
         }
 
-        [Authorize]
         public async Task<ActionResult> MeusCursos()
         {
             int Idusuario = UsuarioLogado.Idusuario;
@@ -134,7 +139,6 @@ namespace STV.Controllers
             return View("CursosDisponiveis", await cursos.ToListAsync());
         }
 
-        [Authorize]
         public async Task<ActionResult> CursosDisponiveis()
         {
             int Idusuario = UsuarioLogado.Idusuario;
@@ -208,7 +212,9 @@ namespace STV.Controllers
             if (curso == null)
                 return HttpNotFound();
 
-            curso.NotaCursoAtual = await db.NotaCurso.FindAsync(UsuarioLogado.Idusuario, curso.Idcurso);
+            var detalhesCurso = Mapper.Map<Curso, DetalhesCurso>(curso);
+
+            detalhesCurso.NotaCursoAtual = await db.NotaCurso.FindAsync(UsuarioLogado.Idusuario, detalhesCurso.Idcurso);
 
             ViewBag.UnidadeSelecionada = Idunidade;  //para reabrir o conteúdo
 
@@ -216,26 +222,23 @@ namespace STV.Controllers
             var cursoVerify = await db.Curso
                 .Where(c => c.IdusuarioInstrutor == UsuarioLogado.Idusuario && c.Idcurso == id)
                 .SingleOrDefaultAsync();
-            ViewBag.Gerenciar = cursoVerify != null ? true : false;
 
-            //mesclando model curso com viewmodel cursoVM
-            //var cursoVM = Mapper.Map<Curso, cursoVM>(curso);
+            detalhesCurso.IsInstutor = cursoVerify != null ? true : false;
 
-            ////listando as unidades do curso e complementando a viewmodel com esses dados
-            //var unidadesdocurso = from u in db.Unidade where u.Curso.Idcurso == curso.Idcurso select u;
-            //if (unidadesdocurso.Count() > 0) cursoVM.Unidades = new List<Unidade>();
-            //foreach (var unidade in unidadesdocurso)
-            //{
-            //    cursoVM.Unidades.Add(unidade);
-            //    var atividadesdaunidade = from a in db.Atividade where a.Idunidade == unidade.Idunidade select a;
-            //    if (atividadesdaunidade.Count() > 0) cursoVM.Atividades = new List<Atividade>();
-            //    foreach (var atividade in atividadesdaunidade)
-            //    {
-            //        cursoVM.Atividades.Add(atividade);
-            //    }
-            //}
+            //Verificar disponibilidade do certificado
+            var usuario = await db.Usuario.FindAsync(UsuarioLogado.Idusuario);
+            var materiaisDoCurso = usuario.MateriaisConsultados.Where(m => m.Unidade.Idcurso == detalhesCurso.Idcurso);
+            var totalMateriaisCurso = 0;
+            foreach (var unidade in detalhesCurso.Unidades)
+            {
+                totalMateriaisCurso += unidade.Materiais.Count();
+            }
+            if (materiaisDoCurso.Count() == totalMateriaisCurso)
+            {
+                //OK
+            }
 
-            return View(curso);
+            return View(detalhesCurso);
         }
 
         // GET: Cursos/Create

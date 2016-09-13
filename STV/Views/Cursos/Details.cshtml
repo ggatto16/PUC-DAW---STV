@@ -1,4 +1,4 @@
-﻿@model STV.Models.Curso
+﻿@model STV.ViewModels.DetalhesCurso
 
 @{
     ViewBag.Title = "Details";
@@ -57,7 +57,7 @@
                 @Html.DisplayFor(model => model.Palavraschave)
             </dd>
 
-            @if (User.IsInRole("Default") && !ViewBag.Gerenciar)
+            @if (User.IsInRole("Default") && !Model.IsInstutor)
             {
                 <dt>
                     @Html.DisplayName("Minha Avaliação")
@@ -88,13 +88,13 @@
     <p>
         @Html.ActionLink("Edit", "Edit", new { id = Model.Idcurso }) |
         @Html.ActionLink("Back to List", "Index") |
-        @Html.ActionLink("Cert", "Certificado", new { id = Model.Idcurso })
+        @Html.ActionLink("Cert", "Certificado", new { id = Model.Idcurso }, new { target = "_blank" })
     </p>
     <hr />
 
     <h3>Unidades</h3>
 
-    @if (User.IsInRole("Admin") || ViewBag.Gerenciar)
+    @if (User.IsInRole("Admin") || Model.IsInstutor)
     {
         @Html.ActionLink("Adicionar", "Create", "Unidades", new { Idcurso = Model.Idcurso }, null)
     }
@@ -112,7 +112,7 @@
                         {
                             @Html.Raw("<td>" + unidade.Titulo + "</td><td>Abrirá em " + unidade.Dtabertura + "</td>");
                         }
-                        @if (User.IsInRole("Admin") || ViewBag.Gerenciar)
+                        @if (User.IsInRole("Admin") || Model.IsInstutor)
                         {
                             @Html.Raw("<td>")
                             @Html.ActionLink("Edit", "Edit", "Unidades", new { id = unidade.Idunidade }, null)
