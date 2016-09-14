@@ -53,6 +53,30 @@
         public bool IsInstutor { get; set; }
 
         public virtual ICollection<Departamento> departamentosQueJaContemInscritos { get; set; }
+
+        public int NotaMaxima
+        {
+            get
+            {
+                if (Unidades != null)
+                {
+                    int nota = 0;
+                    foreach (var unidade in Unidades)
+                    {
+                        if (unidade.Atividades != null)
+                        {
+                            foreach (var atividade in unidade.Atividades)
+                            {
+                                nota += atividade.Valor;
+                            }
+                        }
+                    }
+                    return nota;
+                }
+                else
+                    return 0;
+            }
+        }
     }
 
 }

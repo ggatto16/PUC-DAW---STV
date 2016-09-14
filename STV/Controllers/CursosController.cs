@@ -226,16 +226,27 @@ namespace STV.Controllers
             detalhesCurso.IsInstutor = cursoVerify != null ? true : false;
 
             //Verificar disponibilidade do certificado
-            var usuario = await db.Usuario.FindAsync(UsuarioLogado.Idusuario);
-            var materiaisDoCurso = usuario.MateriaisConsultados.Where(m => m.Unidade.Idcurso == detalhesCurso.Idcurso);
-            var totalMateriaisCurso = 0;
-            foreach (var unidade in detalhesCurso.Unidades)
+            if (detalhesCurso.Dtfinal > DateTime.Today)
             {
-                totalMateriaisCurso += unidade.Materiais.Count();
-            }
-            if (materiaisDoCurso.Count() == totalMateriaisCurso)
-            {
-                //OK
+                var usuario = await db.Usuario.FindAsync(UsuarioLogado.Idusuario);
+
+                var notasDoUsuarioNoCurso = usuario.Notas
+                    .Where(n => n.Atividade.Unidade.Idcurso == detalhesCurso.Idcurso);
+
+
+
+                var materiaisConsultadosNoCurso = usuario.MateriaisConsultados
+                    .Where(m => m.Unidade.Idcurso == detalhesCurso.Idcurso);
+
+                int totalMateriaisCurso = 0;
+                foreach (var unidade in detalhesCurso.Unidades)
+                {
+                    totalMateriaisCurso += unidade.Materiais.Count();
+                }
+                if (materiaisConsultadosNoCurso.Count() == totalMateriaisCurso)
+                {
+                    //OK
+                }
             }
 
             return View(detalhesCurso);
