@@ -225,15 +225,28 @@ namespace STV.Controllers
 
             detalhesCurso.IsInstutor = cursoVerify != null ? true : false;
 
-            //Verificar disponibilidade do certificado
-            if (detalhesCurso.Dtfinal > DateTime.Today)
+            detalhesCurso.DisponibilizarCertificado = await VerificarCertificado(detalhesCurso);
+
+            return View(detalhesCurso);
+        }
+
+        private async Task<bool> VerificarCertificado(DetalhesCurso detalhesCurso)
+        {
+            if (detalhesCurso.Dtfinal < DateTime.Today)
             {
                 var usuario = await db.Usuario.FindAsync(UsuarioLogado.Idusuario);
 
                 var notasDoUsuarioNoCurso = usuario.Notas
                     .Where(n => n.Atividade.Unidade.Idcurso == detalhesCurso.Idcurso);
 
+                int notaUsuario = 0;
+                foreach (var nota in notasDoUsuarioNoCurso)
+                {
+                    notaUsuario += nota.Atividade.Valor;
+                }
 
+                if ((notaUsuario * 100 / detalhesCurso.NotaMaxima) < 70)
+                     return false;
 
                 var materiaisConsultadosNoCurso = usuario.MateriaisConsultados
                     .Where(m => m.Unidade.Idcurso == detalhesCurso.Idcurso);
@@ -245,11 +258,10 @@ namespace STV.Controllers
                 }
                 if (materiaisConsultadosNoCurso.Count() == totalMateriaisCurso)
                 {
-                    //OK
+                    return true;
                 }
             }
-
-            return View(detalhesCurso);
+            return false;
         }
 
         // GET: Cursos/Create

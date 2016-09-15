@@ -348,7 +348,7 @@
     <Compile Include="ViewModels\AtividadeVM.cs" />
     <Compile Include="ViewModels\AlternativaVM.cs" />
     <Compile Include="ViewModels\UsuarioVM.cs" />
-    <Compile Include="ViewModels\cursoVM.cs" />
+    <Compile Include="ViewModels\DetalhesCurso.cs" />
     <Compile Include="ViewModels\DadosUsuario.cs" />
     <Compile Include="ViewModels\DepartamentosAtribuidos.cs" />
     <Compile Include="ViewModels\RespostasAtividade.cs" />

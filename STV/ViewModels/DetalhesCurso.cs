@@ -77,6 +77,8 @@
                     return 0;
             }
         }
+
+        public bool DisponibilizarCertificado { get; set; }
     }
 
 }

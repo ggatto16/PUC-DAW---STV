@@ -95,24 +95,27 @@ namespace STV.Controllers
             return PartialView("Upload");
         }
 
+        private void RegistrarVisualizacao(Material material)
+        {
+            var usuarioToUpdate = db.Usuario
+                    .Include(u => u.MateriaisConsultados)
+                    .Where(i => i.Idusuario == UsuarioLogado.Idusuario)
+                    .Single();
+
+            if (!usuarioToUpdate.MateriaisConsultados.Contains(material))
+            {
+                usuarioToUpdate.MateriaisConsultados.Add(material);
+                db.SaveChanges();
+            }
+        }
+
         // GET: Tipo
         public async Task<ActionResult> MostrarArquivo(int Id)
         {
             var material = await db.Material.FindAsync(Id);
 
             if (material != null)
-            {
-                var usuarioToUpdate = await db.Usuario
-                      .Include(u => u.MateriaisConsultados)
-                      .Where(i => i.Idusuario == UsuarioLogado.Idusuario)
-                      .SingleAsync();
-
-                if (!usuarioToUpdate.MateriaisConsultados.Contains(material))
-                {
-                    usuarioToUpdate.MateriaisConsultados.Add(material);
-                    db.SaveChanges();
-                }
-            }
+                RegistrarVisualizacao(material);
             else
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
@@ -142,6 +145,12 @@ namespace STV.Controllers
 
         public FileResult BaixarArquivo(int Id)
         {
+
+            var material = db.Material.Find(Id);
+
+            if (material != null)
+                RegistrarVisualizacao(material);
+
             var blobArquivo = db.Arquivo.Where(a => a.Idmaterial == Id)
                 .Select(a => new
                 {
