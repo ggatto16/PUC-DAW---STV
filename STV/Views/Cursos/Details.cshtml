@@ -88,7 +88,11 @@
     <p>
         @Html.ActionLink("Edit", "Edit", new { id = Model.Idcurso }) |
         @Html.ActionLink("Back to List", "Index") |
-        @Html.ActionLink("Cert", "Certificado", new { id = Model.Idcurso }, new { target = "_blank" })
+
+        @if (Model.DisponibilizarCertificado)
+        {
+            @Html.ActionLink("Cert", "Certificado", new { id = Model.Idcurso }, new { target = "_blank" })
+        }
     </p>
     <hr />
 
