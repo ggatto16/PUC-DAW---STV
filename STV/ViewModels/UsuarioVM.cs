@@ -2,8 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.Spatial;
 
 namespace STV.ViewModels
 {
@@ -21,8 +19,11 @@ namespace STV.ViewModels
         [StringLength(70)]
         public string Email { get; set; }
 
-        [StringLength(20)]
+        [StringLength(500)]
         public string Senha { get; set; }
+
+        [StringLength(20)]
+        public string SenhaDigitada { get; set; }
 
         public int Iddepartamento { get; set; }
 
@@ -47,6 +48,7 @@ namespace STV.ViewModels
         public virtual ICollection<NotaCurso> NotasCursos { get; set; }
 
         public virtual ICollection<Material> MateriaisConsultados { get; set; }
+
     }
 
 }

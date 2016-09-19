@@ -14,6 +14,7 @@ using STV.ViewModels;
 using System.Data.Entity.Infrastructure;
 using MvcRazorToPdf;
 using iTextSharp.text;
+using STV.Auth;
 
 namespace STV.Controllers
 {
@@ -105,6 +106,7 @@ namespace STV.Controllers
             {
                 usuario.Stamp = DateTime.Now;
                 usuario.Status = false;
+                usuario.Senha = Crypt.Encrypt(usuario.Senha);
                 db.Usuario.Add(usuario);
                 await db.SaveChangesAsync();
                 return RedirectToAction("Index");
@@ -132,7 +134,10 @@ namespace STV.Controllers
             //CarregarDepartamentos(usuario.Iddepartamento);
             ViewBag.Iddepartamento = new SelectList(db.Departamento, "Iddepartamento", "Descricao", usuario.Iddepartamento);
 
-            return View(usuario);
+            var usuarioVM = Mapper.Map<Usuario, UsuarioVM>(usuario);
+            usuarioVM.SenhaDigitada = Crypt.Decrypt(usuario.Senha);
+
+            return View(usuarioVM);
         }
 
         // POST: Usuarios/Edit/5
@@ -141,7 +146,7 @@ namespace STV.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         //public async Task<ActionResult> Edit([Bind(Include = "Idusuario,Cpf,Nome,Email,Senha,Iddepartamento,Role")] Usuario usuario)
-        public async Task<ActionResult> Edit(int? id, string[] rolesSelecionadas)
+        public async Task<ActionResult> Edit(int? id, string[] rolesSelecionadas, string SenhaDigitada)
         {
 
             if (id == null)
@@ -154,12 +159,13 @@ namespace STV.Controllers
                   .SingleAsync();
 
             if (TryUpdateModel(usuarioToUpdate, "",
-                   new string[] { "Cpf", "Nome", "Email", "Senha", "Iddepartamento" }))
+                   new string[] { "Cpf", "Nome", "Email", "Iddepartamento" }))
             {
                 try
                 {
                     AtualizarRolesUsuario(rolesSelecionadas, usuarioToUpdate);
                     usuarioToUpdate.Stamp = DateTime.Now;
+                    usuarioToUpdate.Senha = Crypt.Encrypt(SenhaDigitada);
                     db.SaveChanges();
 
                     return RedirectToAction("Index");

@@ -66,8 +66,9 @@ namespace STV.Controllers
             {
                 using (STVDbContext db = new STVDbContext())
                 {
+                    var senha = Crypt.Encrypt(Anonymous.Senha);
                     var usuarioAutenticado = db.Usuario
-                        .Where(a => a.Cpf.Equals(Anonymous.Cpf) && a.Senha.Equals(Anonymous.Senha))
+                        .Where(a => a.Cpf.Equals(Anonymous.Cpf) && a.Senha.Equals(senha))
                         .Select(a => new 
                         {
                             Idusuario = a.Idusuario,
