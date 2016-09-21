@@ -148,7 +148,6 @@ namespace STV.Controllers
         //public async Task<ActionResult> Edit([Bind(Include = "Idusuario,Cpf,Nome,Email,Senha,Iddepartamento,Role")] Usuario usuario)
         public async Task<ActionResult> Edit(int? id, string[] rolesSelecionadas, string SenhaDigitada)
         {
-
             if (id == null)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
@@ -275,5 +274,7 @@ namespace STV.Controllers
             }
             base.Dispose(disposing);
         }
+
+
     }
 }

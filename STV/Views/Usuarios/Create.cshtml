@@ -7,7 +7,7 @@
 <h2>Create</h2>
 
 
-@using (Html.BeginForm())
+@using (Ajax.BeginForm("Create", new AjaxOptions { HttpMethod = "Post", OnBegin = "onBeginAjax", OnComplete = "onCompleteAjax", OnFailure = "MostrarMensagem('Erro',2);", OnSuccess = "MostrarMensagem('Sucesso',1);" }))
 {
     @Html.AntiForgeryToken()
 

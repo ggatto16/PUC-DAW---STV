@@ -13,11 +13,32 @@
 
     <script>
         function onBeginAjax() {
-        $('#divCarregando').fadeIn();
+            $('#divCarregando').fadeIn();
         }
 
         function onCompleteAjax() {
-        $('#divCarregando').fadeOut();
+            $('#divCarregando').fadeOut();
+        }
+
+        function MostrarMensagem(msg, tipo) {
+            switch (tipo) {
+                case 1: //sucesso
+                    $('#lblMensagemSucesso').text("✔ " + msg);
+                    $('#divMensagemSucesso').fadeIn();
+                    break;
+                case 2: //Erro
+                    $('#lblMensagemErro').text("✖ " + msg);
+                    $('#divMensagemErro').fadeIn();
+                    break;
+                case 3: //Alerta
+                    $('#lblMensagemAlerta').text("❗ " + msg);
+                    $('#divMensagemAlerta').fadeIn();
+                    break;
+                default:
+                    $('#lblMensagemAlerta').text("❗ " + msg);
+                    $('#divMensagemAlerta').fadeIn();
+                    break;
+            }
         }
     </script>
 
@@ -63,7 +84,16 @@
         <div class="text-danger">ViewBag.MensagemErro</div>
     }
 
+
     <div class="container body-content">
+        <div>
+            <div id="divMensagemErro" class="col-md-12 bg-danger text-danger" style="display:none; margin: 20px 0 20px 0;">
+                <label id="lblMensagemErro" style="padding: 5px;"></label>
+            </div>
+            <div id="divMensagemSucesso" class="col-md-12 bg-success text-success" style="display:none; margin: 20px 0 20px 0;">
+                <label id="lblMensagemSucesso" style="padding: 1em;"></label>
+            </div>
+        </div>
         @RenderBody()
     </div>
 
