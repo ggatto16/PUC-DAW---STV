@@ -93,12 +93,20 @@ namespace STV.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit([Bind(Include = "Iddepartamento,Descricao,Status,Stamp")] Departamento departamento)
         {
-            if (ModelState.IsValid)
+
+            try
             {
-                departamento.Stamp = DateTime.Now;
-                db.Entry(departamento).State = EntityState.Modified;
-                await db.SaveChangesAsync();
-                return RedirectToAction("Index");
+                if (ModelState.IsValid)
+                {
+                    departamento.Stamp = DateTime.Now;
+                    db.Entry(departamento).State = EntityState.Modified;
+                    await db.SaveChangesAsync();
+                    return RedirectToAction("Index");
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", ex.Message);
             }
             return View(departamento);
         }

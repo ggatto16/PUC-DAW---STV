@@ -6,42 +6,8 @@
     <title>@ViewBag.Title - KD - Knowledge Database</title>
 
     @Styles.Render("~/Content/css")
-
     @RenderSection("MeusEstilos", required: false)
-
     @Scripts.Render("~/bundles/modernizr")
-
-    <script>
-        function onBeginAjax() {
-            $('#divCarregando').fadeIn();
-        }
-
-        function onCompleteAjax() {
-            $('#divCarregando').fadeOut();
-        }
-
-        function MostrarMensagem(msg, tipo) {
-            switch (tipo) {
-                case 1: //sucesso
-                    $('#lblMensagemSucesso').text("✔ " + msg);
-                    $('#divMensagemSucesso').fadeIn();
-                    break;
-                case 2: //Erro
-                    $('#lblMensagemErro').text("✖ " + msg);
-                    $('#divMensagemErro').fadeIn();
-                    break;
-                case 3: //Alerta
-                    $('#lblMensagemAlerta').text("❗ " + msg);
-                    $('#divMensagemAlerta').fadeIn();
-                    break;
-                default:
-                    $('#lblMensagemAlerta').text("❗ " + msg);
-                    $('#divMensagemAlerta').fadeIn();
-                    break;
-            }
-        }
-    </script>
-
 
 </head>
 <body>
@@ -79,21 +45,20 @@
         </div>
     </div>
 
-    @if (ViewBag.MensagemErro != null)
-    {
-        <div class="text-danger">ViewBag.MensagemErro</div>
-    }
-
-
     <div class="container body-content">
-        <div>
-            <div id="divMensagemErro" class="col-md-12 bg-danger text-danger" style="display:none; margin: 20px 0 20px 0;">
-                <label id="lblMensagemErro" style="padding: 5px;"></label>
+        @if (ViewBag.MensagemErro != null)
+        {
+            <div id="divMensagem" class="col-md-12 bg-danger text-danger" style="display:none; margin: 20px 0 20px 0;">
+                <label id="lblMensagem" style="padding: 1em;">@ViewBag.MensagemErro</label>
             </div>
-            <div id="divMensagemSucesso" class="col-md-12 bg-success text-success" style="display:none; margin: 20px 0 20px 0;">
-                <label id="lblMensagemSucesso" style="padding: 1em;"></label>
+        }
+        else
+        {
+            <div id="divMensagem" class="col-md-12" style="display:none; margin: 20px 0 20px 0;">
+                <label id="lblMensagem" style="padding: 1em;"></label>
             </div>
-        </div>
+        }
+
         @RenderBody()
     </div>
 
@@ -110,6 +75,7 @@
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/ErrorHandler")
     @RenderSection("scripts", required: false)
 </body>
 </html>

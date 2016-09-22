@@ -9,6 +9,7 @@ using System.Web.Security;
 using System.Security.Principal;
 using STV.Auth;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace STV
 {
@@ -43,6 +44,27 @@ namespace STV
                 string[] roles = lstRoles.ToArray();
 
                 HttpContext.Current.User = new GenericPrincipal(id, roles);
+            }
+        }
+
+        protected void Application_Error(object sender, EventArgs e)
+        {
+            HttpApplication app = (HttpApplication)sender;
+            HttpContext context = app.Context;
+            Exception ex = context.Server.GetLastError();
+            bool isAjaxCall = string.Equals(
+                "XMLHttpRequest",
+                context.Request.Headers["x-requested-with"],
+                StringComparison.OrdinalIgnoreCase
+            );
+            if (isAjaxCall)
+            {
+                context.Response.StatusCode = 500;
+                context.Response.Write(ex.Message);
+            }
+            else
+            {
+                // TODO: Handle the case of non async calls
             }
         }
 

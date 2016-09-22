@@ -386,6 +386,7 @@
     <Content Include="App_Data\stvdb_13072016.dacpac" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="Scripts\ErrorHandler.js" />
     <Content Include="Scripts\fileinput\fileinput.min.js" />
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
     <Content Include="fonts\glyphicons-halflings-regular.woff" />

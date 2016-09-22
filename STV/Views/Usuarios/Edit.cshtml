@@ -7,7 +7,7 @@
 <h2>Edit</h2>
 
 
-@using (Ajax.BeginForm("Edit", new AjaxOptions { HttpMethod = "Post", OnBegin = "onBeginAjax", OnComplete = "onCompleteAjax", OnFailure = "MostrarMensagem('Ops! Algo deu errado',2);", OnSuccess = "MostrarMensagem('Dados salvos com sucesso',1);" }))
+@using (Ajax.BeginForm("Edit", new AjaxOptions { HttpMethod = "Post", OnBegin = "onBeginAjax", OnComplete = "onCompleteAjax", OnFailure = "OnFailure", OnSuccess = "MostrarMensagem('Dados salvos com sucesso',1);" }))
 {
     @Html.AntiForgeryToken()
     

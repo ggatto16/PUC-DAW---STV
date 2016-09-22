@@ -10,7 +10,7 @@
     @Html.ActionLink("Create New", "Create")
 </p>
 
-@using (Html.BeginForm("Index", "Usuarios", FormMethod.Get))
+@using (Ajax.BeginForm("Index", new AjaxOptions { HttpMethod = "Get", OnBegin = "onBeginAjax", OnComplete = "onCompleteAjax", OnFailure = "OnFailure" }))
 {
     <p>
         Informe o CPF: @Html.TextBox("Cpf", ViewBag.FiltroCPF as string)
