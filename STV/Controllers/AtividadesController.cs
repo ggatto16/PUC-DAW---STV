@@ -32,7 +32,10 @@ namespace STV.Controllers
         public async Task<ActionResult> CarregarAtividade(int? id, int? index)
         {
             if (id == null)
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            {
+                TempData["msgErr"] = "Ops! Requisição inválida.";
+                return RedirectToAction("Index", "Home");
+            }
 
             Atividade atividade = await db.Atividade
                 .Where(a => a.Idatividade == id)
@@ -91,7 +94,10 @@ namespace STV.Controllers
         public async Task<ActionResult> Finalizar(int? id)
         {
             if (id == null)
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            {
+                TempData["msgErr"] = "Ops! Requisição inválida.";
+                return RedirectToAction("Index", "Home");
+            }
 
             Atividade atividade = await db.Atividade
                 .Where(a => a.Idatividade == id)
@@ -133,6 +139,9 @@ namespace STV.Controllers
         // GET: Atividades
         public async Task<ActionResult> Index(int idunidade = 0)
         {
+            ViewBag.MensagemSucesso = TempData["msg"];
+            ViewBag.MensagemErro = TempData["msgErr"];
+
             if (idunidade != 0)
             {
                 var atividades = from a in db.Atividade where a.Unidade.Idunidade == idunidade select a;
@@ -148,6 +157,9 @@ namespace STV.Controllers
         // GET: Atividades/Details/5
         public async Task<ActionResult> Details(int? id, int? Idquestao)
         {
+            ViewBag.MensagemSucesso = TempData["msg"];
+            ViewBag.MensagemErro = TempData["msgErr"];
+
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);

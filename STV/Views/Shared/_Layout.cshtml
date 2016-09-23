@@ -46,18 +46,12 @@
     </div>
 
     <div class="container body-content">
-        @if (ViewBag.MensagemErro != null)
-        {
-            <div id="divMensagem" class="col-md-12 bg-danger text-danger" style="display:none; margin: 20px 0 20px 0;">
-                <label id="lblMensagem" style="padding: 1em;">@ViewBag.MensagemErro</label>
-            </div>
-        }
-        else
-        {
-            <div id="divMensagem" class="col-md-12" style="display:none; margin: 20px 0 20px 0;">
-                <label id="lblMensagem" style="padding: 1em;"></label>
-            </div>
-        }
+        <div id="divVbMensagem" class="col-md-12" style="display:none; margin: 20px 0 20px 0; border-radius: 4px;">
+            <label id="lblVbMensagem" style="padding: 1em;"></label>
+        </div>
+        <div id="divMensagem" class="col-md-12" style="display:none; margin: 20px 0 20px 0;">
+            <label id="lblMensagem" style="padding: 1em;"></label>
+        </div>
 
         @RenderBody()
     </div>
@@ -77,5 +71,38 @@
     @Scripts.Render("~/bundles/bootstrap")
     @Scripts.Render("~/bundles/ErrorHandler")
     @RenderSection("scripts", required: false)
+
+    <script>
+        $(document).ready(function () {
+
+            var vlabel = $('#lblVbMensagem');
+            var vdiv = $('#divVbMensagem');
+
+            @if(!string.IsNullOrEmpty(ViewBag.MensagemSucesso))
+            {
+                <text>
+                    vlabel.text("✔ " + '@Html.Raw(ViewBag.MensagemSucesso)');
+                    vdiv.addClass('bg-success text-success');
+                    vdiv.fadeIn();
+                    setTimeout(HideVMessage, 10000);
+                </text>
+                ViewBag.MensagemSucesso = null;
+            }
+            else if (!string.IsNullOrEmpty(ViewBag.MensagemErro))
+            {
+                <text>
+                    vlabel.text("✖ " + '@Html.Raw(ViewBag.MensagemErro)');
+                    vdiv.addClass('bg-danger text-danger');
+                    vdiv.fadeIn();
+                    setTimeout(HideVMessage, 10000);
+                </text>
+                ViewBag.MensagemErro = null;
+            }
+        });
+
+        function HideVMessage() {
+            $('#divVbMensagem').fadeOut();
+        }
+    </script>
 </body>
 </html>

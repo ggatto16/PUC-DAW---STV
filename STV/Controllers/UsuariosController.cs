@@ -1,20 +1,17 @@
-﻿using System;
+﻿using AutoMapper;
+using MvcRazorToPdf;
+using STV.Auth;
+using STV.DAL;
+using STV.Models;
+using STV.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Net;
-using System.Web;
 using System.Web.Mvc;
-using STV.Models;
-using STV.DAL;
-using AutoMapper;
-using STV.ViewModels;
-using System.Data.Entity.Infrastructure;
-using MvcRazorToPdf;
-using iTextSharp.text;
-using STV.Auth;
 
 namespace STV.Controllers
 {
@@ -45,6 +42,8 @@ namespace STV.Controllers
         {
             ViewBag.FiltroCPF = cpf;
             ViewBag.FiltroNome = nome;
+            ViewBag.MensagemSucesso = TempData["msg"];
+            ViewBag.MensagemErro = TempData["msgErr"];
 
             var usuarios = from u in db.Usuario select u;
 
@@ -63,16 +62,22 @@ namespace STV.Controllers
         // GET: Usuarios/Details/5
         public async Task<ActionResult> Details(int? id)
         {
-            if (id == null)
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                if (id == null)
+                    throw new ApplicationException("Ops! Requisição inválida.");
+                
+                Usuario usuario = await db.Usuario.FindAsync(id);
+                if (usuario == null)
+                    throw new ApplicationException("Usuário não encontrado.");
+                
+                return View(usuario);
             }
-            Usuario usuario = await db.Usuario.FindAsync(id);
-            if (usuario == null)
+            catch (ApplicationException ex)
             {
-                return HttpNotFound();
+                TempData["msgErr"] = ex.Message;
+                return RedirectToAction("Index");
             }
-            return View(usuario);
         }
 
         // GET: Usuarios/Create
@@ -82,6 +87,7 @@ namespace STV.Controllers
             usuario.Roles = new List<Role>();
             CarregarRolesDisponiveis(usuario);
             ViewBag.Iddepartamento = new SelectList(db.Departamento, "Iddepartamento", "Descricao");
+
             return View();
         }
 
@@ -109,35 +115,46 @@ namespace STV.Controllers
                 usuario.Senha = Crypt.Encrypt(usuario.Senha);
                 db.Usuario.Add(usuario);
                 await db.SaveChangesAsync();
+                TempData["msg"] = "Usuário criado!";
                 return RedirectToAction("Index");
             }
 
+            usuario.Roles = new List<Role>();
+            CarregarRolesDisponiveis(usuario);
+            ViewBag.Iddepartamento = new SelectList(db.Departamento, "Iddepartamento", "Descricao");
             return View(usuario);
         }
 
         // GET: Usuarios/Edit/5
-        public async Task<ActionResult> Edit(int? id)
+        public ActionResult Edit(int? id)
         {
-            if (id == null)
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            try
+            {
+                if (id == null)
+                    throw new ApplicationException("Ops! Requisição inválida.");
 
-            Usuario usuario = await db.Usuario
-                .Include(u => u.Departamento)
-                .Include(r => r.Roles)
-                .Where(u => u.Idusuario == id)
-                .SingleAsync();
-                
-            if (usuario == null)
-                return HttpNotFound();
+                Usuario usuario = db.Usuario
+                    .Include(u => u.Departamento)
+                    .Include(r => r.Roles)
+                    .Where(u => u.Idusuario == id)
+                    .Single();
 
-            CarregarRolesDisponiveis(usuario);
-            //CarregarDepartamentos(usuario.Iddepartamento);
-            ViewBag.Iddepartamento = new SelectList(db.Departamento, "Iddepartamento", "Descricao", usuario.Iddepartamento);
+                if (usuario == null)
+                    throw new ApplicationException("Usuário não encontrado.");
 
-            var usuarioVM = Mapper.Map<Usuario, UsuarioVM>(usuario);
-            usuarioVM.SenhaDigitada = Crypt.Decrypt(usuario.Senha);
+                CarregarRolesDisponiveis(usuario);
+                ViewBag.Iddepartamento = new SelectList(db.Departamento, "Iddepartamento", "Descricao", usuario.Iddepartamento);
 
-            return View(usuarioVM);
+                var usuarioVM = Mapper.Map<Usuario, UsuarioVM>(usuario);
+                usuarioVM.SenhaDigitada = Crypt.Decrypt(usuario.Senha);
+
+                return View(usuarioVM);
+            }
+            catch (ApplicationException ex)
+            {
+                TempData["msgErr"] = ex.Message;
+                return RedirectToAction("Index");
+            }
         }
 
         // POST: Usuarios/Edit/5
@@ -148,8 +165,12 @@ namespace STV.Controllers
         //public async Task<ActionResult> Edit([Bind(Include = "Idusuario,Cpf,Nome,Email,Senha,Iddepartamento,Role")] Usuario usuario)
         public async Task<ActionResult> Edit(int? id, string[] rolesSelecionadas, string SenhaDigitada)
         {
+
             if (id == null)
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            {
+                TempData["msgErr"] = "Ops! Requisição inválida.";
+                return RedirectToAction("Index");
+            }
 
             var usuarioToUpdate = await db.Usuario
                   .Include(u => u.Departamento)
@@ -166,18 +187,17 @@ namespace STV.Controllers
                     usuarioToUpdate.Stamp = DateTime.Now;
                     usuarioToUpdate.Senha = Crypt.Encrypt(SenhaDigitada);
                     db.SaveChanges();
-
+                    TempData["msg"] = "Dados Salvos!";
                     return RedirectToAction("Index");
                 }
                 catch (RetryLimitExceededException /* dex */)
                 {
                     //Log the error (uncomment dex variable name and add a line here to write a log.
-                    ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists, see your system administrator.");
+                    ModelState.AddModelError("", "Não foi possível salver as alterações.");
                 }
             }
 
             CarregarRolesDisponiveis(usuarioToUpdate);
-            //CarregarDepartamentos(usuarioToUpdate.Iddepartamento);
             ViewBag.Iddepartamento = new SelectList(db.Departamento, "Iddepartamento", "Descricao", usuarioToUpdate.Iddepartamento);
             return View(usuarioToUpdate);
         }
@@ -217,24 +237,30 @@ namespace STV.Controllers
         private void CarregarDepartamentos(object departamentoSelecionado = null)
         {
             var departmentosQuery = from d in db.Departamento
-                                   orderby d.Descricao
-                                   select d;
+                                    orderby d.Descricao
+                                    select d;
             ViewBag.Iddepartamento = new SelectList(departmentosQuery, "Iddepartamento", "Descricao", departamentoSelecionado);
         }
 
         // GET: Usuarios/Delete/5
         public async Task<ActionResult> Delete(int? id)
         {
-            if (id == null)
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                if (id == null)
+                    throw new ApplicationException("Ops! Requisição inválida.");
+                
+                Usuario usuario = await db.Usuario.FindAsync(id);
+                if (usuario == null)
+                    throw new ApplicationException("Usuário não encontrado.");
+
+                return View(usuario);
             }
-            Usuario usuario = await db.Usuario.FindAsync(id);
-            if (usuario == null)
+            catch (ApplicationException ex)
             {
-                return HttpNotFound();
+                TempData["msgErr"] = ex.Message;
+                return RedirectToAction("Index");
             }
-            return View(usuario);
         }
 
         // POST: Usuarios/Delete/5
@@ -242,11 +268,20 @@ namespace STV.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
-            Usuario usuario = await db.Usuario.FindAsync(id);
-            db.Entry(usuario).Collection("Roles").Load();
-            db.Usuario.Remove(usuario);
-            await db.SaveChangesAsync();
-            return RedirectToAction("Index");
+            try
+            {
+                Usuario usuario = await db.Usuario.FindAsync(id);
+                db.Entry(usuario).Collection("Roles").Load();
+                db.Usuario.Remove(usuario);
+                await db.SaveChangesAsync();
+                TempData["msg"] = "Usuário excluído!";
+                return RedirectToAction("Index");
+            }
+            catch (Exception)
+            {
+                TempData["msgErr"] = "Usuário não pode ser excluído.";
+                return RedirectToAction("Index");
+            }
         }
 
         private void CarregarRolesDisponiveis(Usuario usuario)

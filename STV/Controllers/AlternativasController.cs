@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Net;
-using System.Web;
-using System.Web.Mvc;
-using STV.Models;
+﻿using AutoMapper;
 using STV.DAL;
+using STV.Models;
 using STV.ViewModels;
-using AutoMapper;
+using System;
+using System.Data.Entity;
+using System.Net;
+using System.Threading.Tasks;
+using System.Web.Mvc;
 
 namespace STV.Controllers
 {
@@ -21,6 +17,9 @@ namespace STV.Controllers
         // GET: Alternativas
         public async Task<ActionResult> Index()
         {
+            ViewBag.MensagemSucesso = TempData["msg"];
+            ViewBag.MensagemErro = TempData["msgErr"];
+
             var alternativa = db.Alternativa.Include(a => a.Questao);
             return View(await alternativa.ToListAsync());
         }
@@ -28,16 +27,22 @@ namespace STV.Controllers
         // GET: Alternativas/Details/5
         public async Task<ActionResult> Details(int? id)
         {
-            if (id == null)
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                if (id == null)
+                    throw new ApplicationException("Ops! Requisição inválida.");
+
+                Alternativa alternativa = await db.Alternativa.FindAsync(id);
+                if (alternativa == null)
+                    throw new ApplicationException("Alternativa não encontrada.");
+
+                return View(alternativa);
             }
-            Alternativa alternativa = await db.Alternativa.FindAsync(id);
-            if (alternativa == null)
+            catch (ApplicationException ex)
             {
-                return HttpNotFound();
+                TempData["msgErr"] = ex.Message;
+                return RedirectToAction("Index", "Home");
             }
-            return View(alternativa);
         }
 
         // GET: Alternativas/Create
@@ -72,6 +77,7 @@ namespace STV.Controllers
                     db.Questao.Attach(questao);
                     db.Entry(questao).Property(q => q.IdalternativaCorreta).IsModified = true;
                     await db.SaveChangesAsync();
+                    TempData["msg"] = "Dados salvos!";
                 }
 
                 return VoltarParaListagemVM(alternativa);
@@ -84,18 +90,26 @@ namespace STV.Controllers
         // GET: Alternativas/Edit/5
         public async Task<ActionResult> Edit(int? id)
         {
-            if (id == null)
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            
-            Alternativa alternativa = await db.Alternativa.FindAsync(id);
+            try
+            {
+                if (id == null)
+                    throw new ApplicationException("Ops! Requisição inválida.");
 
-            if (alternativa == null)
-                return HttpNotFound();
+                Alternativa alternativa = await db.Alternativa.FindAsync(id);
 
-            var alternativaVM = Mapper.Map<Alternativa, AlternativaVM>(alternativa);
+                if (alternativa == null)
+                    throw new ApplicationException("Alternativa não encontrada.");
 
-            ViewBag.Idquestao = new SelectList(db.Questao, "Idquestao", "Descricao", alternativa.Idquestao);
-            return View(alternativaVM);
+                var alternativaVM = Mapper.Map<Alternativa, AlternativaVM>(alternativa);
+
+                ViewBag.Idquestao = new SelectList(db.Questao, "Idquestao", "Descricao", alternativa.Idquestao);
+                return View(alternativaVM);
+            }
+            catch (ApplicationException ex)
+            {
+                TempData["msgErr"] = ex.Message;
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         // POST: Alternativas/Edit/5
@@ -152,30 +166,16 @@ namespace STV.Controllers
         }
 
         //Retorna para a tela principal da Atividade
-        private RedirectToRouteResult VoltarParaListagem (Alternativa alternativa)
+        private RedirectToRouteResult VoltarParaListagem(Alternativa alternativa)
         {
-            try
-            {
-                Questao questao = db.Questao.Find(alternativa.Idquestao);
-                return RedirectToAction("Details", "Atividades", new { id = questao.Idatividade, Idquestao = alternativa.Idquestao });
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            Questao questao = db.Questao.Find(alternativa.Idquestao);
+            return RedirectToAction("Details", "Atividades", new { id = questao.Idatividade, Idquestao = alternativa.Idquestao });
         }
 
         private RedirectToRouteResult VoltarParaListagemVM(AlternativaVM alternativa)
         {
-            try
-            {
-                Questao questao = db.Questao.Find(alternativa.Idquestao);
-                return RedirectToAction("Details", "Atividades", new { id = questao.Idatividade, Idquestao = alternativa.Idquestao });
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            Questao questao = db.Questao.Find(alternativa.Idquestao);
+            return RedirectToAction("Details", "Atividades", new { id = questao.Idatividade, Idquestao = alternativa.Idquestao });
         }
 
 
