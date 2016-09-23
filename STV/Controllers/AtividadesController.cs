@@ -54,7 +54,10 @@ namespace STV.Controllers
                 if (AtividadeModel.QuestaoToShow != null)
                     AtividadeModel.QuestaoToShow.Indice = (int)index + 1;
                 else
+                {
+                    TempData["msg"] = "Respostas salvas!";
                     return RedirectToAction("Details", "Cursos", new { id = atividade.Unidade.Idcurso, Idunidade = atividade.Idunidade });
+                }
             }
 
             return View("Atividade", AtividadeModel);
@@ -132,49 +135,33 @@ namespace STV.Controllers
 
             db.Nota.Add(nota);
             await db.SaveChangesAsync();
+            TempData["msg"] = "Atividade Finalizada! Aguarde o encerramento para verificar o gabarito.";
 
             return RedirectToAction("Details", "Cursos", new { id = atividade.Unidade.Idcurso, Idunidade = atividade.Idunidade });
-        }
-
-        // GET: Atividades
-        public async Task<ActionResult> Index(int idunidade = 0)
-        {
-            ViewBag.MensagemSucesso = TempData["msg"];
-            ViewBag.MensagemErro = TempData["msgErr"];
-
-            if (idunidade != 0)
-            {
-                var atividades = from a in db.Atividade where a.Unidade.Idunidade == idunidade select a;
-                return PartialView(await atividades.ToListAsync());
-            }
-            else
-            {
-                var atividades = db.Atividade.Include(m => m.Unidade);
-                return PartialView(await atividades.ToListAsync());
-            }
         }
 
         // GET: Atividades/Details/5
         public async Task<ActionResult> Details(int? id, int? Idquestao)
         {
-            ViewBag.MensagemSucesso = TempData["msg"];
-            ViewBag.MensagemErro = TempData["msgErr"];
-
-            if (id == null)
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-        
-            Atividade atividade = await db.Atividade.FindAsync(id);
+                if (id == null)
+                    throw new ApplicationException("Ops! Requisição inválida.");
 
-            if (atividade == null)
+                Atividade atividade = await db.Atividade.FindAsync(id);
+
+                if (atividade == null)
+                    throw new ApplicationException("Atividade não encontrada.");
+
+                ViewBag.QuestaoSelecionada = Idquestao;
+
+                return View(atividade);
+            }
+            catch (ApplicationException ex)
             {
-                return HttpNotFound();
+                TempData["msgErr"] = ex.Message;
+                return RedirectToAction("Index", "Home");
             }
-
-            ViewBag.QuestaoSelecionada = Idquestao;
-
-            return View(atividade);
         }
 
         // GET: Atividades/Create
@@ -197,6 +184,7 @@ namespace STV.Controllers
             {
                 db.Atividade.Add(atividade);
                 await db.SaveChangesAsync();
+                TempData["msg"] = "Dados salvos!";
                 return VoltarParaListagem(atividade);
             }
 
@@ -207,17 +195,23 @@ namespace STV.Controllers
         // GET: Atividades/Edit/5
         public async Task<ActionResult> Edit(int? id)
         {
-            if (id == null)
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                if (id == null)
+                    throw new ApplicationException("Ops! Requisição inválida.");
+
+                Atividade atividade = await db.Atividade.FindAsync(id);
+                if (atividade == null)
+                    throw new ApplicationException("Atividade não encontrada.");
+
+                ViewBag.Idunidade = new SelectList(db.Unidade, "Idunidade", "Titulo", atividade.Idunidade);
+                return View(atividade);
             }
-            Atividade atividade = await db.Atividade.FindAsync(id);
-            if (atividade == null)
+            catch (ApplicationException ex)
             {
-                return HttpNotFound();
+                TempData["msgErr"] = ex.Message;
+                return RedirectToAction("Index", "Home");
             }
-            ViewBag.Idunidade = new SelectList(db.Unidade, "Idunidade", "Titulo", atividade.Idunidade);
-            return View(atividade);
         }
 
         // POST: Atividades/Edit/5
@@ -231,6 +225,7 @@ namespace STV.Controllers
             {
                 db.Entry(atividade).State = EntityState.Modified;
                 await db.SaveChangesAsync();
+                TempData["msg"] = "Dados salvos!";
                 return VoltarParaListagem(atividade);
             }
             ViewBag.Idunidade = new SelectList(db.Unidade, "Idunidade", "Titulo", atividade.Idunidade);
@@ -240,16 +235,22 @@ namespace STV.Controllers
         // GET: Atividades/Delete/5
         public async Task<ActionResult> Delete(int? id)
         {
-            if (id == null)
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                if (id == null)
+                    throw new ApplicationException("Ops! Requisição inválida.");
+
+                Atividade atividade = await db.Atividade.FindAsync(id);
+                if (atividade == null)
+                    throw new ApplicationException("Atividade não econtrada.");
+
+                return View(atividade);
             }
-            Atividade atividade = await db.Atividade.FindAsync(id);
-            if (atividade == null)
+            catch (ApplicationException ex)
             {
-                return HttpNotFound();
+                TempData["msgErr"] = ex.Message;
+                return RedirectToAction("Index", "Home");
             }
-            return View(atividade);
         }
 
         // POST: Atividades/Delete/5
@@ -258,23 +259,25 @@ namespace STV.Controllers
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
             Atividade atividade = await db.Atividade.FindAsync(id);
-            db.Atividade.Remove(atividade);
-            await db.SaveChangesAsync();
-            return VoltarParaListagem(atividade);
+            try
+            {
+                db.Atividade.Remove(atividade);
+                await db.SaveChangesAsync();
+                TempData["msg"] = "Atividade excluída!";
+                return VoltarParaListagem(atividade);
+            }
+            catch (Exception)
+            {
+                TempData["msgErr"] = "Atividade não pode ser excluída.";
+                return RedirectToAction("Details", "Cursos", new { id = atividade.Unidade.Idcurso, Idunidade = atividade.Unidade.Idunidade });
+            }
         }
 
         //Retorna para a tela principal do Curso
         private RedirectToRouteResult VoltarParaListagem(Atividade atividade)
         {
-            try
-            {
-                Unidade unidade = db.Unidade.Find(atividade.Idunidade);
-                return RedirectToAction("Details", "Cursos", new { id = unidade.Idcurso, Idunidade = atividade.Idunidade });
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            Unidade unidade = db.Unidade.Find(atividade.Idunidade);
+            return RedirectToAction("Details", "Cursos", new { id = unidade.Idcurso, Idunidade = atividade.Idunidade });
         }
 
         protected override void Dispose(bool disposing)

@@ -29,7 +29,6 @@ namespace STV.Controllers
         public CursosController()
         {
             SessionContext auth = new SessionContext();
-            //UsuarioLogado = Mapper.Map<DadosUsuario, Usuario>(auth.GetUserData());
             UsuarioLogado = auth.GetUserData();
         }
 
@@ -67,7 +66,7 @@ namespace STV.Controllers
             HTMLString.Append("</div>");
             HTMLString.Append("</div>");
 
-            string css = @".Nome{padding:320px 0 50px;font-family:'Kunstler Script';font-size:400%;color:#036;text-align:center;position:absolute;width:500px;height:535px;overflow-y:hidden;}.Curso{padding:0px 0 0 20px;font-family:'Arial';color:#036;font-size:100%;text-align:center;position:absolute;width:580px;height:60px;overflow-y:hidden;}.Instrutor{padding:127px 0 0;font-family:'Arial';color:#036;font-size:100%;text-align:center;position:absolute;width:410px}.Aluno{padding:100px 0 0;font-family:'Arial';color:#036;font-size:100%;text-align:center;position:absolute;width:410px}.Data{padding:57px 0 0;font-family:'Freestyle Script';color:#036;font-size:200%;text-align:center;position:absolute;width:320px}.LabelData{padding:0;font-family:'Arial';color:#036;font-size:100%;text-align:center;position:absolute;width:320px}"; 
+            string css = @".Nome{padding:320px 0 50px;font-family:'Kunstler Script';font-size:400%;color:#036;text-align:center;position:absolute;width:500px;height:535px;overflow-y:hidden;}.Curso{padding:0px 0 0 20px;font-family:'Arial';color:#036;font-size:100%;text-align:center;position:absolute;width:580px;height:60px;overflow-y:hidden;}.Instrutor{padding:127px 0 0;font-family:'Arial';color:#036;font-size:100%;text-align:center;position:absolute;width:410px}.Aluno{padding:100px 0 0;font-family:'Arial';color:#036;font-size:100%;text-align:center;position:absolute;width:410px}.Data{padding:57px 0 0;font-family:'Freestyle Script';color:#036;font-size:200%;text-align:center;position:absolute;width:320px}.LabelData{padding:0;font-family:'Arial';color:#036;font-size:100%;text-align:center;position:absolute;width:320px}";
 
             if (RequestExtensions.IsMobileBrowser(Request.UserAgent))
             {
@@ -153,6 +152,9 @@ namespace STV.Controllers
 
             ViewBag.Idusuario = Idusuario;
 
+            ViewBag.MensagemSucesso = TempData["msg"];
+            ViewBag.MensagemErro = TempData["msgErr"];
+
             return View(await cursos.ToListAsync());
         }
 
@@ -165,6 +167,7 @@ namespace STV.Controllers
             curso.Usuarios.Add(usuario);
 
             await db.SaveChangesAsync();
+            TempData["msg"] = "Dados salvos!";
 
             return RedirectToAction("CursosDisponiveis");
         }
@@ -191,43 +194,55 @@ namespace STV.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Index()
         {
+            ViewBag.MensagemSucesso = TempData["msg"];
+            ViewBag.MensagemErro = TempData["msgErr"];
             return View(await db.Curso.ToListAsync());
         }
 
         // GET: Cursos/Details/5
         public async Task<ActionResult> Details(int? id, int? Idunidade)
         {
-            if (id == null)
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            try
+            {
+                if (id == null)
+                    throw new ApplicationException("Ops! Requisição inválida.");
 
-            //Curso curso = await db.Curso.FindAsync(id);
+                Curso curso = await db.Curso
+                    .Include(c => c.Instrutor)
+                    .Include(c => c.Unidades)
+                    .Where(c => c.Idcurso == id)
+                    .SingleAsync();
 
-            Curso curso = await db.Curso
-                .Include(c => c.Instrutor)
-                .Include(c => c.Unidades)
-                .Where(c => c.Idcurso == id)
-                .SingleAsync();
+                if (curso == null)
+                    throw new ApplicationException("Curso não encontrado.");
 
+                var detalhesCurso = Mapper.Map<Curso, DetalhesCurso>(curso);
 
-            if (curso == null)
-                return HttpNotFound();
+                detalhesCurso.NotaCursoAtual = await db.NotaCurso.FindAsync(UsuarioLogado.Idusuario, detalhesCurso.Idcurso);
 
-            var detalhesCurso = Mapper.Map<Curso, DetalhesCurso>(curso);
+                ViewBag.MensagemSucesso = TempData["msg"];
+                ViewBag.MensagemErro = TempData["msgErr"];
+                ViewBag.UnidadeSelecionada = Idunidade;  //para reabrir o conteúdo
 
-            detalhesCurso.NotaCursoAtual = await db.NotaCurso.FindAsync(UsuarioLogado.Idusuario, detalhesCurso.Idcurso);
+                //Verificar se é instrutor
+                var cursoVerify = await db.Curso
+                    .Where(c => c.IdusuarioInstrutor == UsuarioLogado.Idusuario && c.Idcurso == id)
+                    .SingleOrDefaultAsync();
 
-            ViewBag.UnidadeSelecionada = Idunidade;  //para reabrir o conteúdo
+                detalhesCurso.IsInstutor = cursoVerify != null ? true : false;
 
-            //Verificar se é instrutor
-            var cursoVerify = await db.Curso
-                .Where(c => c.IdusuarioInstrutor == UsuarioLogado.Idusuario && c.Idcurso == id)
-                .SingleOrDefaultAsync();
+                detalhesCurso.DisponibilizarCertificado = await VerificarCertificado(detalhesCurso);
 
-            detalhesCurso.IsInstutor = cursoVerify != null ? true : false;
-
-            detalhesCurso.DisponibilizarCertificado = await VerificarCertificado(detalhesCurso);
-
-            return View(detalhesCurso);
+                return View(detalhesCurso);
+            }
+            catch (ApplicationException ex)
+            {
+                TempData["msgErr"] = ex.Message;
+                if (User.IsInRole("Admin"))
+                    return RedirectToAction("Index");
+                else
+                    return RedirectToAction("CursosDisponiveis");
+            }
         }
 
         private async Task<bool> VerificarCertificado(DetalhesCurso detalhesCurso)
@@ -246,7 +261,7 @@ namespace STV.Controllers
                 }
 
                 if ((notaUsuario * 100 / detalhesCurso.NotaMaxima) < 70)
-                     return false;
+                    return false;
 
                 var materiaisConsultadosNoCurso = usuario.MateriaisConsultados
                     .Where(m => m.Unidade.Idcurso == detalhesCurso.Idcurso);
@@ -299,6 +314,7 @@ namespace STV.Controllers
                 curso.Stamp = DateTime.Now;
                 db.Curso.Add(curso);
                 await db.SaveChangesAsync();
+                TempData["msg"] = "Dados Salvos!";
                 return RedirectToAction("Index");
             }
 
@@ -309,18 +325,26 @@ namespace STV.Controllers
         // GET: Cursos/Edit/5
         public async Task<ActionResult> Edit(int? id)
         {
-            if (id == null)
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            try
+            {
+                if (id == null)
+                    throw new ApplicationException("Ops! Requisição inválida.");
 
-            Curso curso = await db.Curso.FindAsync(id);
+                Curso curso = await db.Curso.FindAsync(id);
 
-            if (curso == null)
-                return HttpNotFound();
+                if (curso == null)
+                    throw new ApplicationException("Curso não encontrado.");
 
-            CarregarDepartamentos(curso);
+                CarregarDepartamentos(curso);
 
-            ViewBag.IdusuarioInstrutor = new SelectList(db.Usuario, "Idusuario", "Nome");
-            return View(curso);
+                ViewBag.IdusuarioInstrutor = new SelectList(db.Usuario, "Idusuario", "Nome");
+                return View(curso);
+            }
+            catch (ApplicationException ex)
+            {
+                TempData["msgErr"] = ex.Message;
+                return RedirectToAction("Index");
+            }
         }
 
         // POST: Cursos/Edit/5
@@ -331,6 +355,12 @@ namespace STV.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(int? id, string[] departamentosSelecionados)
         {
+            if (id == null)
+            {
+                TempData["msgErr"] = "Ops! Requisição inválida.";
+                return RedirectToAction("Index");
+            }
+
             var cursoToUpdate = await db.Curso
                   .Include(u => u.Departamentos)
                   .Include(u => u.Instrutor)
@@ -345,13 +375,13 @@ namespace STV.Controllers
                     AtualizarVisibilidadeDepartamentos(departamentosSelecionados, cursoToUpdate);
                     cursoToUpdate.Stamp = DateTime.Now;
                     db.SaveChanges();
-
+                    TempData["msg"] = "Dados Salvos!";
                     return RedirectToAction("Index");
                 }
                 catch (RetryLimitExceededException /* dex */)
                 {
                     //Log the error (uncomment dex variable name and add a line here to write a log.
-                    ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists, see your system administrator.");
+                    ModelState.AddModelError("", "Não foi possível salver as alterações.");
                 }
             }
 
@@ -401,16 +431,22 @@ namespace STV.Controllers
         // GET: Cursos/Delete/5
         public async Task<ActionResult> Delete(int? id)
         {
-            if (id == null)
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                if (id == null)
+                    throw new ApplicationException("Ops! Requisição inválida.");
+
+                Curso curso = await db.Curso.FindAsync(id);
+                if (curso == null)
+                    throw new ApplicationException("Curso não encontrado.");
+
+                return View(curso);
             }
-            Curso curso = await db.Curso.FindAsync(id);
-            if (curso == null)
+            catch (ApplicationException ex)
             {
-                return HttpNotFound();
+                TempData["msgErr"] = ex.Message;
+                return RedirectToAction("Index");
             }
-            return View(curso);
         }
 
         // POST: Cursos/Delete/5
@@ -419,12 +455,20 @@ namespace STV.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
-            Curso curso = await db.Curso.FindAsync(id);
-            db.Entry(curso).Collection("Departamentos").Load(); //Para remover também a referência
-            db.Curso.Remove(curso);
-            await db.SaveChangesAsync();
-
-            return RedirectToAction("Index");
+            try
+            {
+                Curso curso = await db.Curso.FindAsync(id);
+                db.Entry(curso).Collection("Departamentos").Load(); //Para remover também a referência
+                db.Curso.Remove(curso);
+                await db.SaveChangesAsync();
+                TempData["msg"] = "Curso excluído!";
+                return RedirectToAction("Index");
+            }
+            catch (Exception)
+            {
+                TempData["msgErr"] = "Usuário não pode ser excluído.";
+                return RedirectToAction("Index");
+            }
         }
 
         protected override void Dispose(bool disposing)

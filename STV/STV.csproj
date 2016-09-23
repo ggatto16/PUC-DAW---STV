@@ -484,7 +484,6 @@
     <Content Include="Views\Atividades\Delete.cshtml" />
     <Content Include="Views\Atividades\Details.cshtml" />
     <Content Include="Views\Atividades\Edit.cshtml" />
-    <Content Include="Views\Atividades\Index.cshtml" />
     <Content Include="Views\Unidades\Conteudo.cshtml" />
     <Content Include="Views\Questoes\Create.cshtml" />
     <Content Include="Views\Questoes\Delete.cshtml" />

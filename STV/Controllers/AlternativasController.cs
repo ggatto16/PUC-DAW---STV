@@ -132,6 +132,7 @@ namespace STV.Controllers
 
                 db.Entry(ModelAlternativa).State = EntityState.Modified;
                 await db.SaveChangesAsync();
+                TempData["msg"] = "Dados salvos!";
 
                 return VoltarParaListagemVM(alternativa);
             }
@@ -142,16 +143,22 @@ namespace STV.Controllers
         // GET: Alternativas/Delete/5
         public async Task<ActionResult> Delete(int? id)
         {
-            if (id == null)
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                if (id == null)
+                    throw new ApplicationException("Ops! Requisição inválida.");
+
+                Alternativa alternativa = await db.Alternativa.FindAsync(id);
+                if (alternativa == null)
+                    throw new ApplicationException("Alternativa não encontrada.");
+
+                return View(alternativa);
             }
-            Alternativa alternativa = await db.Alternativa.FindAsync(id);
-            if (alternativa == null)
+            catch (ApplicationException ex)
             {
-                return HttpNotFound();
+                TempData["msgErr"] = ex.Message;
+                return RedirectToAction("Index", "Home");
             }
-            return View(alternativa);
         }
 
         // POST: Alternativas/Delete/5
@@ -159,10 +166,18 @@ namespace STV.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
-            Alternativa alternativa = await db.Alternativa.FindAsync(id);
-            db.Alternativa.Remove(alternativa);
-            await db.SaveChangesAsync();
-            return VoltarParaListagem(alternativa);
+            try
+            {
+                Alternativa alternativa = await db.Alternativa.FindAsync(id);
+                db.Alternativa.Remove(alternativa);
+                await db.SaveChangesAsync();
+                return VoltarParaListagem(alternativa);
+            }
+            catch (Exception)
+            {
+                TempData["msgErr"] = "Alternativa não pode ser excluída.";
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         //Retorna para a tela principal da Atividade
