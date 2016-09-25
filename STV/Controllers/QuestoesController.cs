@@ -36,7 +36,8 @@ namespace STV.Controllers
         {
             if (Idquestao == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                TempData["msgErr"] = "Ops! Requisição inválida.";
+                return RedirectToAction("Index", "Home");
             }
 
             var questao = await db.Questao.FindAsync(Idquestao);
@@ -51,16 +52,22 @@ namespace STV.Controllers
         // GET: Questoes/Details/5
         public async Task<ActionResult> Details(int? id)
         {
-            if (id == null)
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                if (id == null)
+                    throw new ApplicationException("Ops! Requisição inválida.");
+
+                Questao questao = await db.Questao.FindAsync(id);
+                if (questao == null)
+                    throw new ApplicationException("Questão não encontrada.");
+
+                return View(questao);
             }
-            Questao questao = await db.Questao.FindAsync(id);
-            if (questao == null)
+            catch (ApplicationException ex)
             {
-                return HttpNotFound();
+                TempData["msgErr"] = ex.Message;
+                return RedirectToAction("Index", "Home");
             }
-            return View(questao);
         }
 
         // GET: Questoes/Create
@@ -85,6 +92,7 @@ namespace STV.Controllers
             {
                 db.Questao.Add(questao);
                 await db.SaveChangesAsync();
+                TempData["msg"] = "Dados salvos!";
                 return VoltarParaListagem(questao);
             }
 
@@ -96,18 +104,24 @@ namespace STV.Controllers
         // GET: Questoes/Edit/5
         public async Task<ActionResult> Edit(int? id)
         {
-            if (id == null)
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                if (id == null)
+                    throw new ApplicationException("Ops! Requisição inválida.");
+
+                Questao questao = await db.Questao.FindAsync(id);
+                if (questao == null)
+                    throw new ApplicationException("Questão não encontrada.");
+
+                ViewBag.IdalternativaCorreta = new SelectList(db.Alternativa.Where(a => a.Idquestao == id), "Idalternativa", "Descricao");
+                ViewBag.Idatividade = new SelectList(db.Atividade, "Idatividade", "Idatividade", questao.Idatividade);
+                return View(questao);
             }
-            Questao questao = await db.Questao.FindAsync(id);
-            if (questao == null)
+            catch (ApplicationException ex)
             {
-                return HttpNotFound();
+                TempData["msgErr"] = ex.Message;
+                return RedirectToAction("Index", "Home");
             }
-            ViewBag.IdalternativaCorreta = new SelectList(db.Alternativa.Where(a => a.Idquestao == id), "Idalternativa", "Descricao");
-            ViewBag.Idatividade = new SelectList(db.Atividade, "Idatividade", "Idatividade", questao.Idatividade);
-            return View(questao);
         }
 
         // POST: Questoes/Edit/5
@@ -121,6 +135,7 @@ namespace STV.Controllers
             {
                 db.Entry(questao).State = EntityState.Modified;
                 await db.SaveChangesAsync();
+                TempData["msg"] = "Dados salvos!";
                 return VoltarParaListagem(questao);
             }
             ViewBag.IdalternativaCorreta = new SelectList(db.Alternativa, "Idalternativa", "Descricao", questao.IdalternativaCorreta);
@@ -131,16 +146,22 @@ namespace STV.Controllers
         // GET: Questoes/Delete/5
         public async Task<ActionResult> Delete(int? id)
         {
-            if (id == null)
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                if (id == null)
+                    throw new ApplicationException("Ops! Requisição inválida.");
+
+                Questao questao = await db.Questao.FindAsync(id);
+                if (questao == null)
+                    throw new ApplicationException("Questão não econtrada.");
+
+                return View(questao);
             }
-            Questao questao = await db.Questao.FindAsync(id);
-            if (questao == null)
+            catch (ApplicationException ex)
             {
-                return HttpNotFound();
+                TempData["msgErr"] = ex.Message;
+                return RedirectToAction("Index", "Home");
             }
-            return View(questao);
         }
 
         // POST: Questoes/Delete/5
@@ -149,23 +170,29 @@ namespace STV.Controllers
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
             Questao questao = await db.Questao.FindAsync(id);
-            db.Questao.Remove(questao);
-            await db.SaveChangesAsync();
-            return VoltarParaListagem(questao);
+            try
+            {
+                db.Questao.Remove(questao);
+                await db.SaveChangesAsync();
+                TempData["msg"] = "Questão excluída!";
+                return VoltarParaListagem(questao);
+            }
+            catch (Exception)
+            {
+                TempData["msgErr"] = "Questão não pode ser excluída.";
+                return RedirectToAction("Details", "Atividades", new
+                {
+                    id = questao.Idatividade,
+                    Idquestao = questao.Idquestao
+                });
+            }
         }
 
         //Retorna para a tela principal do Curso
         private RedirectToRouteResult VoltarParaListagem(Questao questao)
         {
-            try
-            {
-                Atividade atividade = db.Atividade.Find(questao.Idatividade);
-                return RedirectToAction("Details", "Atividades", new { id = atividade.Idatividade, Idquestao = questao.Idquestao });
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            Atividade atividade = db.Atividade.Find(questao.Idatividade);
+            return RedirectToAction("Details", "Atividades", new { id = atividade.Idatividade, Idquestao = questao.Idquestao });
         }
 
         protected override void Dispose(bool disposing)

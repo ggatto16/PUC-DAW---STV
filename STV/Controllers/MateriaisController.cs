@@ -44,22 +44,26 @@ namespace STV.Controllers
         // GET: Materiais/Details/5
         public async Task<ActionResult> Details(int? id)
         {
-            if (id == null)
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                if (id == null)
+                    throw new ApplicationException("Ops! Requisição inválida.");
+
+                //Material material = await db.Material.Include(m => m.Arquivo.Nome).SingleOrDefaultAsync(m => m.Idmaterial == id);
+                Material material = await db.Material.FindAsync(id);
+
+                if (material == null)
+                    throw new ApplicationException("Material não encontrado.");
+
+                GetArquivoInfo(ref material);
+
+                return View(material);
             }
-
-            //Material material = await db.Material.Include(m => m.Arquivo.Nome).SingleOrDefaultAsync(m => m.Idmaterial == id);
-            Material material = await db.Material.FindAsync(id);
-
-            if (material == null)
+            catch (ApplicationException ex)
             {
-                return HttpNotFound();
+                TempData["msgErr"] = ex.Message;
+                return RedirectToAction("Index", "Home");
             }
-
-            GetArquivoInfo(ref material);
-
-            return View(material);
         }
 
         private void GetArquivoInfo(ref Material material)
@@ -138,8 +142,6 @@ namespace STV.Controllers
                 default:
                     break;
             }
-
-
             return PartialView("ConteudoArquivo", material);
         }
 
@@ -186,35 +188,37 @@ namespace STV.Controllers
                 //{
                 //    try
                 //    {
-                        
-                        db.Material.Add(material);
 
-                        if (material.Tipo == TipoMaterial.Arquivo || material.Tipo == TipoMaterial.Imagem || material.Tipo == TipoMaterial.Video)
-                        {
-                            GetUploadInfo(ref material, upload);
+                db.Material.Add(material);
 
-                            await db.SaveChangesAsync();
+                if (material.Tipo == TipoMaterial.Arquivo || material.Tipo == TipoMaterial.Imagem || material.Tipo == TipoMaterial.Video)
+                {
+                    GetUploadInfo(ref material, upload);
 
-                            var arquivo = await db.Arquivo.FindAsync(material.Idmaterial);
+                    await db.SaveChangesAsync();
 
-                            //Grava o conteúdo do arquivo no banco de dados
-                            VarbinaryStream blob = new VarbinaryStream(
-                            db.Database.Connection.ConnectionString,
-                            "Arquivo",
-                            "Blob",
-                            "Idmaterial",
-                            arquivo.Idmaterial);
+                    var arquivo = await db.Arquivo.FindAsync(material.Idmaterial);
 
-                            await upload.InputStream.CopyToAsync(blob, 65536);
+                    //Grava o conteúdo do arquivo no banco de dados
+                    VarbinaryStream blob = new VarbinaryStream(
+                    db.Database.Connection.ConnectionString,
+                    "Arquivo",
+                    "Blob",
+                    "Idmaterial",
+                    arquivo.Idmaterial);
 
-                            //dbContextTransaction.Commit();
-                        }
-                        else
-                        {
-                            await db.SaveChangesAsync();
-                        }
+                    await upload.InputStream.CopyToAsync(blob, 65536);
 
-                        return VoltarParaListagem(material);
+                    //dbContextTransaction.Commit();
+                }
+                else
+                {
+                    await db.SaveChangesAsync();
+                }
+
+                TempData["msg"] = "Dados salvos!";
+
+                return VoltarParaListagem(material);
                 //    }
                 //    catch (Exception)
                 //    {
@@ -232,11 +236,13 @@ namespace STV.Controllers
         {
             try
             {
-                if (id == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                if (id == null)
+                    throw new ApplicationException("Ops! Requisição inválida.");
 
                 Material material = await db.Material.FindAsync(id);
 
-                if (material == null) return HttpNotFound();
+                if (material == null)
+                    throw new ApplicationException("Material não encontrado.");
 
                 GetArquivoInfo(ref material);
 
@@ -245,10 +251,10 @@ namespace STV.Controllers
 
                 return View(material);
             }
-            catch (Exception)
+            catch (ApplicationException ex)
             {
-
-                throw;
+                TempData["msgErr"] = ex.Message;
+                return RedirectToAction("Index", "Home");
             }
         }
 
@@ -290,6 +296,7 @@ namespace STV.Controllers
                 }
 
                 //transaction.Commit();
+                TempData["msg"] = "Dados salvos!";
 
                 return VoltarParaListagem(material);
                 //}
@@ -309,17 +316,22 @@ namespace STV.Controllers
         // GET: Materiais/Delete/5
         public async Task<ActionResult> Delete(int? id)
         {
-            if (id == null)
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Material material = await db.Material.FindAsync(id);
-            if (material == null)
-            {
-                return HttpNotFound();
-            }
+                if (id == null)
+                    throw new ApplicationException("Ops! Requisição inválida.");
 
-            return View(material);
+                Material material = await db.Material.FindAsync(id);
+                if (material == null)
+                    throw new ApplicationException("Material não econtrado.");
+
+                return View(material);
+            }
+            catch (ApplicationException ex)
+            {
+                TempData["msgErr"] = ex.Message;
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         // POST: Materiais/Delete/5
@@ -328,11 +340,19 @@ namespace STV.Controllers
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
             Material material = await db.Material.FindAsync(id);
-            db.Entry(material).Collection("UsuariosConsulta").Load(); //Para remover também a referência
-            db.Material.Remove(material);
-            await db.SaveChangesAsync();
-
-            return VoltarParaListagem(material);
+            try
+            {
+                db.Entry(material).Collection("UsuariosConsulta").Load(); //Para remover também a referência
+                db.Material.Remove(material);
+                await db.SaveChangesAsync();
+                TempData["msg"] = "Material excluído!";
+                return VoltarParaListagem(material);
+            }
+            catch (Exception)
+            {
+                TempData["msgErr"] = "Material não pode ser excluído.";
+                return RedirectToAction("Details", "Cursos", new { id = material.Unidade.Idcurso, Idunidade = material.Unidade.Idunidade });
+            }
         }
 
         private void GetUploadContent(ref Material material, HttpPostedFileBase upload)
@@ -347,12 +367,6 @@ namespace STV.Controllers
                         ContentType = upload.ContentType,
                         Idmaterial = material.Idmaterial
                     };
-
-                    //using (var fileData = new MemoryStream())
-                    //{
-                    //    upload.InputStream.CopyTo(fileData);
-                    //    arquivo.Blob = fileData.ToArray();
-                    //}
 
                     using (BinaryReader b = new BinaryReader(upload.InputStream))
                     {
@@ -431,15 +445,8 @@ namespace STV.Controllers
         //Retorna para a tela principal do Curso
         private RedirectToRouteResult VoltarParaListagem(Material material)
         {
-            try
-            {
-                Unidade unidade = db.Unidade.Find(material.Idunidade);
-                return RedirectToAction("Details", "Cursos", new { id = unidade.Idcurso, Idunidade = material.Idunidade });
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            Unidade unidade = db.Unidade.Find(material.Idunidade);
+            return RedirectToAction("Details", "Cursos", new { id = unidade.Idcurso, Idunidade = material.Idunidade });
         }
 
         protected override void Dispose(bool disposing)

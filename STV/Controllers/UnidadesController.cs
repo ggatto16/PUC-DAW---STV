@@ -30,6 +30,9 @@ namespace STV.Controllers
         // GET: Unidades
         public async Task<ActionResult> Index(int idcurso = 0)
         {
+            ViewBag.MensagemSucesso = TempData["msg"];
+            ViewBag.MensagemErro = TempData["msgErr"];
+
             if (idcurso != 0)
             {
                 var unidades = from u in db.Unidade where u.Curso.Idcurso == idcurso select u;
@@ -87,25 +90,31 @@ namespace STV.Controllers
             }
 
             return PartialView("Conteudo", unidadeVM);
-           
+
         }
 
         // GET: Unidades/Details/5
         public async Task<ActionResult> Details(int? id)
         {
-            if (id == null)
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                if (id == null)
+                    throw new ApplicationException("Ops! Requisição inválida.");
+
+                Unidade unidade = await db.Unidade.FindAsync(id);
+                if (unidade == null)
+                    throw new ApplicationException("Unidade não encontrada.");
+
+                return View(unidade);
             }
-            Unidade unidade = await db.Unidade.FindAsync(id);
-            if (unidade == null)
+            catch (ApplicationException ex)
             {
-                return HttpNotFound();
+                TempData["msgErr"] = ex.Message;
+                return RedirectToAction("Index", "Home");
             }
-            return View(unidade);
         }
 
-        private bool Autorizarado (int? Idcurso)
+        private bool Autorizarado(int? Idcurso)
         {
             var curso = db.Curso
                 .Where(c => c.IdusuarioInstrutor == UsuarioLogado.Idusuario && c.Idcurso == Idcurso)
@@ -123,7 +132,10 @@ namespace STV.Controllers
         public ActionResult Create(int? Idcurso)
         {
             if (Idcurso == null)
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            {
+                TempData["msgErr"] = "Ops! Requisição inválida.";
+                return RedirectToAction("Index", "Home");
+            }
 
             if (!Autorizarado(Idcurso)) return View("NaoAutorizado");
 
@@ -145,7 +157,8 @@ namespace STV.Controllers
                 unidade.Stamp = DateTime.Now;
                 db.Unidade.Add(unidade);
                 await db.SaveChangesAsync();
-                return RedirectToAction("Index");
+                TempData["msg"] = "Unidade criada!";
+                VoltarParaListagem(unidade);
             }
 
             return View(unidade);
@@ -154,18 +167,26 @@ namespace STV.Controllers
         // GET: Unidades/Edit/5
         public async Task<ActionResult> Edit(int? id)
         {
-            if (id == null)
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            
-            Unidade unidade = await db.Unidade.FindAsync(id);
-            if (unidade == null)
-                return HttpNotFound();
+            try
+            {
+                if (id == null)
+                    throw new ApplicationException("Ops! Requisição inválida.");
 
-            Autorizarado(unidade.Idcurso);
-            if (!Autorizarado(unidade.Idcurso)) return View("NaoAutorizado");
+                Unidade unidade = await db.Unidade.FindAsync(id);
+                if (unidade == null)
+                    throw new ApplicationException("Unidade não encontrada.");
 
-            ViewBag.Idcurso = new SelectList(db.Curso, "Idcurso", "Titulo");
-            return View(unidade);
+                Autorizarado(unidade.Idcurso);
+                if (!Autorizarado(unidade.Idcurso)) return View("NaoAutorizado");
+
+                ViewBag.Idcurso = new SelectList(db.Curso, "Idcurso", "Titulo");
+                return View(unidade);
+            }
+            catch (ApplicationException ex)
+            {
+                TempData["msgErr"] = ex.Message;
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         // POST: Unidades/Edit/5
@@ -182,7 +203,8 @@ namespace STV.Controllers
                 unidade.Stamp = DateTime.Now;
                 db.Entry(unidade).State = EntityState.Modified;
                 await db.SaveChangesAsync();
-                return RedirectToAction("Index");
+                TempData["msg"] = "Dados Salvos!";
+                VoltarParaListagem(unidade);
             }
             return View(unidade);
         }
@@ -190,17 +212,25 @@ namespace STV.Controllers
         // GET: Unidades/Delete/5
         public async Task<ActionResult> Delete(int? id)
         {
-            if (id == null)
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            
-            Unidade unidade = await db.Unidade.FindAsync(id);
+            try
+            {
+                if (id == null)
+                    throw new ApplicationException("Ops! Requisição inválida.");
 
-            if (unidade == null)
-                return HttpNotFound();
+                Unidade unidade = await db.Unidade.FindAsync(id);
 
-            if (!Autorizarado(unidade.Idcurso)) return View("NaoAutorizado");
+                if (unidade == null)
+                    throw new ApplicationException("Unidade não encontrada.");
 
-            return View(unidade);
+                if (!Autorizarado(unidade.Idcurso)) return View("NaoAutorizado");
+
+                return View(unidade);
+            }
+            catch (ApplicationException ex)
+            {
+                TempData["msgErr"] = ex.Message;
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         // POST: Unidades/Delete/5
@@ -208,11 +238,26 @@ namespace STV.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
-            Unidade unidade = await db.Unidade.FindAsync(id);
-            if (!Autorizarado(unidade.Idcurso)) return View("NaoAutorizado");
-            db.Unidade.Remove(unidade);
-            await db.SaveChangesAsync();
-            return RedirectToAction("Index");
+            try
+            {
+                Unidade unidade = await db.Unidade.FindAsync(id);
+                if (!Autorizarado(unidade.Idcurso)) return View("NaoAutorizado");
+                db.Unidade.Remove(unidade);
+                await db.SaveChangesAsync();
+                TempData["msg"] = "Unidade excluída!";
+                return RedirectToAction("Details", "Cursos", new { id = unidade.Idcurso });
+            }
+            catch (Exception)
+            {
+                TempData["msgErr"] = "Unidade não pode ser excluída.";
+                return RedirectToAction("Index", "Home");
+            }
+        }
+
+        //Retorna para a tela principal do Curso
+        private RedirectToRouteResult VoltarParaListagem(Unidade unidade)
+        {
+            return RedirectToAction("Details", "Cursos", new { id = unidade.Idcurso, Idunidade = unidade.Idunidade });
         }
 
         protected override void Dispose(bool disposing)

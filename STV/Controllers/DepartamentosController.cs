@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using STV.DAL;
+using STV.Models;
+using System;
 using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Net;
-using System.Web;
 using System.Web.Mvc;
-using STV.Models;
-using STV.DAL;
 
 namespace STV.Controllers
 {
@@ -21,6 +18,8 @@ namespace STV.Controllers
         public async Task<ActionResult> Index(string s)
         {
             ViewBag.Filtro = s;
+            ViewBag.MensagemSucesso = TempData["msg"];
+            ViewBag.MensagemErro = TempData["msgErr"];
 
             var departamentos = from d in db.Departamento select d;
 
@@ -35,16 +34,22 @@ namespace STV.Controllers
         // GET: Departamentos/Details/5
         public async Task<ActionResult> Details(int? id)
         {
-            if (id == null)
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                if (id == null)
+                    throw new ApplicationException("Ops! Requisição inválida.");
+
+                Departamento departamento = await db.Departamento.FindAsync(id);
+                if (departamento == null)
+                    throw new ApplicationException("Departamento não encontrado.");
+
+                return View(departamento);
             }
-            Departamento departamento = await db.Departamento.FindAsync(id);
-            if (departamento == null)
+            catch (ApplicationException ex)
             {
-                return HttpNotFound();
+                TempData["msgErr"] = ex.Message;
+                return RedirectToAction("Index");
             }
-            return View(departamento);
         }
 
         // GET: Departamentos/Create
@@ -74,16 +79,22 @@ namespace STV.Controllers
         // GET: Departamentos/Edit/5
         public async Task<ActionResult> Edit(int? id)
         {
-            if (id == null)
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                if (id == null)
+                    throw new ApplicationException("Ops! Requisição inválida.");
+
+                Departamento departamento = await db.Departamento.FindAsync(id);
+                if (departamento == null)
+                    throw new ApplicationException("Departamento não encontrado.");
+
+                return View(departamento);
             }
-            Departamento departamento = await db.Departamento.FindAsync(id);
-            if (departamento == null)
+            catch (ApplicationException ex)
             {
-                return HttpNotFound();
+                TempData["msgErr"] = ex.Message;
+                return RedirectToAction("Index");
             }
-            return View(departamento);
         }
 
         // POST: Departamentos/Edit/5
@@ -93,20 +104,12 @@ namespace STV.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit([Bind(Include = "Iddepartamento,Descricao,Status,Stamp")] Departamento departamento)
         {
-
-            try
+            if (ModelState.IsValid)
             {
-                if (ModelState.IsValid)
-                {
-                    departamento.Stamp = DateTime.Now;
-                    db.Entry(departamento).State = EntityState.Modified;
-                    await db.SaveChangesAsync();
-                    return RedirectToAction("Index");
-                }
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError("", ex.Message);
+                departamento.Stamp = DateTime.Now;
+                db.Entry(departamento).State = EntityState.Modified;
+                await db.SaveChangesAsync();
+                return RedirectToAction("Index");
             }
             return View(departamento);
         }
@@ -114,16 +117,22 @@ namespace STV.Controllers
         // GET: Departamentos/Delete/5
         public async Task<ActionResult> Delete(int? id)
         {
-            if (id == null)
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                if (id == null)
+                    throw new ApplicationException("Ops! Requisição inválida.");
+
+                Departamento departamento = await db.Departamento.FindAsync(id);
+                if (departamento == null)
+                    throw new ApplicationException("Departamento não encontrado.");
+
+                return View(departamento);
             }
-            Departamento departamento = await db.Departamento.FindAsync(id);
-            if (departamento == null)
+            catch (ApplicationException ex)
             {
-                return HttpNotFound();
+                TempData["msgErr"] = ex.Message;
+                return RedirectToAction("Index");
             }
-            return View(departamento);
         }
 
         // POST: Departamentos/Delete/5
@@ -131,10 +140,18 @@ namespace STV.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
-            Departamento departamento = await db.Departamento.FindAsync(id);
-            db.Departamento.Remove(departamento);
-            await db.SaveChangesAsync();
-            return RedirectToAction("Index");
+            try
+            {
+                Departamento departamento = await db.Departamento.FindAsync(id);
+                db.Departamento.Remove(departamento);
+                await db.SaveChangesAsync();
+                return RedirectToAction("Index");
+            }
+            catch (Exception)
+            {
+                TempData["msgErr"] = "Departamento não pode ser excluído.";
+                return RedirectToAction("Index");
+            }
         }
 
         protected override void Dispose(bool disposing)
