@@ -504,6 +504,7 @@
     <Content Include="Views\Shared\_PdfLayout.cshtml" />
     <Content Include="Views\Usuarios\PDF.cshtml" />
     <Content Include="Views\Cursos\Certificado.cshtml" />
+    <Content Include="Views\Cursos\Comentarios.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
