@@ -82,9 +82,44 @@
                     </span>
                 </dd>
             }
+            else if (Model.IsInstutor)
+            {
+                <dt>
+                    @Html.DisplayName("Média de Avaliação dos Alunos")
+                </dt>
+
+                <dd>
+                    <span class="starRating">
+                        @Html.RadioButton("rating", "10", Model.MediaNota > 8 ? true : false, new { id = "rating10", disabled = "disabled" })
+                        <label for="rating10">5</label>
+                        @Html.RadioButton("rating", "8", Model.MediaNota > 6 ? true : false, new { id = "rating8", disabled = "disabled" })
+                        <label for="rating8">4</label>
+                        @Html.RadioButton("rating", "6", Model.MediaNota > 4 ? true : false, new { id = "rating6", disabled = "disabled" })
+                        <label for="rating6">3</label>
+                        @Html.RadioButton("rating", "4", Model.MediaNota > 2 ? true : false, new { id = "rating4", disabled = "disabled" })
+                        <label for="rating4">2</label>
+                        @Html.RadioButton("rating", "2", Model.MediaNota >= 0 ? true : false, new { id = "rating2", disabled = "disabled" })
+                        <label for="rating2">1</label>
+                    </span>
+                </dd>
+            }
 
         </dl>
     </div>
+
+    @if (Model.IsInstutor)
+    {
+        <p>
+            @Ajax.ActionLink("Ver comentários", "CarregarComentarios", new { id = Model.Idcurso }, new AjaxOptions { UpdateTargetId = "divComentarios", InsertionMode = InsertionMode.Replace, HttpMethod = "Get", OnBegin = "onBeginAjax", OnComplete = "AbrirModal" })
+        </p>
+    }
+    else
+    {
+        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal">
+            Comentar
+        </button>
+    }
+
     <p>
         @Html.ActionLink("Edit", "Edit", new { id = Model.Idcurso }) |
         @Html.ActionLink("Back to List", "Index") |
@@ -135,6 +170,61 @@
     <div id="ConteudoUnidade"></div>
 </div>
 
+@if (User.IsInRole("Default") && !Model.IsInstutor)
+{
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                @using (Ajax.BeginForm("SalvarComentario", new AjaxOptions { HttpMethod = "Post", OnBegin = "onBeginAjax", OnComplete = "FecharModal", OnFailure = "OnFailure", OnSuccess = "MostrarMensagem('Comentário enviado!',1);" }))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(model => model.Idcurso)
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">Comentário</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <div class="col-md-12">
+                                @Html.TextBoxFor(model => model.NotaCursoAtual.Comentario, new { Class = "form-control", id = "Comentario", Name = "Comentario" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="submit" value="Enviar" class="btn btn-primary" />
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+}
+else
+{
+      <!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Comentários dos Alunos</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="col-md-12" id="divComentarios">
+                            
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
 @section scripts {
 
     @Scripts.Render("~/bundles/jqueryval")
@@ -150,9 +240,9 @@
             @if (ViewBag.UnidadeSelecionada != null)
             {
                 <text>
-                    var url = '@Url.Action("CarregarConteudo","Unidades", new { idunidade = ViewBag.UnidadeSelecionada })';
-                    $.post(url, null, function (data) { $('#ConteudoUnidade').html(data); });
-                </text>
+            var url = '@Url.Action("CarregarConteudo","Unidades", new { idunidade = ViewBag.UnidadeSelecionada })';
+            $.post(url, null, function (data) { $('#ConteudoUnidade').html(data); });
+            </text>
             }
 
         });
@@ -169,6 +259,18 @@
             });
         };
 
+        onCompleteAjax
+
+        function AbrirModal() {
+            $('#myModal').modal('show');
+            onCompleteAjax();
+        }
+
+        function FecharModal() {
+            $('#myModal').modal('hide');
+            onCompleteAjax();
+        }
+
     </script>
 
-}      
+}

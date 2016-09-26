@@ -64,6 +64,7 @@ namespace STV.Controllers
         {
             try
             {
+                throw new Exception("Teste erro não maepado");
                 if (id == null)
                     throw new ApplicationException("Ops! Requisição inválida.");
                 

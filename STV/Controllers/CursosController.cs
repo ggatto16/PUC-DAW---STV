@@ -7,6 +7,7 @@ using STV.Models;
 using STV.Utils;
 using STV.ViewModels;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
@@ -189,6 +190,52 @@ namespace STV.Controllers
             ViewBag.Departamentos = viewModel;
         }
 
+        public async Task<ActionResult> CarregarComentarios(int? id)
+        {
+            if (id == null)
+            {
+                TempData["msgErr"] = "Ops! Requisição inválida.";
+                return RedirectToAction("Index", "Home");
+            }
+
+            var curso = await db.Curso
+                .Where(c => c.Idcurso == id)
+                .Include(c => c.NotasCurso)
+                .SingleOrDefaultAsync();
+
+            return PartialView("Comentarios", curso);
+        }
+
+        public async Task<ActionResult> SalvarComentario(int? Idcurso, string Comentario)
+        {
+            if (Idcurso == null)
+            {
+                TempData["msgErr"] = "Ops! Requisição inválida.";
+                return RedirectToAction("Index", "Home");
+            }
+
+            NotaCurso nota = null;
+            nota = await db.NotaCurso.FindAsync(UsuarioLogado.Idusuario, Idcurso);
+
+            HttpStatusCodeResult HttpResult;
+            if (nota != null)
+            {
+                nota.Comentario = Comentario;
+                db.NotaCurso.Attach(nota);
+                db.Entry(nota).Property(n => n.Comentario).IsModified = true;
+            }
+            else
+            {
+                HttpResult = new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Avalie o curso antes de enviar um comentário.");
+                return HttpResult;
+            }
+
+            await db.SaveChangesAsync();
+
+            HttpResult = new HttpStatusCodeResult(HttpStatusCode.OK, "Comentário enviado!");
+            return HttpResult;
+        }
+
 
         // GET: Cursos
         [Authorize(Roles = "Admin")]
@@ -219,6 +266,7 @@ namespace STV.Controllers
                 var detalhesCurso = Mapper.Map<Curso, DetalhesCurso>(curso);
 
                 detalhesCurso.NotaCursoAtual = await db.NotaCurso.FindAsync(UsuarioLogado.Idusuario, detalhesCurso.Idcurso);
+                detalhesCurso.NotasCurso = await db.NotaCurso.Where(n => n.Idcurso == detalhesCurso.Idcurso).ToListAsync();
 
                 ViewBag.MensagemSucesso = TempData["msg"];
                 ViewBag.MensagemErro = TempData["msgErr"];
@@ -230,8 +278,8 @@ namespace STV.Controllers
                     .SingleOrDefaultAsync();
 
                 detalhesCurso.IsInstutor = cursoVerify != null ? true : false;
-
                 detalhesCurso.DisponibilizarCertificado = await VerificarCertificado(detalhesCurso);
+                detalhesCurso.MediaNota = CalcularNotaMedia(detalhesCurso.NotasCurso);
 
                 return View(detalhesCurso);
             }
@@ -245,9 +293,24 @@ namespace STV.Controllers
             }
         }
 
+        private float CalcularNotaMedia(ICollection<NotaCurso> NotasCurso)
+        {
+            if (NotasCurso != null && NotasCurso.Count > 0)
+            {
+                var cont = NotasCurso.Count;
+                int soma = 0;
+                foreach (var nota in NotasCurso)
+                {
+                    soma += nota.Pontos;
+                }
+                return soma / cont;
+            }
+            return 0;
+        }
+
         private async Task<bool> VerificarCertificado(DetalhesCurso detalhesCurso)
         {
-            if (detalhesCurso.Dtfinal < DateTime.Today)
+            if (detalhesCurso.Dtfinal < DateTime.Today && !detalhesCurso.IsInstutor)
             {
                 var usuario = await db.Usuario.FindAsync(UsuarioLogado.Idusuario);
 
@@ -260,7 +323,10 @@ namespace STV.Controllers
                     notaUsuario += nota.Atividade.Valor;
                 }
 
-                if ((notaUsuario * 100 / detalhesCurso.NotaMaxima) < 70)
+                var notaMax = detalhesCurso.NotaMaxima;
+                if (notaMax == 0) return false;
+
+                if ((notaUsuario * 100 / notaMax) < 70)
                     return false;
 
                 var materiaisConsultadosNoCurso = usuario.MateriaisConsultados

@@ -9,7 +9,7 @@ namespace STV
         {
             filters.Add(new HandleErrorAttribute()
             {
-                View = "ErroNaoMapeado"
+                View = "Error"
             });
         }
     }

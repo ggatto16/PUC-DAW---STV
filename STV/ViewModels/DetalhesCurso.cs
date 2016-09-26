@@ -79,6 +79,8 @@
         }
 
         public bool DisponibilizarCertificado { get; set; }
+
+        public float MediaNota { get; set; }
     }
 
 }

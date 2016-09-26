@@ -43,8 +43,14 @@ function MostrarMensagem(msg, tipo) {
 }
 
 function OnFailure(xhr, status) {
-    var error = xhr.responseText.split("<title>")[1].split("</title>")[0];
+    //var error = xhr.responseText.split("<title>")[1].split("</title>")[0];
+    var error = xhr.statusText;
     MostrarMensagem(error, 2);
+}
+
+function OnSuccess(xhr, status) {
+    var msg = xhr.statusText;
+    MostrarMensagem(msg, 1);
 }
 
 function HideMessage() {

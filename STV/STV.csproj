@@ -375,6 +375,7 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="Images\bad-smile.png" />
     <Content Include="Images\bg-certificado.jpg" />
     <Content Include="Images\GreenCheck.jpg" />
     <Content Include="Images\RedX.jpg" />
@@ -396,6 +397,7 @@
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
+    <None Include="Properties\PublishProfiles\stvkd - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-2.2.4.intellisense.js" />
     <Content Include="Scripts\fileinput\fileinputSetup.js" />
     <Content Include="Scripts\jquery-2.2.4.js" />
@@ -503,6 +505,7 @@
     <Content Include="Views\Shared\_PdfLayout.cshtml" />
     <Content Include="Views\Usuarios\PDF.cshtml" />
     <Content Include="Views\Cursos\Certificado.cshtml" />
+    <Content Include="Views\Cursos\Comentarios.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
@@ -513,7 +516,6 @@
     <Content Include="Scripts\jquery-2.2.4.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Properties\PublishProfiles\" />
     <Folder Include="Views\Arquivos\" />
     <Folder Include="Views\NotasCurso\" />
   </ItemGroup>
