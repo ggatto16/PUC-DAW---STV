@@ -396,6 +396,7 @@
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
+    <None Include="Properties\PublishProfiles\stvkd.pubxml" />
     <None Include="Scripts\jquery-2.2.4.intellisense.js" />
     <Content Include="Scripts\fileinput\fileinputSetup.js" />
     <Content Include="Scripts\jquery-2.2.4.js" />
@@ -513,7 +514,6 @@
     <Content Include="Scripts\jquery-2.2.4.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Properties\PublishProfiles\" />
     <Folder Include="Views\Arquivos\" />
     <Folder Include="Views\NotasCurso\" />
   </ItemGroup>
