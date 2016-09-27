@@ -349,6 +349,7 @@
     <Compile Include="Startup.cs" />
     <Compile Include="Utils\Mensagens.cs" />
     <Compile Include="Utils\RequestExtensions.cs" />
+    <Compile Include="ViewModels\MaterialVM .cs" />
     <Compile Include="ViewModels\RelatorioUsuario.cs" />
     <Compile Include="ViewModels\UnidadeVM.cs" />
     <Compile Include="ViewModels\AtividadeVM.cs" />
@@ -375,6 +376,7 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="Images\bad-smile.png" />
     <Content Include="Images\bg-certificado.jpg" />
     <Content Include="Images\GreenCheck.jpg" />
     <Content Include="Images\RedX.jpg" />

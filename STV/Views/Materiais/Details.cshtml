@@ -6,6 +6,7 @@
 
 <h2>Details</h2>
 
+
 <div class="col-md-6">
     <div>
         <h4>Material</h4>
@@ -24,7 +25,7 @@
             </dt>
 
             <dd>
-                @Html.DisplayFor(model => model.Tipo)
+                @ViewBag.DescricaoTipo
             </dd>
 
             @if (Model.Arquivo != null)
@@ -44,18 +45,24 @@
                     }
                 </dd>
             }
-            else
+            else if (Model.Tipo == STV.Models.TipoMaterial.Link && Model.URL != string.Empty)
             {
-                if (Model.URL != string.Empty)
-                {
-                    <dt>
-                        @Html.DisplayNameFor(model => model.URL)
-                    </dt>
+                <dt>
+                    @Html.DisplayNameFor(model => model.URL)
+                </dt>
 
-                    <dd>
-                        <a href="@Model.URL" target="_blank">@Model.URL</a>
-                    </dd>
-                }
+                <dd>
+                    <a href="@Model.URL" target="_blank">@Model.URL</a>
+                </dd>
+            }
+            else if (Model.Tipo == STV.Models.TipoMaterial.Embedded && Model.URL != string.Empty)
+            {
+                <dt>
+                    Vídeo
+                </dt>
+                <dd>
+                    @Ajax.ActionLink("Assistir", "MostrarArquivo", "Materiais", new { Id = Model.Idmaterial }, new AjaxOptions { UpdateTargetId = "ConteudoMaterial", InsertionMode = InsertionMode.Replace, HttpMethod = "Get", OnBegin = "onBeginAjax", OnComplete = "onCompleteAjax" })
+                </dd>
             }
         </dl>
     </div>

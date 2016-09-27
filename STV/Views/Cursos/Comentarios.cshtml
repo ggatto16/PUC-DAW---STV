@@ -1,6 +1,16 @@
 ﻿@model STV.Models.Curso
 
+@{
+    int i = 0;
+}
 @foreach (var nota in Model.NotasCurso)
 {
-    @nota.Comentario;
+    @Html.Raw("<p>\"")
+        @nota.Comentario; @Html.Raw("\"<br /><b>Nota: </b>") @nota.Pontos
+    @Html.Raw("</p>")
+
+    if (i > 0)
+    {
+        @Html.Raw("<hr />")
+    }
 }

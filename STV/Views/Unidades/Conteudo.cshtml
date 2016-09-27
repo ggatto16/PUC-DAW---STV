@@ -60,50 +60,69 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Descricao)
             </td>
-            <td>
-                @if (!encerrada)
-                {
+
+            @if (!encerrada)
+            {
+                <td>
                     @Html.Raw("Encerra em ") @Html.DisplayFor(modelItem => item.Dtencerramento);
-                }
-                else
+                </td>
+            }
+            else
+            {
+                if (!aberta)
                 {
-                    if (!aberta)
-                    {
+                    <td>
                         @Html.Raw("Inicia em ") @Html.DisplayFor(modelItem => item.Dtabertura);
-                    }
+                    </td>
                 }
-            </td>
+            }
+
             <td>
                 @if (User.IsInRole("Default"))
                 {
                     @Html.DisplayFor(modelItem => item.Realizado) @Html.Raw("% realizado")
                 }
             </td>
-            <td>
 
-                @if (User.IsInRole("Default"))
+            @if (User.IsInRole("Default"))
+            {
+                if (item.IsFinalizada)
                 {
-                    if (item.IsFinalizada)
-                    {
+                    <td class="success">
                         @Html.Raw("Atividade Finalizada")
-                    }
-                    else
+                    </td>
+                }
+                else
+                {
+                    if (!encerrada)
                     {
-                        if (!encerrada)
-                        {
+                        <td>
                             @Html.ActionLink("Responder", "CarregarAtividade", "Atividades", new { id = item.Idatividade }, null);
                             @Html.Raw(" | ");
                             @Html.ActionLink("Finalizar", "Finalizar", "Atividades", new { id = item.Idatividade }, null);
+                        </td>
+                    }
+                    else
+                    {
+                        if (item.Realizado < 100)
+                        {
+                            <td class="danger">
+                                @Html.Raw("Pazo Encerrado")
+                            </td>
                         }
                         else
                         {
-                            @Html.Raw("Pazo Encerrado")
+                            <td class="success">
+                                @Html.Raw("Pazo Encerrado")
+                            </td>
                         }
                     }
                 }
-                else if (User.IsInRole("Admin"))
-                {
-                    if (!encerrada)
+            }
+            else if (User.IsInRole("Admin"))
+            {
+                <td>
+                    @if (!encerrada)
                     {
                         @Html.ActionLink("Edit", "Edit", "Atividades", new { id = item.Idatividade }, null)
                         @Html.Raw(" | ");
@@ -111,14 +130,18 @@
                     @Html.ActionLink("Details", "Details", "Atividades", new { id = item.Idatividade }, null)
                     @Html.Raw(" | ");
                     @Html.ActionLink("Delete", "Delete", "Atividades", new { id = item.Idatividade }, null)
-                }
-
-
-            </td>
+                </td>
+            }
         </tr>
     }
 
 </table>
 
-<p>@Html.ActionLink("Notas", "MinhasNotas", "Notas", new { Idunidade = Model.Idunidade }, null)</p>
+@if (User.IsInRole("Default") && !Model.IsInstutor)
+{
+    <h4>Notas</h4>
+    <p>
+        @Html.ActionLink("Visualizar Notas", "MinhasNotas", "Notas", new { Idunidade = Model.Idunidade }, new { @class = "btn btn-primary" })
+    </p>
+}
 

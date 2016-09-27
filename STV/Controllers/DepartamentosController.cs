@@ -70,6 +70,7 @@ namespace STV.Controllers
                 departamento.Stamp = DateTime.Now;
                 db.Departamento.Add(departamento);
                 await db.SaveChangesAsync();
+                TempData["msg"] = "Departamento criado!";
                 return RedirectToAction("Index");
             }
 
@@ -109,6 +110,7 @@ namespace STV.Controllers
                 departamento.Stamp = DateTime.Now;
                 db.Entry(departamento).State = EntityState.Modified;
                 await db.SaveChangesAsync();
+                TempData["msg"] = "Dados salvos!";
                 return RedirectToAction("Index");
             }
             return View(departamento);
@@ -145,6 +147,7 @@ namespace STV.Controllers
                 Departamento departamento = await db.Departamento.FindAsync(id);
                 db.Departamento.Remove(departamento);
                 await db.SaveChangesAsync();
+                TempData["msg"] = "Departamento excluído!";
                 return RedirectToAction("Index");
             }
             catch (Exception)

@@ -58,6 +58,7 @@ namespace STV.Controllers
                 //.Include(u => u.Materiais)
                 .Where(u => u.Idunidade == idunidade)
                 .SingleOrDefaultAsync();
+
             var unidadeVM = Mapper.Map<Unidade, UnidadeVM>(unidade);
 
             IEnumerable<Atividade> atividades;
@@ -88,6 +89,13 @@ namespace STV.Controllers
                 if (nota > 0)
                     atividade.IsFinalizada = true;
             }
+
+            //Verificar se é instrutor
+            var cursoVerify = await db.Curso
+                .Where(c => c.IdusuarioInstrutor == UsuarioLogado.Idusuario && c.Idcurso == unidadeVM.Idcurso)
+                .SingleOrDefaultAsync();
+
+            unidadeVM.IsInstutor = cursoVerify != null ? true : false;
 
             return PartialView("Conteudo", unidadeVM);
 

@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.Spatial;
+using System.Reflection;
 
 namespace STV.Models
 {
@@ -10,10 +9,14 @@ namespace STV.Models
     public enum TipoMaterial
     {
         Nenhum = 0,
+        [Display(Name = "Arquivo de vídeo")]
         Video = 1,
         Arquivo = 2,
+        [Display(Name = "Link para site ou arquivo")]
         Link = 3,
-        Imagem = 4
+        Imagem = 4,
+        [Display(Name = "URL para vídeo incorporado", Description = "URL para vídeo incorporado" )]
+        Embedded = 5
     };
 
     [Table("Material")]
@@ -30,6 +33,7 @@ namespace STV.Models
         [Required]
         public TipoMaterial Tipo { get; set; }
 
+        [Url]
         public string URL { get; set; }
 
         public virtual Unidade Unidade { get; set; }

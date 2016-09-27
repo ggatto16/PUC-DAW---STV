@@ -28,6 +28,8 @@ namespace STV.ViewModels
 
         public DateTime Stamp { get; set; }
 
+        public bool IsInstutor { get; set; }
+
         public virtual Curso Curso { get; set; }
 
         public virtual IEnumerable<AtividadeVM> AtividadesVM { get; set; }

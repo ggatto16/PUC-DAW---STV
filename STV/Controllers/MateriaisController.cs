@@ -11,6 +11,10 @@ using STV.Models;
 using System.IO;
 using STV.DAL;
 using STV.Auth;
+using STV.ViewModels;
+using AutoMapper;
+using System.Reflection;
+using System.ComponentModel.DataAnnotations;
 
 namespace STV.Controllers
 {
@@ -41,6 +45,13 @@ namespace STV.Controllers
             }
         }
 
+        private static string GetText(object e)
+        {
+            FieldInfo fieldInfo = e.GetType().GetField(e.ToString());
+            DisplayAttribute[] displayAttributes = fieldInfo.GetCustomAttributes(typeof(DisplayAttribute), false) as DisplayAttribute[];
+            return null != displayAttributes && displayAttributes.Length > 0 ? displayAttributes[0].Name : e.ToString();
+        }
+
         // GET: Materiais/Details/5
         public async Task<ActionResult> Details(int? id)
         {
@@ -51,6 +62,7 @@ namespace STV.Controllers
 
                 //Material material = await db.Material.Include(m => m.Arquivo.Nome).SingleOrDefaultAsync(m => m.Idmaterial == id);
                 Material material = await db.Material.FindAsync(id);
+                ViewBag.DescricaoTipo = GetText(material.Tipo);
 
                 if (material == null)
                     throw new ApplicationException("Material não encontrado.");
@@ -169,10 +181,10 @@ namespace STV.Controllers
         // GET: Materiais/Create
         public ActionResult Create(int Idunidade)
         {
-            ViewBag.Idunidade = new SelectList(db.Unidade, "Idunidade", "Titulo");
             Material material = new Material();
+            var materialVM = Mapper.Map<Material, MaterialVM>(material);
             material.Idunidade = Idunidade;
-            return View(material);
+            return View(materialVM);
         }
 
         // POST: Materiais/Create
@@ -180,8 +192,10 @@ namespace STV.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Idmaterial,Idunidade,Descricao,Tipo,URL")] Material material, HttpPostedFileBase upload)
+        public async Task<ActionResult> Create([Bind(Include = "Idmaterial,Idunidade,Descricao,Tipo,URL")] MaterialVM materialVM, HttpPostedFileBase upload)
         {
+            var material = Mapper.Map<MaterialVM, Material>(materialVM);
+
             if (ModelState.IsValid)
             {
                 //using (var dbContextTransaction = db.Database.BeginTransaction())

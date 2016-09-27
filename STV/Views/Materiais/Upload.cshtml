@@ -8,7 +8,7 @@
 
 <div class="form-horizontal">
     <div class="form-group">
-            @if (ViewBag.Tipo == STV.Models.TipoMaterial.Link)
+            @if (ViewBag.Tipo == STV.Models.TipoMaterial.Link || ViewBag.Tipo == STV.Models.TipoMaterial.Embedded)
             {
                 @Html.LabelFor(model => model.URL, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">

@@ -12,11 +12,12 @@
         <h3>Ops! Algo não correu bem.</h3>
 
         <p>Ocorreu um erro durante o processamento da sua requisição, por favor tente novamente. <br />
-        Caso o problema persista contate o administrador do sistema.</p>
+        Caso o problema persista, contate o administrador do sistema.</p>
     </div>
     <div style="color: white;">
         <p>
             <small>Mensagem: @Model.Exception.Message</small>
+            <small>Inner: @Model.Exception.InnerException</small>
         </p>
     </div>
 </div>
