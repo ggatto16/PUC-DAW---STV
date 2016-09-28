@@ -3,12 +3,14 @@ namespace STV.DAL
     using System.Data.Entity;
     using System.Data.Entity.ModelConfiguration.Conventions;
     using STV.Models;
+    using System.Data.Entity.Infrastructure;
 
     public partial class STVDbContext : DbContext
     {
         public STVDbContext()
             : base("name=STVDbContext")
         {
+            ((IObjectContextAdapter)this).ObjectContext.CommandTimeout = 600;
         }
 
         public virtual DbSet<Departamento> Departamento { get; set; }

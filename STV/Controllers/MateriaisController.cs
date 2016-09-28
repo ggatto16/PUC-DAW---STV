@@ -15,6 +15,7 @@ using STV.ViewModels;
 using AutoMapper;
 using System.Reflection;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel;
 
 namespace STV.Controllers
 {
@@ -192,7 +193,7 @@ namespace STV.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Idmaterial,Idunidade,Descricao,Tipo,URL")] MaterialVM materialVM, HttpPostedFileBase upload)
+        public ActionResult Create([Bind(Include = "Idmaterial,Idunidade,Descricao,Tipo,URL")] MaterialVM materialVM, HttpPostedFileBase upload)
         {
             var material = Mapper.Map<MaterialVM, Material>(materialVM);
 
@@ -209,9 +210,9 @@ namespace STV.Controllers
                 {
                     GetUploadInfo(ref material, upload);
 
-                    await db.SaveChangesAsync();
+                    db.SaveChanges();
 
-                    var arquivo = await db.Arquivo.FindAsync(material.Idmaterial);
+                    var arquivo = db.Arquivo.Find(material.Idmaterial);
 
                     //Grava o conteúdo do arquivo no banco de dados
                     VarbinaryStream blob = new VarbinaryStream(
@@ -221,13 +222,15 @@ namespace STV.Controllers
                     "Idmaterial",
                     arquivo.Idmaterial);
 
-                    await upload.InputStream.CopyToAsync(blob, 65536);
+                    Task.Run(() => GravarArquivo(upload, blob));
+                    //await upload.InputStream.CopyToAsync(blob, 65536);
+
 
                     //dbContextTransaction.Commit();
                 }
                 else
                 {
-                    await db.SaveChangesAsync();
+                    db.SaveChanges();
                 }
 
                 TempData["msg"] = "Dados salvos!";
@@ -243,6 +246,11 @@ namespace STV.Controllers
             }
 
             return View(material);
+        }
+
+        private async Task GravarArquivo(HttpPostedFileBase upload, VarbinaryStream blob)
+        {
+            await Task.Run(() => upload.InputStream.CopyTo(blob, 65536));
         }
 
         // GET: Materiais/Edit/5
@@ -356,6 +364,7 @@ namespace STV.Controllers
             Material material = await db.Material.FindAsync(id);
             try
             {
+                //await db.Database.ExecuteSqlCommandAsync(@"DELETE FROM [Arquivo] WHERE Idmaterial = {0}", id);
                 db.Entry(material).Collection("UsuariosConsulta").Load(); //Para remover também a referência
                 db.Material.Remove(material);
                 await db.SaveChangesAsync();

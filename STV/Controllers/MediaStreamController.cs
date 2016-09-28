@@ -20,59 +20,77 @@ namespace STV.Controllers
 
         public HttpResponseMessage Get(int id)
         {
+            string cs = db.Database.Connection.ConnectionString;
+            string local = "0";
+            try
+            {
 
-            //Recuperar informações do arquivo
-            var arquivoInfo = db.Arquivo.Where(a => a.Idmaterial == id)
-                .Select(a => new {
-                    Idmaterial = a.Idmaterial,
-                    Nome = a.Nome,
-                    ContentType = a.ContentType,
-                    Tamanho = a.Tamanho
-                }).Single();
-
-            VarbinaryStream filestream = new VarbinaryStream(
-                                                db.Database.Connection.ConnectionString,
-                                                "Arquivo",
-                                                "Blob",
-                                                "Idmaterial",
-                                                id,
-                                                true);
-
-            var response = Request.CreateResponse();
-
-            response.Content = new PushStreamContent(
-                 async (Stream outputStream, HttpContent content, TransportContext context) =>
+                //Recuperar informações do arquivo
+                var arquivoInfo = db.Arquivo.Where(a => a.Idmaterial == id)
+                    .Select(a => new
                     {
-                        try
-                        {
-                            var buffer = new byte[65536];
+                        Idmaterial = a.Idmaterial,
+                        Nome = a.Nome,
+                        ContentType = a.ContentType,
+                        Tamanho = a.Tamanho
+                    }).Single();
+                local = "1";
+                VarbinaryStream filestream = new VarbinaryStream(
+                                                    cs,
+                                                    "Arquivo",
+                                                    "Blob",
+                                                    "Idmaterial",
+                                                    id,
+                                                    true);
+                local = "2";
 
-                            using (Stream stream = filestream)
+                var response = Request.CreateResponse();
+
+                local = "3";
+
+                response.Content = new PushStreamContent(
+                     async (Stream outputStream, HttpContent content, TransportContext context) =>
+                        {
+                            try
                             {
-                                var length = (int)arquivoInfo.Tamanho;
-                                var bytesRead = 1;
+                                var buffer = new byte[65536];
 
-
-                                while (length > 0 && bytesRead > 0)
+                                using (Stream stream = filestream)
                                 {
-                                    bytesRead = stream.Read(buffer, 0, Math.Min(length, buffer.Length));
-                                    await outputStream.WriteAsync(buffer, 0, bytesRead);
-                                    length -= bytesRead;
+                                    local = "4";
+                                    var length = (int)arquivoInfo.Tamanho;
+                                    var bytesRead = 1;
+
+                                    local = "5";
+                                    while (length > 0 && bytesRead > 0)
+                                    {
+                                        bytesRead = stream.Read(buffer, 0, Math.Min(length, buffer.Length));
+                                        await outputStream.WriteAsync(buffer, 0, bytesRead);
+                                        length -= bytesRead;
+                                    }
+                                    local = "6";
                                 }
+
                             }
+                            catch (HttpException)
+                            {
+                                return;
+                            }
+                            finally
+                            {
+                                outputStream.Close();
+                            }
+                        }, new MediaTypeHeaderValue(arquivoInfo.ContentType));
 
-                        }
-                        catch (HttpException)
-                        {
-                            return;
-                        }
-                        finally
-                        {
-                            outputStream.Close();
-                        }
-                    }, new MediaTypeHeaderValue(arquivoInfo.ContentType));
-
-            return response;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                var response = Request.CreateResponse();
+                response.StatusCode = HttpStatusCode.InternalServerError;
+                response.Content = new StringContent(ex.Message + " - StackTrace = " + ex.StackTrace + "MinhaCS= " + cs);
+                return response;
+            }
         }
 
     }

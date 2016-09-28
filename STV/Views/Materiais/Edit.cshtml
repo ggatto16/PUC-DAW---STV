@@ -55,7 +55,7 @@
                     @Html.LabelFor(model => model.Arquivo.Nome, "Idarquivo", htmlAttributes: new { @class = "control-label col-md-2" })
                     <div class="col-md-10">
                         @Html.ActionLink(Model.Arquivo.Nome, "Index", "Arquivos", new { id = Model.Arquivo.Idmaterial }, new { target = "_blank" })
-                        @Ajax.ActionLink("Excluir", "ExcluirArquivo", "Materiais", new { id = Model.Arquivo.Idmaterial }, new AjaxOptions { HttpMethod = "Delete", OnSuccess = "RemoverArquivo();", OnFailure = "$('#divErroArquivo').text('Algo deu errado');", OnBegin = "onBeginAjax", OnComplete = "onCompleteAjax" }, null)
+                        @Ajax.ActionLink("Excluir", "ExcluirArquivo", "Materiais", new { id = Model.Arquivo.Idmaterial }, new AjaxOptions { HttpMethod = "Delete", OnSuccess = "RemoverArquivo();", OnFailure = "MostrarMensagem('Algo deu errado!', 2);", OnBegin = "onBeginAjax", OnComplete = "onCompleteAjax" }, null)
 
                     </div>
                 </div>
@@ -111,7 +111,7 @@
         function RemoverArquivo() {
             $('#arquivo').remove();
             $('#Tipo').val('0');
-            MostrarMensagem('Arquuivo excluído!', 1);
+            MostrarMensagem('Arquivo excluído!', 1);
         };
 
     </script>
