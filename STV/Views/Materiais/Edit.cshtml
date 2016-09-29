@@ -12,7 +12,7 @@
 
 <div class="text-danger" id="divErroArquivo"></div>
 
-@using (Ajax.BeginForm("Create", new AjaxOptions { HttpMethod = "Post", OnBegin = "onBeginAjax", OnComplete = "onCompleteAjax", OnFailure = "OnFailure", OnSuccess = "MaterialSalvo", InsertionMode = InsertionMode.Replace, UpdateTargetId = "containerUpload" }))
+@using (Ajax.BeginForm("Edit", new AjaxOptions { HttpMethod = "Post", OnBegin = "onBeginAjax", OnComplete = "onCompleteAjax", OnFailure = "OnFailure", OnSuccess = "MaterialSalvo", InsertionMode = InsertionMode.Replace, UpdateTargetId = "containerUpload" }))
 {
     @Html.AntiForgeryToken()
 
@@ -36,8 +36,9 @@
             <div class="form-group">
                 @Html.LabelFor(model => model.Tipo, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
-                    @Html.EnumDropDownListFor(model => model.Tipo, null, htmlAttributes: new { @class = "form-control" })
+                    @Html.EnumDropDownListFor(model => model.Tipo, null, htmlAttributes: new { @class = "form-control", @disabled = "disabled" })
                     @Html.ValidationMessageFor(model => model.Tipo, "", new { @class = "text-danger" })
+                    @Html.HiddenFor(model => model.Tipo)
                 </div>
             </div>
 
@@ -91,7 +92,7 @@
         $(function () {
             $('#Tipo').change(function () {
                 var tipoID = $(this).val();
-                if (tipoID != 1 && tipoID != 2 && tipoID != 4) {
+                if (tipoID != 1 && tipoID != 2 && tipoID != 4 && tipoID != 0) {
                     $.ajax({
                         url: '/Materiais/CarregarTipo',
                         type: 'GET',
@@ -108,20 +109,33 @@
 
         $(document).ready(function () {
             $("select[id^='Tipo']").change();
+            if ($('#Tipo').val() == 0) {
+                $('#Tipo').prop("disabled", false);
+            }
         });
 
         function RemoverArquivo() {
             $('#arquivo').remove();
             $('#Tipo').val('0');
+            $('#Tipo').prop("disabled", false);
             MostrarMensagem('Arquivo excluído!', 1);
         };
 
         function MaterialSalvo() {
             var tipo = $('#Tipo').val();
-            if (tipo == 3 || tipo == 5) {
+            if (tipo == 3 || tipo == 5 || temArquivo) {
                 var url = '@Url.Action("Details", "Cursos", new { id = Model.Idcurso, Idunidade = Model.Idunidade })';
                 window.location.href = url;
             }
+        };
+
+        @if(Model.Arquivo == null)
+        {
+            @Html.Raw("var temArquivo = false;")
+        }
+        else
+        {
+            @Html.Raw("var temArquivo = true;")
         }
 
     </script>

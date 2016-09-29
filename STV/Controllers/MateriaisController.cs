@@ -335,53 +335,32 @@ namespace STV.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "Idmaterial,Idunidade,Descricao,Tipo,URL")] Material material, HttpPostedFileBase upload)
+        public async Task<ActionResult> Edit([Bind(Include = "Idmaterial,Idunidade,Descricao,Tipo,URL")] MaterialVM materialVM, HttpPostedFileBase upload)
         {
+            var material = Mapper.Map<MaterialVM, Material>(materialVM);
 
             if (ModelState.IsValid)
             {
-                //using (var transaction = db.Database.BeginTransaction())
-                //{
-                //    try
-                //    {
-
-                GetUploadInfo(ref material, upload);
-
-                if (material.Arquivo != null) db.Arquivo.Add(material.Arquivo);
-
+                
                 db.Entry(material).State = EntityState.Modified;
                 await db.SaveChangesAsync();
-
-                if (material.Arquivo != null)
-                {
-                    var arquivo = await db.Arquivo.FindAsync(material.Idmaterial);
-
-                    //Grava o conteúdo do arquivo no banco de dados
-                    VarbinaryStream blob = new VarbinaryStream(
-                    db.Database.Connection.ConnectionString,
-                    "Arquivo",
-                    "Blob",
-                    "Idmaterial",
-                    arquivo.Idmaterial);
-
-                    await upload.InputStream.CopyToAsync(blob, 65536);
-                }
-
-                //transaction.Commit();
                 TempData["msg"] = "Dados salvos!";
 
-                return VoltarParaListagem(material);
-                //}
+                if (material.Tipo != TipoMaterial.Arquivo && material.Tipo != TipoMaterial.Imagem && material.Tipo != TipoMaterial.Video)
+                    return new HttpStatusCodeResult(HttpStatusCode.OK);
 
-                //catch (Exception ex)
-                //{
-                //    transaction.Rollback();
-                //    ModelState.AddModelError("", ex.Message);
-                //    ViewBag.Idunidade = new SelectList(db.Unidade, "Idunidade", "Titulo");
-                //}
-                //}
+                var arquivo = db.Arquivo.Find(material.Idmaterial);
+                if (arquivo == null)
+                {
+                    ViewBag.IdTipo = (int)material.Tipo;
+                    ViewBag.Idcurso = db.Unidade.Find(material.Idunidade).Idcurso;
+                    return PartialView("Upload", material);
+                }
+                else
+                    return new HttpStatusCodeResult(HttpStatusCode.OK);
             }
-            return View(material);
+
+            return new HttpStatusCodeResult(HttpStatusCode.InternalServerError);
         }
 
 
