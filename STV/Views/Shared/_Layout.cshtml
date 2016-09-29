@@ -73,6 +73,13 @@
     @RenderSection("scripts", required: false)
 
     <script>
+
+        $('#divCarregando').bind('ajaxStart', function () {
+            $(this).show();
+        }).bind('ajaxStop', function () {
+            $(this).hide();
+        });
+
         $(document).ready(function () {
 
             var vlabel = $('#lblVbMensagem');

@@ -114,6 +114,12 @@ namespace STV.Controllers
 
         private void RegistrarVisualizacao(Material material)
         {
+            if (User.IsInRole("Admin")) return;
+
+            var isInstrutor = db.Curso.Where(c => c.Idcurso == material.Unidade.Idcurso).FirstOrDefault()
+                .IdusuarioInstrutor == UsuarioLogado.Idusuario;
+            if (isInstrutor) return;
+
             var usuarioToUpdate = db.Usuario
                     .Include(u => u.MateriaisConsultados)
                     .Where(i => i.Idusuario == UsuarioLogado.Idusuario)
@@ -184,7 +190,8 @@ namespace STV.Controllers
         {
             Material material = new Material();
             var materialVM = Mapper.Map<Material, MaterialVM>(material);
-            material.Idunidade = Idunidade;
+            materialVM.Idunidade = Idunidade;
+            materialVM.Idcurso = db.Unidade.Find(Idunidade).Idcurso;
             return View(materialVM);
         }
 
@@ -193,49 +200,53 @@ namespace STV.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Idmaterial,Idunidade,Descricao,Tipo,URL")] MaterialVM materialVM, HttpPostedFileBase upload)
+        public async Task<ActionResult> Create([Bind(Include = "Idmaterial,Idunidade,Descricao,Tipo,URL")] MaterialVM materialVM, HttpPostedFileBase upload)
         {
             var material = Mapper.Map<MaterialVM, Material>(materialVM);
 
             if (ModelState.IsValid)
             {
-                //using (var dbContextTransaction = db.Database.BeginTransaction())
-                //{
-                //    try
-                //    {
 
                 db.Material.Add(material);
+                await db.SaveChangesAsync();
 
-                if (material.Tipo == TipoMaterial.Arquivo || material.Tipo == TipoMaterial.Imagem || material.Tipo == TipoMaterial.Video)
-                {
-                    GetUploadInfo(ref material, upload);
+                //if (material.Tipo == TipoMaterial.Arquivo || material.Tipo == TipoMaterial.Imagem || material.Tipo == TipoMaterial.Video)
+                //{
+                //    GetUploadInfo(ref material, upload);
 
-                    db.SaveChanges();
+                //    db.SaveChanges();
 
-                    var arquivo = db.Arquivo.Find(material.Idmaterial);
+                //    var arquivo = db.Arquivo.Find(material.Idmaterial);
 
-                    //Grava o conteúdo do arquivo no banco de dados
-                    VarbinaryStream blob = new VarbinaryStream(
-                    db.Database.Connection.ConnectionString,
-                    "Arquivo",
-                    "Blob",
-                    "Idmaterial",
-                    arquivo.Idmaterial);
+                //    //Grava o conteúdo do arquivo no banco de dados
+                //    VarbinaryStream blob = new VarbinaryStream(
+                //    db.Database.Connection.ConnectionString,
+                //    "Arquivo",
+                //    "Blob",
+                //    "Idmaterial",
+                //    arquivo.Idmaterial);
 
-                    Task.Run(() => GravarArquivo(upload, blob));
-                    //await upload.InputStream.CopyToAsync(blob, 65536);
+                //    //Task.Run(() => GravarArquivo(upload, blob));
+                //    await upload.InputStream.CopyToAsync(blob, 65536);
 
 
                     //dbContextTransaction.Commit();
-                }
-                else
-                {
-                    db.SaveChanges();
-                }
+                //}
+                //else
+                //{
+                //    db.SaveChanges();
+                //}
 
                 TempData["msg"] = "Dados salvos!";
 
-                return VoltarParaListagem(material);
+                if (material.Tipo != TipoMaterial.Arquivo && material.Tipo != TipoMaterial.Imagem && material.Tipo != TipoMaterial.Video)
+                    return new HttpStatusCodeResult(HttpStatusCode.OK);
+
+                ViewBag.IdTipo = (int)material.Tipo;
+                ViewBag.Idcurso = db.Unidade.Find(material.Idunidade).Idcurso;
+                return PartialView("Upload", material);
+
+                //return VoltarParaListagem(material);
                 //    }
                 //    catch (Exception)
                 //    {
@@ -245,12 +256,49 @@ namespace STV.Controllers
                 //}
             }
 
-            return View(material);
+            return new HttpStatusCodeResult(HttpStatusCode.InternalServerError);
         }
 
         private async Task GravarArquivo(HttpPostedFileBase upload, VarbinaryStream blob)
         {
             await Task.Run(() => upload.InputStream.CopyTo(blob, 65536));
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> UploadFile(int id)
+        {
+            try
+            {
+                foreach (string file in Request.Files)
+                {
+                    var fileContent = Request.Files[file];
+                    if (fileContent != null && fileContent.ContentLength > 0)
+                    {
+                        //Atualiza o material com os dados do arquivo
+                        var material = db.Material.Find(id);
+                        GetUploadInfo(ref material, fileContent);
+                        db.Arquivo.Add(material.Arquivo);
+                        await db.SaveChangesAsync();
+
+                        //Grava o conteúdo do arquivo no banco de dados
+                        VarbinaryStream blob = new VarbinaryStream(
+                        db.Database.Connection.ConnectionString,
+                        "Arquivo",
+                        "Blob",
+                        "Idmaterial",
+                        id);
+
+                        await fileContent.InputStream.CopyToAsync(blob, 65536);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                return Json(ex.Message);
+            }
+
+            return Json("File uploaded successfully");
         }
 
         // GET: Materiais/Edit/5
@@ -262,16 +310,18 @@ namespace STV.Controllers
                     throw new ApplicationException("Ops! Requisição inválida.");
 
                 Material material = await db.Material.FindAsync(id);
+                GetArquivoInfo(ref material);
+
+                var materialVM = Mapper.Map<Material, MaterialVM>(material);
+                materialVM.Idunidade = material.Unidade.Idunidade;
+                materialVM.Idcurso = material.Unidade.Idcurso;
 
                 if (material == null)
                     throw new ApplicationException("Material não encontrado.");
 
-                GetArquivoInfo(ref material);
-
                 ViewBag.URL = material.URL;
-                ViewBag.Idunidade = new SelectList(db.Unidade, "Idunidade", "Titulo");
 
-                return View(material);
+                return View(materialVM);
             }
             catch (ApplicationException ex)
             {

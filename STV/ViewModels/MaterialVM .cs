@@ -26,5 +26,7 @@ namespace STV.ViewModels
 
         public virtual ICollection<Usuario> UsuariosConsulta { get; set; }
 
+        public int Idcurso { get; set; }
+
     }
 }

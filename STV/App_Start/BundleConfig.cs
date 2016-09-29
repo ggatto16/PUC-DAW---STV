@@ -38,6 +38,9 @@ namespace STV
             bundles.Add(new ScriptBundle("~/bundles/fileinputSetup").Include(
                         "~/Scripts/fileinput/fileinputSetup.js"));
 
+            bundles.Add(new ScriptBundle("~/bundles/Upload").Include(
+                        "~/Scripts/Upload.js"));
+
             bundles.Add(new StyleBundle("~/Content/fileinput").Include("~/Content/fileinput.min.css"));
 
             bundles.Add(new StyleBundle("~/Content/stars").Include(

@@ -1,4 +1,4 @@
-﻿@model STV.Models.Material
+﻿@model STV.ViewModels.MaterialVM
 
 @section MeusEstilos {
     @Styles.Render("~/Content/fileinput")
@@ -12,7 +12,7 @@
 
 <div class="text-danger" id="divErroArquivo"></div>
 
-@using (Html.BeginForm("Edit", "Materiais", null, FormMethod.Post, new { enctype = "multipart/form-data" }))
+@using (Ajax.BeginForm("Create", new AjaxOptions { HttpMethod = "Post", OnBegin = "onBeginAjax", OnComplete = "onCompleteAjax", OnFailure = "OnFailure", OnSuccess = "MaterialSalvo", InsertionMode = InsertionMode.Replace, UpdateTargetId = "containerUpload" }))
 {
     @Html.AntiForgeryToken()
 
@@ -42,11 +42,7 @@
             </div>
 
             <div class="form-group">
-                @Html.LabelFor(model => model.Idunidade, "Idunidade", htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.DisplayFor(model => model.Unidade.Titulo, "", new { @class = "form-control" })
-                    @Html.ValidationMessageFor(model => model.Idunidade, "", new { @class = "text-danger" })
-                </div>
+                <div id="containerURL"></div>
             </div>
 
             @if (Model.Arquivo != null)
@@ -81,6 +77,10 @@
 
 }
 
+<div class="col-md-6">
+    <div id="containerUpload"></div>
+</div>
+
 @section Scripts {
 
     @Scripts.Render("~/bundles/jqueryval")
@@ -91,16 +91,18 @@
         $(function () {
             $('#Tipo').change(function () {
                 var tipoID = $(this).val();
-                $.ajax({
-                    url: 'http://' + window.location.host + '/Materiais/CarregarTipo',
-                    type: 'GET',
-                    data: { Idtipo: tipoID, url: '@Model.URL' },
-                    cache: false,
-                    success: function (result) {
-                        $('#container').html(result);
-                        PrepararFileUpload(tipoID);
-                    }
-                });
+                if (tipoID != 1 && tipoID != 2 && tipoID != 4) {
+                    $.ajax({
+                        url: '/Materiais/CarregarTipo',
+                        type: 'GET',
+                        data: { Idtipo: tipoID, URL: "@Html.Raw(Model.URL)" },
+                        cache: false,
+                        success: function (result) {
+                            $('#containerURL').html(result);
+                            PrepararFileUpload(tipoID);
+                        }
+                    });
+                }
             });
         });
 
@@ -113,6 +115,14 @@
             $('#Tipo').val('0');
             MostrarMensagem('Arquivo excluído!', 1);
         };
+
+        function MaterialSalvo() {
+            var tipo = $('#Tipo').val();
+            if (tipo == 3 || tipo == 5) {
+                var url = '@Url.Action("Details", "Cursos", new { id = Model.Idcurso, Idunidade = Model.Idunidade })';
+                window.location.href = url;
+            }
+        }
 
     </script>
 

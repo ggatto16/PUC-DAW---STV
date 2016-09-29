@@ -2,26 +2,81 @@
 
 @Scripts.Render("~/bundles/fileinput")
 
-<h4>Upload de Arquivo</h4>
+<script>
 
-<hr />
+    @if (Model != null)
+    {
+        <text>
 
-<div class="form-horizontal">
-    <div class="form-group">
-            @if (ViewBag.Tipo == STV.Models.TipoMaterial.Link || ViewBag.Tipo == STV.Models.TipoMaterial.Embedded)
-            {
-                @Html.LabelFor(model => model.URL, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.EditorFor(model => model.URL, new { htmlAttributes = new { @class = "form-control", @Value = ViewBag.URL } })
-                    @Html.ValidationMessageFor(model => model.URL, "", new { @class = "text-danger" })
-                </div>
-            }
-            else
-            {
+    var tipoId = @Convert.ToInt32(Model.Tipo);
+    $(document).ready(function () {
+        if (tipoId == 1 || tipoId == 2 || tipoId == 4)
+            PrepararFileUpload(tipoId);
+    });
+
+    function EnviarArquivo(){
+        debugger;
+        $('#divCarregando').fadeIn(); 
+
+        var formData = new FormData($('#formArquivo')[0]);
+        
+
+        $.ajax({
+            url: '/Materiais/UploadFile?id=' + @Model.Idmaterial,
+            type: 'POST',
+            data: formData,
+            //async: false,
+            timeout: 0,
+            beforeSend: function () {
+                $(".divCarregando").show(); 
+            },
+            complete: function() { 
+                $('#divCarregando').fadeOut();; 
+            },
+            error: function() { MostrarMensagem(data, 2); },
+            success: function (data) {
+                var url = '@Url.Action("Details", "Cursos", new { id = ViewBag.Idcurso, Idunidade = Model.Idunidade })';
+                window.location.href = url;
+            },
+            cache: false,
+            contentType: false,
+            processData: false
+        });
+
+        return false;
+    }
+
+    </text>
+    }
+
+</script>
+
+@if (ViewBag.Tipo == STV.Models.TipoMaterial.Link || ViewBag.Tipo == STV.Models.TipoMaterial.Embedded)
+{
+    @Html.LabelFor(model => model.URL, htmlAttributes: new { @class = "control-label col-md-2" })
+    <div class="col-md-10">
+        @Html.EditorFor(model => model.URL, new { htmlAttributes = new { @class = "form-control", @Value = ViewBag.URL } })
+        @Html.ValidationMessageFor(model => model.URL, "", new { @class = "text-danger" })
+    </div>
+}
+else
+{
+    <form id="formArquivo" method="post" enctype="multipart/form-data">
+        <div class="form-horizontal">
+            <div class="form-group">
                 <div class="col-md-10">
                     <input id="Arquivo" name="upload" class="file-loading" type="file" />
                     @Html.ValidationMessageFor(model => model.Arquivo.Nome, "", new { @class = "text-danger" })
                 </div>
-            }
+            </div>
+        </div>
+    </form>
+    <div class="form-horizontal">
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <button onclick="EnviarArquivo();" class="btn btn-default">Enviar</button>
+            </div>
+        </div>
     </div>
-</div>
+}
+
