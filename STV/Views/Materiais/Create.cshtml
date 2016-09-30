@@ -8,6 +8,12 @@
     ViewBag.Title = "Create";
 }
 
+<ol class="breadcrumb">
+    <li><a href="~/Cursos/Details/@Model.Unidade.Curso.Idcurso">@Model.Unidade.Curso.Titulo</a></li>
+    <li><a href="~/Cursos/Details/@Model.Unidade.Curso.Idcurso?Idunidade=@Model.Unidade.Idunidade">@Model.Unidade.Titulo</a></li>
+    <li class="active">Novo Material</li>
+</ol>
+
 <h2>Create</h2>
 
 

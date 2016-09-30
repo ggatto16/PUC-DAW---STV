@@ -28,6 +28,13 @@
         <hr />
         <dl class="dl-horizontal">
             <dt>
+                @Html.DisplayName("Instrutor")
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Instrutor.Nome)
+            </dd>
+            <dt>
                 @Html.DisplayNameFor(model => model.Dtinicial)
             </dt>
 
@@ -150,8 +157,8 @@
                         @if (User.IsInRole("Admin") || Model.IsInstutor)
                         {
                             @Html.ActionLink("Edit", "Edit", "Unidades", new { id = unidade.Idunidade }, null)
-                            @Html.Raw("|")
-                            @Html.ActionLink("Delete", "Delete", "Unidades", new { id = unidade.Idunidade })
+                            @Html.Raw(" | ")
+                            @Html.ActionLink("Delete", "Delete", "Unidades", new { id = unidade.Idunidade }, null)
                         }
                     </td>
                 </tr>

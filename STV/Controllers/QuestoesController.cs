@@ -78,6 +78,7 @@ namespace STV.Controllers
 
             Questao questao = new Questao();
             questao.Idatividade = Idatividade;
+            questao.Atividade = db.Atividade.Find(Idatividade);
             return View(questao);
         }
 

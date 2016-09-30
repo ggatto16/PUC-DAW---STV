@@ -26,15 +26,16 @@ namespace STV.Controllers
 
             var RelatorioUsuario = Mapper.Map<Usuario, RelatorioUsuario>(usuario);
 
-            return new PdfActionResult("PDF", RelatorioUsuario);
+            // return new PdfActionResult("PDF", RelatorioUsuario);
             //return View("PDF", RelatorioUsuario);
 
-            //return new PdfActionResult(usuario, (writer, document) =>
-            //{
-            //    document.SetPageSize(PageSize.A4.Rotate());
-            //    document.NewPage();
-
-            //});
+            return new PdfActionResult("PDF", RelatorioUsuario, (writer, document) =>
+            {
+                //document.SetPageSize(PageSize.A4.Rotate());
+                document.NewPage();
+                document.AddCreator("teste");
+                HttpContext.Response.AddHeader("content-disposition", string.Format("inline; filename=Relatorio-{0}.pdf", usuario.Nome));
+            });
         }
 
         // GET: Usuarios
@@ -44,6 +45,7 @@ namespace STV.Controllers
             ViewBag.FiltroNome = nome;
             ViewBag.MensagemSucesso = TempData["msg"];
             ViewBag.MensagemErro = TempData["msgErr"];
+            TempData.Clear();
 
             var usuarios = from u in db.Usuario select u;
 

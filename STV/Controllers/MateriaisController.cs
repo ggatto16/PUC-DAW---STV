@@ -191,7 +191,9 @@ namespace STV.Controllers
             Material material = new Material();
             var materialVM = Mapper.Map<Material, MaterialVM>(material);
             materialVM.Idunidade = Idunidade;
-            materialVM.Idcurso = db.Unidade.Find(Idunidade).Idcurso;
+            var unidade = db.Unidade.Find(Idunidade);
+            materialVM.Unidade = unidade;
+            materialVM.Idcurso = unidade.Idcurso;
             return View(materialVM);
         }
 

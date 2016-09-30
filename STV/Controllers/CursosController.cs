@@ -155,6 +155,7 @@ namespace STV.Controllers
 
             ViewBag.MensagemSucesso = TempData["msg"];
             ViewBag.MensagemErro = TempData["msgErr"];
+            TempData.Clear();
 
             return View(await cursos.ToListAsync());
         }
@@ -243,6 +244,7 @@ namespace STV.Controllers
         {
             ViewBag.MensagemSucesso = TempData["msg"];
             ViewBag.MensagemErro = TempData["msgErr"];
+            TempData.Clear();
             return View(await db.Curso.ToListAsync());
         }
 
@@ -270,6 +272,7 @@ namespace STV.Controllers
 
                 ViewBag.MensagemSucesso = TempData["msg"];
                 ViewBag.MensagemErro = TempData["msgErr"];
+                TempData.Clear();
                 ViewBag.UnidadeSelecionada = Idunidade;  //para reabrir o conteúdo
 
                 //Verificar se é instrutor
@@ -403,7 +406,7 @@ namespace STV.Controllers
 
                 CarregarDepartamentos(curso);
 
-                ViewBag.IdusuarioInstrutor = new SelectList(db.Usuario, "Idusuario", "Nome");
+                ViewBag.IdusuarioInstrutor = new SelectList(db.Usuario, "Idusuario", "Nome", curso.IdusuarioInstrutor);
                 return View(curso);
             }
             catch (ApplicationException ex)

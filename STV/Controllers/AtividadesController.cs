@@ -170,6 +170,7 @@ namespace STV.Controllers
             ViewBag.Idunidade = new SelectList(db.Unidade, "Idunidade", "Titulo");
             Atividade atividade = new Atividade();
             atividade.Idunidade = Idunidade;
+            atividade.Unidade = db.Unidade.Find(Idunidade);
             return View(atividade);
         }
 

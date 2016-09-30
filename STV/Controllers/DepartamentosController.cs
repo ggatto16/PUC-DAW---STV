@@ -20,6 +20,7 @@ namespace STV.Controllers
             ViewBag.Filtro = s;
             ViewBag.MensagemSucesso = TempData["msg"];
             ViewBag.MensagemErro = TempData["msgErr"];
+            TempData.Clear();
 
             var departamentos = from d in db.Departamento select d;
 

@@ -4,12 +4,18 @@
     ViewBag.Title = "Create";
 }
 
+<ol class="breadcrumb">
+    <li><a href="~/Cursos/Details/@Model.Curso.Idcurso">@Model.Curso.Titulo</a></li>
+    <li class="active">Nova Unidade</li>
+</ol>
+
 <h2>Create</h2>
 
 
 @using (Html.BeginForm()) 
 {
     @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.Idcurso)
     
     <div class="form-horizontal">
         <h4>Unidade</h4>
@@ -20,14 +26,6 @@
             <div class="col-md-10">
                 @Html.EditorFor(model => model.Titulo, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.Titulo, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Idcurso, "Idcurso", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownList("Idcurso", null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.Idcurso, "", new { @class = "text-danger" })
             </div>
         </div>
         

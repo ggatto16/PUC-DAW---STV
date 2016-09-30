@@ -19,6 +19,7 @@ namespace STV.Controllers
         {
             ViewBag.MensagemSucesso = TempData["msg"];
             ViewBag.MensagemErro = TempData["msgErr"];
+            TempData.Clear();
 
             var alternativa = db.Alternativa.Include(a => a.Questao);
             return View(await alternativa.ToListAsync());

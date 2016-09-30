@@ -4,6 +4,14 @@
     ViewBag.Title = "Details";
 }
 
+<ol class="breadcrumb">
+    <li><a href="~/Cursos/Details/@Model.Questao.Atividade.Unidade.Curso.Idcurso">@Model.Questao.Atividade.Unidade.Curso.Titulo</a></li>
+    <li><a href="~/Cursos/Details/@Model.Questao.Atividade.Unidade.Curso.Idcurso?Idunidade=@Model.Questao.Atividade.Unidade.Idunidade">@Model.Questao.Atividade.Unidade.Titulo</a></li>
+    <li><a href="~/Atividades/Details/@Model.Questao.Atividade.Idatividade">@Model.Questao.Atividade.Descricao</a></li>
+    <li><a href="~/Atividades/Details/@Model.Questao.Atividade.Idatividade?Idquestao=@Model.Questao.Idquestao">Questão @Model.Questao.Numero</a></li>
+    <li class="active">Detalhes da Alternativa</li>
+</ol>
+
 <h2>Details</h2>
 
 <div>

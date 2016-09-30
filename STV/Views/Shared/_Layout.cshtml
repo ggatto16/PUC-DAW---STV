@@ -57,7 +57,7 @@
     </div>
 
     <div id="divCarregando" class="loader-div">
-        <div class="loader"></div>
+        <div class="loader">Carregando...</div>
     </div>
 
     <div class="container">
@@ -74,42 +74,45 @@
 
     <script>
 
-        $('#divCarregando').bind('ajaxStart', function () {
-            $(this).show();
-        }).bind('ajaxStop', function () {
-            $(this).hide();
-        });
+        var msg = '';
+        var msgErr = '';
+
+        @if (!string.IsNullOrEmpty(ViewBag.MensagemSucesso))
+        {
+            <text>msg = '@ViewBag.MensagemSucesso';</text>
+            ViewBag.MensagemSucesso = null;
+        }
+        else if (!string.IsNullOrEmpty(ViewBag.MensagemErro))
+        {
+            <text>msgErr = '@ViewBag.MensagemErro';</text>
+            ViewBag.MensagemErro = null;
+        }
 
         $(document).ready(function () {
 
             var vlabel = $('#lblVbMensagem');
             var vdiv = $('#divVbMensagem');
 
-            @if(!string.IsNullOrEmpty(ViewBag.MensagemSucesso))
-            {
-                <text>
-                    vlabel.text("✔ " + '@Html.Raw(ViewBag.MensagemSucesso)');
-                    vdiv.addClass('bg-success text-success');
-                    vdiv.fadeIn();
-                    setTimeout(HideVMessage, 10000);
-                </text>
-                ViewBag.MensagemSucesso = null;
+            if (msg != '') {
+                vlabel.text("✔ " + msg);
+                msg = '';
+                vdiv.addClass('bg-success text-success');
+                vdiv.fadeIn();
+                setTimeout(HideVMessage, 10000);
             }
-            else if (!string.IsNullOrEmpty(ViewBag.MensagemErro))
-            {
-                <text>
-                    vlabel.text("✖ " + '@Html.Raw(ViewBag.MensagemErro)');
-                    vdiv.addClass('bg-danger text-danger');
-                    vdiv.fadeIn();
-                    setTimeout(HideVMessage, 10000);
-                </text>
-                ViewBag.MensagemErro = null;
+            else if (msgErr != '') {
+                vlabel.text("✖ " + msgErr);
+                msgErr = '';
+                vdiv.addClass('bg-danger text-danger');
+                vdiv.fadeIn();
+                setTimeout(HideVMessage, 10000);
             }
         });
 
         function HideVMessage() {
             $('#divVbMensagem').fadeOut();
         }
+
     </script>
 </body>
 </html>

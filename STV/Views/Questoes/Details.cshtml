@@ -4,6 +4,13 @@
     ViewBag.Title = "Details";
 }
 
+<ol class="breadcrumb">
+    <li><a href="~/Cursos/Details/@Model.Atividade.Unidade.Curso.Idcurso">@Model.Atividade.Unidade.Curso.Titulo</a></li>
+    <li><a href="~/Cursos/Details/@Model.Atividade.Unidade.Curso.Idcurso?Idunidade=@Model.Atividade.Unidade.Idunidade">@Model.Atividade.Unidade.Titulo</a></li>
+    <li><a href="~/Atividades/Details/@Model.Atividade.Idatividade">@Model.Atividade.Descricao</a></li>
+    <li class="active">Detalhes da Questão</li>
+</ol>
+
 <h2>Details</h2>
 
 <div>
@@ -11,19 +18,11 @@
     <hr />
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.Alternativa.Descricao)
+            @Html.DisplayName("Atividade")
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.Alternativa.Descricao)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Atividade.Idatividade)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Atividade.Idatividade)
+            @Html.DisplayFor(model => model.Atividade.Descricao)
         </dd>
 
         <dt>

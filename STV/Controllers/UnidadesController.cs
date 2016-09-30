@@ -32,6 +32,7 @@ namespace STV.Controllers
         {
             ViewBag.MensagemSucesso = TempData["msg"];
             ViewBag.MensagemErro = TempData["msgErr"];
+            TempData.Clear();
 
             if (idcurso != 0)
             {
@@ -124,6 +125,8 @@ namespace STV.Controllers
 
         private bool Autorizarado(int? Idcurso)
         {
+            if (User.IsInRole("Admin")) return true;
+
             var curso = db.Curso
                 .Where(c => c.IdusuarioInstrutor == UsuarioLogado.Idusuario && c.Idcurso == Idcurso)
                 .SingleOrDefault();
@@ -147,8 +150,10 @@ namespace STV.Controllers
 
             if (!Autorizarado(Idcurso)) return View("NaoAutorizado");
 
+            var unidade = new Unidade { Curso = db.Curso.Where(c => c.Idcurso == Idcurso).FirstOrDefault() };
+
             ViewBag.Idcurso = new SelectList(db.Curso, "Idcurso", "Titulo");
-            return View();
+            return View(unidade);
         }
 
         // POST: Unidades/Create
@@ -166,7 +171,7 @@ namespace STV.Controllers
                 db.Unidade.Add(unidade);
                 await db.SaveChangesAsync();
                 TempData["msg"] = "Unidade criada!";
-                VoltarParaListagem(unidade);
+                return VoltarParaListagem(unidade);
             }
 
             return View(unidade);
@@ -212,7 +217,7 @@ namespace STV.Controllers
                 db.Entry(unidade).State = EntityState.Modified;
                 await db.SaveChangesAsync();
                 TempData["msg"] = "Dados Salvos!";
-                VoltarParaListagem(unidade);
+                return VoltarParaListagem(unidade);
             }
             return View(unidade);
         }

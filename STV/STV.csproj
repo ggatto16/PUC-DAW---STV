@@ -521,6 +521,7 @@
     <Content Include="Views\Usuarios\PDF.cshtml" />
     <Content Include="Views\Cursos\Certificado.cshtml" />
     <Content Include="Views\Cursos\Comentarios.cshtml" />
+    <Content Include="Views\Shared\NaoAutorizado.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

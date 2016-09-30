@@ -4,6 +4,12 @@
     ViewBag.Title = "Details";
 }
 
+<ol class="breadcrumb">
+    <li><a href="~/Cursos/Details/@Model.Unidade.Curso.Idcurso">@Model.Unidade.Curso.Titulo</a></li>
+    <li><a href="~/Cursos/Details/@Model.Unidade.Curso.Idcurso?Idunidade=@Model.Unidade.Idunidade">@Model.Unidade.Titulo</a></li>
+    <li class="active">Detalhes da Atividade</li>
+</ol>
+
 <h2>Details</h2>
 
 <div class="col-md-6">
