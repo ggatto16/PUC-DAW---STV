@@ -57,7 +57,7 @@
     </div>
 
     <div id="divCarregando" class="loader-div">
-        <div class="loader">Carregando...</div>
+        <div class="loader"></div>
     </div>
 
     <div class="container">
@@ -79,12 +79,12 @@
 
         @if (!string.IsNullOrEmpty(ViewBag.MensagemSucesso))
         {
-            <text>msg = '@ViewBag.MensagemSucesso';</text>
+            <text>msg = '@Html.Raw(ViewBag.MensagemSucesso)';</text>
             ViewBag.MensagemSucesso = null;
         }
         else if (!string.IsNullOrEmpty(ViewBag.MensagemErro))
         {
-            <text>msgErr = '@ViewBag.MensagemErro';</text>
+            <text>msgErr = '@Html.Raw(ViewBag.MensagemErro)';</text>
             ViewBag.MensagemErro = null;
         }
 

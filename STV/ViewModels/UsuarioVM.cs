@@ -11,6 +11,8 @@ namespace STV.ViewModels
         public int Idusuario { get; set; }
 
         [StringLength(15)]
+        [Required(ErrorMessage = "CPF obrigatório")]
+        [CustomValidationCPF(ErrorMessage = "CPF inválido")]
         public string Cpf { get; set; }
 
         [StringLength(60)]

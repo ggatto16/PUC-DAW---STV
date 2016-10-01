@@ -15,6 +15,9 @@
 
     @foreach (var curso in Model.Cursos)
     {
+        var notaMaximaCurso = 0;
+        var notaAlunoCurso = 0;
+        var qtdMateriaisCurso = 0;
         <hr />
         <div style="padding: 10px 0px 10px 0px; width: 100%; overflow: hidden;">
             <div class="col-md-5">
@@ -23,6 +26,7 @@
         </div>
         foreach (var unidade in curso.Unidades)
         {
+            qtdMateriaisCurso += unidade.Materiais.Count();
             <div style="padding-left: 20px; width: 100%; overflow: hidden;">
                 <div class="col-md-5">
                     <strong>Unidade: </strong> @Html.DisplayFor(modelItem => unidade.Titulo)
@@ -40,11 +44,13 @@
                     <tbody>
                         @foreach (var atividade in unidade.Atividades)
                         {
-                            var nota = Model.Notas.Where(n => n.Idatividade == atividade.Idatividade);
+                            notaMaximaCurso += atividade.Valor;
+                            var nota = Model.Notas.Where(n => n.Idatividade == atividade.Idatividade && n.Idusuario == Model.Idusuario).FirstOrDefault();
                             string nota2 = string.Empty;
-                            if (nota.Count() > 0)
+                            if (nota != null)
                             {
-                                nota2 = nota.FirstOrDefault().Pontos.ToString();
+                                nota2 = nota.Pontos.ToString();
+                                notaAlunoCurso = nota.Pontos;
                             }
                             <tr>
                                 <td style="width: 50%;">
@@ -106,7 +112,7 @@
                                 @{
                                     if (Model.MateriaisConsultadosPorUnidade > 0)
                                     {
-                                        var porcentagem = 100 / Model.MateriaisConsultadosPorUnidade;
+                                        var porcentagem = (100 * Model.MateriaisConsultadosPorUnidade) / unidade.Materiais.Count();
                                         Model.MateriaisConsultadosPorUnidade = 0;
                                         @Html.Raw(porcentagem + "%");
                                     }
@@ -122,5 +128,30 @@
                 </table>
             </div>
         }
+        var aprovado = false;
+        if (curso.Dtfinal < DateTime.Now)
+        {
+            var qtdMateriaisColsultadosCurso = Model.MateriaisConsultados.Where(m => m.Unidade.Idcurso == curso.Idcurso).Count();
+            var porcentagemNotaCurso = 0;
+            if (notaMaximaCurso > 0)
+            {
+                porcentagemNotaCurso = (notaAlunoCurso * 100) / notaMaximaCurso;
+            }
+            aprovado = qtdMateriaisColsultadosCurso == qtdMateriaisCurso && porcentagemNotaCurso >= 70;
+
+            if (aprovado)
+            {
+                <div>Aluno Aprovado</div>
+            }
+            else
+            {
+                <div>Aluno Reprovado</div>
+            }
+        }
+        else
+        {
+            <div>Curso em Andamento</div>
+        }
+        
     }
 </div>

@@ -153,6 +153,9 @@ namespace STV.Controllers
                 if (atividade == null)
                     throw new ApplicationException("Atividade não encontrada.");
 
+                ViewBag.MensagemSucesso = TempData["msg"];
+                ViewBag.MensagemErro = TempData["msgErr"];
+                TempData.Clear();
                 ViewBag.QuestaoSelecionada = Idquestao;
 
                 return View(atividade);

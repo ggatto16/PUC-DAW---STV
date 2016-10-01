@@ -20,7 +20,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.Cpf, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.Cpf, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.Cpf, new { htmlAttributes = new { @class = "form-control", id = "cpf" } })
                 @Html.ValidationMessageFor(model => model.Cpf, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -82,7 +82,7 @@
                                     @:</tr><tr>
                                 }
                                 @:<td>
-                                    <input type="checkbox"
+                                    <input type="radio"
                                            name="rolesSelecionadas"
                                            value="@role.Idrole"
                                            @(Html.Raw(role.Atribuida ? "checked=\"checked\"" : "")) />
@@ -109,4 +109,6 @@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/scripts/CustomValidation.js")
+    @Scripts.Render("~/bundles/inputmask")
 }

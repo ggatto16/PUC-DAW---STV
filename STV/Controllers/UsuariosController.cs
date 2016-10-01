@@ -66,15 +66,16 @@ namespace STV.Controllers
         {
             try
             {
-                throw new Exception("Teste erro não maepado");
                 if (id == null)
                     throw new ApplicationException("Ops! Requisição inválida.");
                 
                 Usuario usuario = await db.Usuario.FindAsync(id);
                 if (usuario == null)
                     throw new ApplicationException("Usuário não encontrado.");
+
+                var usuarioVM = Mapper.Map<Usuario, UsuarioVM>(usuario);
                 
-                return View(usuario);
+                return View(usuarioVM);
             }
             catch (ApplicationException ex)
             {
@@ -86,12 +87,12 @@ namespace STV.Controllers
         // GET: Usuarios/Create
         public ActionResult Create()
         {
-            var usuario = new Usuario();
+            var usuario = new UsuarioVM();
             usuario.Roles = new List<Role>();
             CarregarRolesDisponiveis(usuario);
             ViewBag.Iddepartamento = new SelectList(db.Departamento, "Iddepartamento", "Descricao");
 
-            return View();
+            return View(usuario);
         }
 
         // POST: Usuarios/Create
@@ -99,8 +100,10 @@ namespace STV.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Idusuario,Cpf,Nome,Email,Senha,Iddepartamento")] Usuario usuario, string[] rolesSelecionadas)
+        public async Task<ActionResult> Create([Bind(Include = "Idusuario,Cpf,Nome,Email,Senha,Iddepartamento")] UsuarioVM usuarioVM, string[] rolesSelecionadas)
         {
+            var usuario = Mapper.Map<UsuarioVM, Usuario>(usuarioVM);
+
             if (rolesSelecionadas != null)
             {
                 usuario.Roles = new List<Role>();
@@ -122,10 +125,10 @@ namespace STV.Controllers
                 return RedirectToAction("Index");
             }
 
-            usuario.Roles = new List<Role>();
-            CarregarRolesDisponiveis(usuario);
+            usuarioVM.Roles = new List<Role>();
+            CarregarRolesDisponiveis(usuarioVM);
             ViewBag.Iddepartamento = new SelectList(db.Departamento, "Iddepartamento", "Descricao");
-            return View(usuario);
+            return View(usuarioVM);
         }
 
         // GET: Usuarios/Edit/5
@@ -145,10 +148,10 @@ namespace STV.Controllers
                 if (usuario == null)
                     throw new ApplicationException("Usuário não encontrado.");
 
-                CarregarRolesDisponiveis(usuario);
-                ViewBag.Iddepartamento = new SelectList(db.Departamento, "Iddepartamento", "Descricao", usuario.Iddepartamento);
-
                 var usuarioVM = Mapper.Map<Usuario, UsuarioVM>(usuario);
+
+                CarregarRolesDisponiveis(usuarioVM);
+                ViewBag.Iddepartamento = new SelectList(db.Departamento, "Iddepartamento", "Descricao", usuario.Iddepartamento);
                 usuarioVM.SenhaDigitada = Crypt.Decrypt(usuario.Senha);
 
                 return View(usuarioVM);
@@ -196,13 +199,14 @@ namespace STV.Controllers
                 catch (RetryLimitExceededException /* dex */)
                 {
                     //Log the error (uncomment dex variable name and add a line here to write a log.
-                    ModelState.AddModelError("", "Não foi possível salver as alterações.");
+                    ModelState.AddModelError("", "Não foi possível salvar as alterações.");
                 }
             }
 
-            CarregarRolesDisponiveis(usuarioToUpdate);
-            ViewBag.Iddepartamento = new SelectList(db.Departamento, "Iddepartamento", "Descricao", usuarioToUpdate.Iddepartamento);
-            return View(usuarioToUpdate);
+            var usuarioVM = Mapper.Map<Usuario, UsuarioVM>(usuarioToUpdate);
+            CarregarRolesDisponiveis(usuarioVM);
+            ViewBag.Iddepartamento = new SelectList(db.Departamento, "Iddepartamento", "Descricao", usuarioVM.Iddepartamento);
+            return View(usuarioVM);
         }
 
         private void AtualizarRolesUsuario(string[] rolesSelecionadas, Usuario usuarioToUpdate)
@@ -287,7 +291,7 @@ namespace STV.Controllers
             }
         }
 
-        private void CarregarRolesDisponiveis(Usuario usuario)
+        private void CarregarRolesDisponiveis(UsuarioVM usuario)
         {
             var allRoles = db.Role;
             var usuarioRoles = new HashSet<int>(usuario.Roles.Select(c => c.Idrole));

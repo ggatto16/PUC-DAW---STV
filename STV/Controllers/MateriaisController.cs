@@ -1,21 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using AutoMapper;
+using STV.Auth;
+using STV.DAL;
+using STV.Models;
+using STV.ViewModels;
+using System;
+using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Data.Entity;
+using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Net;
+using System.Reflection;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
-using STV.Models;
-using System.IO;
-using STV.DAL;
-using STV.Auth;
-using STV.ViewModels;
-using AutoMapper;
-using System.Reflection;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel;
 
 namespace STV.Controllers
 {
@@ -259,11 +257,6 @@ namespace STV.Controllers
             }
 
             return new HttpStatusCodeResult(HttpStatusCode.InternalServerError);
-        }
-
-        private async Task GravarArquivo(HttpPostedFileBase upload, VarbinaryStream blob)
-        {
-            await Task.Run(() => upload.InputStream.CopyTo(blob, 65536));
         }
 
         [HttpPost]
