@@ -143,7 +143,7 @@
                 <div class="form">
                     <form class="login-form">
 
-                        @Html.TextBoxFor(a => a.Cpf, new { @placeholder = "CPF", @id = "cpf" })
+                        @Html.TextBoxFor(a => a.Cpf, new { @placeholder = "CPF" })
                         @Html.ValidationMessageFor(a => a.Cpf)
                         @Html.PasswordFor(a => a.Senha, new { @placeholder = "Senha" })
                         @Html.ValidationMessageFor(a => a.Senha)
@@ -161,9 +161,9 @@
         }
 
     </div>
-    @Scripts.Render("~/bundles/jquery")
+    @*@Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/jqueryval")
     @Scripts.Render("~/Scripts/CustomValidation.js")
-    @Scripts.Render("~/bundles/inputmask")
+    @Scripts.Render("~/bundles/inputmask")*@
 </body>
 </html>
