@@ -15,6 +15,16 @@ namespace STV.ViewModels
         [CustomValidationCPF(ErrorMessage = "CPF inválido")]
         public string Cpf { get; set; }
 
+        public string CpfSoNumeros
+        {
+            get
+            {
+                System.Text.RegularExpressions.Regex reg = new System.Text.RegularExpressions.Regex(@"[^0-9]");
+                string ret = reg.Replace(Cpf, string.Empty);
+                return ret;
+            }
+        }
+
         [StringLength(60)]
         public string Nome { get; set; }
 

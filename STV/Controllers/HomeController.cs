@@ -1,4 +1,5 @@
 ﻿using STV.Models;
+using STV.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -60,7 +61,7 @@ namespace STV.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public ActionResult Login(Usuario Anonymous, string returnUrl = "")
+        public ActionResult Login(UsuarioVM Anonymous, string returnUrl = "")
         {
             if (ModelState.IsValid) 
             {
@@ -68,7 +69,7 @@ namespace STV.Controllers
                 {
                     var senha = Crypt.Encrypt(Anonymous.Senha);
                     var usuarioAutenticado = db.Usuario
-                        .Where(a => a.Cpf.Equals(Anonymous.Cpf) && a.Senha.Equals(senha))
+                        .Where(a => a.Cpf.Equals(Anonymous.CpfSoNumeros) && a.Senha.Equals(senha))
                         .Select(a => new 
                         {
                             Idusuario = a.Idusuario,
