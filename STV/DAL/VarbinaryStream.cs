@@ -9,7 +9,7 @@ namespace STV.DAL
 {
     public class VarbinaryStream : Stream
     {
-        private STVDbContext db = new STVDbContext();
+        private STVDbContext _db;
         private List<SqlParameter> parameters;
 
         private SqlConnection _Connection;
@@ -32,10 +32,16 @@ namespace STV.DAL
         string BinaryColumn,
         string KeyColumn,
         int KeyValue,
+        STVDbContext db,
         bool AllowRead = false)
         {
             // create own connection with the connection string.
             _Connection = new SqlConnection(ConnectionString);
+
+            if (db == null)
+                _db = new STVDbContext();
+            else
+                _db = db;
 
             _TableName = TableName;
             _BinaryColumn = BinaryColumn;
@@ -102,7 +108,7 @@ namespace STV.DAL
                     parameters.Add(new SqlParameter("@firstchunk", buffer));
                     parameters.Add(new SqlParameter("@id", _KeyValue));
 
-                    db.Database.ExecuteSqlCommand(
+                    _db.Database.ExecuteSqlCommand(
                                             @"UPDATE [dbo].[" + _TableName + @"]
                                                 SET [" + _BinaryColumn + @"] = @firstchunk 
                                                     WHERE [" + _KeyColumn + "] = @id",
@@ -129,7 +135,7 @@ namespace STV.DAL
                     parameters.Add(new SqlParameter("@length", count));
                     parameters.Add(new SqlParameter("@id", _KeyValue));
 
-                    db.Database.ExecuteSqlCommand(
+                    _db.Database.ExecuteSqlCommand(
                                             @"UPDATE [dbo].[" + _TableName + @"]
                                                 SET [" + _BinaryColumn + @"].WRITE(@chunk, NULL, @length)
                                                     WHERE [" + _KeyColumn + "] = @id",

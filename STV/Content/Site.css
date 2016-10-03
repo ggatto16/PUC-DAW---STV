@@ -1,4 +1,15 @@
-﻿body {
+﻿.Mensagem {
+    display: none; 
+    margin: 20px 0 20px 0; 
+    border-radius: 4px; 
+    position: fixed; 
+    top: 40px; 
+    opacity: 0.95;
+    width: inherit;
+    z-index: 999;
+}
+
+body {
     padding-top: 50px;
     padding-bottom: 20px;
 }

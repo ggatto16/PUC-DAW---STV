@@ -4,9 +4,12 @@ using STV.DAL;
 using STV.Models;
 using STV.ViewModels;
 using System;
+using System.Activities.Statements;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Data.Entity;
+using System.Data.SqlClient;
+using System.EnterpriseServices;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -195,105 +198,59 @@ namespace STV.Controllers
             return View(materialVM);
         }
 
-        // POST: Materiais/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Idmaterial,Idunidade,Descricao,Tipo,URL")] MaterialVM materialVM, HttpPostedFileBase upload)
-        {
-            var material = Mapper.Map<MaterialVM, Material>(materialVM);
-
-            if (ModelState.IsValid)
-            {
-
-                db.Material.Add(material);
-                await db.SaveChangesAsync();
-
-                //if (material.Tipo == TipoMaterial.Arquivo || material.Tipo == TipoMaterial.Imagem || material.Tipo == TipoMaterial.Video)
-                //{
-                //    GetUploadInfo(ref material, upload);
-
-                //    db.SaveChanges();
-
-                //    var arquivo = db.Arquivo.Find(material.Idmaterial);
-
-                //    //Grava o conteúdo do arquivo no banco de dados
-                //    VarbinaryStream blob = new VarbinaryStream(
-                //    db.Database.Connection.ConnectionString,
-                //    "Arquivo",
-                //    "Blob",
-                //    "Idmaterial",
-                //    arquivo.Idmaterial);
-
-                //    //Task.Run(() => GravarArquivo(upload, blob));
-                //    await upload.InputStream.CopyToAsync(blob, 65536);
-
-
-                    //dbContextTransaction.Commit();
-                //}
-                //else
-                //{
-                //    db.SaveChanges();
-                //}
-
-                TempData["msg"] = "Dados salvos!";
-
-                if (material.Tipo != TipoMaterial.Arquivo && material.Tipo != TipoMaterial.Imagem && material.Tipo != TipoMaterial.Video)
-                    return new HttpStatusCodeResult(HttpStatusCode.OK);
-
-                ViewBag.IdTipo = (int)material.Tipo;
-                ViewBag.Idcurso = db.Unidade.Find(material.Idunidade).Idcurso;
-                return PartialView("Upload", material);
-
-                //return VoltarParaListagem(material);
-                //    }
-                //    catch (Exception)
-                //    {
-                //        dbContextTransaction.Rollback();
-                //        throw;
-                //    }
-                //}
-            }
-
-            return new HttpStatusCodeResult(HttpStatusCode.InternalServerError);
-        }
-
-        [HttpPost]
         public async Task<JsonResult> UploadFile(int id)
         {
-            try
+            using (DbContextTransaction transaction = db.Database.BeginTransaction())
             {
-                foreach (string file in Request.Files)
+                try
                 {
-                    var fileContent = Request.Files[file];
-                    if (fileContent != null && fileContent.ContentLength > 0)
+                    var form = Request.Form;
+                    var material = new Material
                     {
-                        //Atualiza o material com os dados do arquivo
-                        var material = db.Material.Find(id);
-                        GetUploadInfo(ref material, fileContent);
-                        db.Arquivo.Add(material.Arquivo);
-                        await db.SaveChangesAsync();
+                        Idmaterial = Convert.ToInt32(form["Idmaterial"]),
+                        Descricao = form["Descricao"],
+                        Idunidade = Convert.ToInt32(form["Idunidade"]),
+                        Tipo = (TipoMaterial)Convert.ToInt32(form["Tipo"]),
+                        Unidade = db.Unidade.Find(Convert.ToInt32(form["Idunidade"])),
+                        URL = form["URL"]
+                    };
 
-                        //Grava o conteúdo do arquivo no banco de dados
-                        VarbinaryStream blob = new VarbinaryStream(
-                        db.Database.Connection.ConnectionString,
-                        "Arquivo",
-                        "Blob",
-                        "Idmaterial",
-                        id);
+                    foreach (string file in Request.Files)
+                    {
+                        var fileContent = Request.Files[file];
+                        if (fileContent != null && fileContent.ContentLength > 0)
+                        {
+                            GetUploadInfo(ref material, fileContent);
+                            db.Material.Add(material);
+                            await db.SaveChangesAsync();
 
-                        await fileContent.InputStream.CopyToAsync(blob, 65536);
+                            //Grava o conteúdo do arquivo no banco de dados
+                            using (VarbinaryStream blob = new VarbinaryStream(
+                                db.Database.Connection.ConnectionString,
+                                "Arquivo",
+                                "Blob",
+                                "Idmaterial",
+                                material.Idmaterial, db))
+                            {
+                                await fileContent.InputStream.CopyToAsync(blob, 65536);
+                            }
+                        }
                     }
+
+                    transaction.Commit();
+                    TempData["msg"] = "Material criado!";
+                    Response.StatusCode = (int)HttpStatusCode.OK;
+                    return Json("File uploaded successfully");
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                    return Json(ex.Message);
                 }
             }
-            catch (Exception ex)
-            {
-                Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                return Json(ex.Message);
-            }
-
-            return Json("File uploaded successfully");
         }
 
         // GET: Materiais/Edit/5
@@ -336,7 +293,7 @@ namespace STV.Controllers
 
             if (ModelState.IsValid)
             {
-                
+
                 db.Entry(material).State = EntityState.Modified;
                 await db.SaveChangesAsync();
                 TempData["msg"] = "Dados salvos!";
@@ -434,7 +391,7 @@ namespace STV.Controllers
         {
             HttpStatusCodeResult HttpResult;
 
-            using (var transaction = db.Database.BeginTransaction())
+            using (DbContextTransaction transaction = db.Database.BeginTransaction())
             {
                 try
                 {
