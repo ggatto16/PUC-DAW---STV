@@ -13,6 +13,7 @@ using Microsoft.Owin;
 using STV.Auth;
 using AutoMapper;
 using STV.ViewModels;
+using STV.Utils;
 
 namespace STV.Controllers
 {
@@ -31,36 +32,46 @@ namespace STV.Controllers
 
         public async Task<ActionResult> CarregarAtividade(int? id, int? index)
         {
-            if (id == null)
+            try
             {
-                TempData["msgErr"] = "Ops! Requisição inválida.";
-                return RedirectToAction("Index", "Home");
-            }
+                if (id == null)
+                    throw new ApplicationException("Ops! Requisição inválida.");
 
-            Atividade atividade = await db.Atividade
-                .Where(a => a.Idatividade == id)
-                .SingleOrDefaultAsync();
+                Atividade atividade = await db.Atividade
+                    .Where(a => a.Idatividade == id)
+                    .SingleOrDefaultAsync();
 
-            var AtividadeModel = Mapper.Map<Atividade, AtividadeVM>(atividade);
+                if (atividade == null)
+                    throw new ApplicationException("Ops! Atividade não encontrada.");
 
-            if (index == null)
-            {
-                AtividadeModel.QuestaoToShow = atividade.Questoes.FirstOrDefault();
-                AtividadeModel.QuestaoToShow.Indice = 0;
-            }
-            else
-            {
-                AtividadeModel.QuestaoToShow = atividade.Questoes.ElementAtOrDefault((int)index + 1);
-                if (AtividadeModel.QuestaoToShow != null)
-                    AtividadeModel.QuestaoToShow.Indice = (int)index + 1;
+                if (!Autorizacao.UsuarioInscrito(atividade.Unidade.Curso.Usuarios, UsuarioLogado.Idusuario, User)) return View("NaoAutorizado");
+
+                var AtividadeModel = Mapper.Map<Atividade, AtividadeVM>(atividade);
+
+                if (index == null)
+                {
+                    AtividadeModel.QuestaoToShow = atividade.Questoes.FirstOrDefault();
+                    AtividadeModel.QuestaoToShow.Indice = 0;
+                }
                 else
                 {
-                    TempData["msg"] = "Respostas salvas!";
-                    return RedirectToAction("Details", "Cursos", new { id = atividade.Unidade.Idcurso, Idunidade = atividade.Idunidade });
+                    AtividadeModel.QuestaoToShow = atividade.Questoes.ElementAtOrDefault((int)index + 1);
+                    if (AtividadeModel.QuestaoToShow != null)
+                        AtividadeModel.QuestaoToShow.Indice = (int)index + 1;
+                    else
+                    {
+                        TempData["msg"] = "Respostas salvas!";
+                        return RedirectToAction("Details", "Cursos", new { id = atividade.Unidade.Idcurso, Idunidade = atividade.Idunidade });
+                    }
                 }
-            }
 
-            return View("Atividade", AtividadeModel);
+                return View("Atividade", AtividadeModel);
+            }
+            catch (ApplicationException ex)
+            {
+                TempData["msgErr"] = ex.Message;
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         [HttpPost]
@@ -96,48 +107,59 @@ namespace STV.Controllers
 
         public async Task<ActionResult> Finalizar(int? id)
         {
-            if (id == null)
+            try
             {
-                TempData["msgErr"] = "Ops! Requisição inválida.";
+                if (id == null)
+                    throw new ApplicationException("Ops! Requisição inválida.");
+
+                Atividade atividade = await db.Atividade
+                    .Where(a => a.Idatividade == id)
+                    .SingleOrDefaultAsync();
+
+                if (atividade == null)
+                    throw new ApplicationException("Atividade não encontrada.");
+
+                if (!Autorizacao.UsuarioInscrito(atividade.Unidade.Curso.Usuarios, UsuarioLogado.Idusuario, User)) return View("NaoAutorizado");
+
+                var corretas = db.Resposta
+                    .Where(r => r.Idusuario == UsuarioLogado.Idusuario && r.Questao.Idatividade == atividade.Idatividade)
+                    .OrderBy(r => r.Idquestao)
+                    .Select(r => new { Idquestao = r.Idquestao, Idalternativa = r.Idalternativa })
+                    .ToList();
+
+                var corretasHS = new HashSet<int>(corretas.Select(r => r.Idalternativa));
+
+                var respondidas = atividade.Questoes
+                    .Select(q => new { Idquestao = q.Idquestao, Idalternativa = (int)q.IdalternativaCorreta })
+                    .OrderBy(r => r.Idquestao)
+                    .ToList();
+
+                var respondidasHS = new HashSet<int>(respondidas.Select(r => r.Idalternativa));
+
+                int total = atividade.Questoes.Count();
+                int certas = total - corretasHS.Except(respondidasHS).Count();
+                int valorQuestao = atividade.Valor / total;
+                int pontos = certas * valorQuestao;
+
+                Nota nota = new Nota
+                {
+                    Idatividade = atividade.Idatividade,
+                    Idusuario = UsuarioLogado.Idusuario,
+                    Pontos = pontos
+                };
+
+                db.Nota.Add(nota);
+                await db.SaveChangesAsync();
+                TempData["msg"] = "Atividade Finalizada! Aguarde o encerramento para verificar o gabarito.";
+
+                return RedirectToAction("Details", "Cursos", new { id = atividade.Unidade.Idcurso, Idunidade = atividade.Idunidade });
+
+            }
+            catch (ApplicationException ex)
+            {
+                TempData["msgErr"] = ex.Message;
                 return RedirectToAction("Index", "Home");
             }
-
-            Atividade atividade = await db.Atividade
-                .Where(a => a.Idatividade == id)
-                .SingleOrDefaultAsync();
-
-            var corretas = db.Resposta
-                .Where(r => r.Idusuario == UsuarioLogado.Idusuario && r.Questao.Idatividade == atividade.Idatividade)
-                .OrderBy(r => r.Idquestao)
-                .Select(r => new { Idquestao = r.Idquestao, Idalternativa = r.Idalternativa })
-                .ToList();
-
-            var corretasHS = new HashSet<int>(corretas.Select(r => r.Idalternativa));
-
-            var respondidas = atividade.Questoes
-                .Select(q => new { Idquestao = q.Idquestao, Idalternativa = (int)q.IdalternativaCorreta })
-                .OrderBy(r => r.Idquestao)
-                .ToList();
-
-            var respondidasHS = new HashSet<int>(respondidas.Select(r => r.Idalternativa));
-
-            int total = atividade.Questoes.Count();
-            int certas = total - corretasHS.Except(respondidasHS).Count();
-            int valorQuestao = atividade.Valor / total;
-            int pontos = certas * valorQuestao;
-
-            Nota nota = new Nota
-            {
-                Idatividade = atividade.Idatividade,
-                Idusuario = UsuarioLogado.Idusuario,
-                Pontos = pontos
-            };
-
-            db.Nota.Add(nota);
-            await db.SaveChangesAsync();
-            TempData["msg"] = "Atividade Finalizada! Aguarde o encerramento para verificar o gabarito.";
-
-            return RedirectToAction("Details", "Cursos", new { id = atividade.Unidade.Idcurso, Idunidade = atividade.Idunidade });
         }
 
         // GET: Atividades/Details/5
@@ -152,6 +174,8 @@ namespace STV.Controllers
 
                 if (atividade == null)
                     throw new ApplicationException("Atividade não encontrada.");
+
+                if (!Autorizacao.UsuarioInscrito(atividade.Unidade.Curso.Usuarios, UsuarioLogado.Idusuario, User)) return View("NaoAutorizado");
 
                 ViewBag.MensagemSucesso = TempData["msg"];
                 ViewBag.MensagemErro = TempData["msgErr"];

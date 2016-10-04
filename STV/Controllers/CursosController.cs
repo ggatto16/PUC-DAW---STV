@@ -33,40 +33,37 @@ namespace STV.Controllers
             UsuarioLogado = auth.GetUserData();
         }
 
-        public ActionResult Certificado(int id)
+        public ActionResult Certificado(DetalhesCurso cursoVM)
         {
-            Curso curso = db.Curso.Find(id);
+            if (!VerificarCertificado(cursoVM)) return View("NaoAutorizado");
+
+            Curso curso = db.Curso.Find(cursoVM.Idcurso);
             //return new PdfActionResult("Certificado", curso);
             //return View("Certificado", curso);
 
             StringBuilder HTMLString = new StringBuilder();
             HTMLString.Append("    <div class='cert'>");
             HTMLString.Append("< div class='Nome'>");
-
-            HTMLString.Append("<b>Gabriel Gatto</b>");
+            HTMLString.Append("<b>{0}</b>");
             HTMLString.Append("</div>");
             HTMLString.Append("< div class='Curso'>");
-
-            HTMLString.Append("<b>Pela conclusão do curso Curso Teste por meio da plataforma de aprendizagem virtual KD(Knowkedge Database).</b>");
+            HTMLString.Append("<b>Pela conclusão do curso {1} por meio da plataforma de aprendizagem virtual KD(Knowkedge Database).</b>");
             HTMLString.Append("</div>");
             HTMLString.Append("< div class='Instrutor'>");
-
-            HTMLString.Append("<b>Instrutor Gabriel Roberto Gatto da Silva Sauro</b>");
+            HTMLString.Append("<b>Instrutor {2}</b>");
             HTMLString.Append(" </div>    ");
             HTMLString.Append("< div class='Aluno'>");
-
-            HTMLString.Append("<b>Aluno Gabriel Roberto Gatto da Silva Sauro</b>");
+            HTMLString.Append("<b>Aluno {3}</b>");
             HTMLString.Append("</div>   ");
             HTMLString.Append("< div class='Data'>");
-
-            HTMLString.Append("<b>11/09/2016</b>");
+            HTMLString.Append("<b>{4}</b>");
             HTMLString.Append("</div>");
             HTMLString.Append("< div class='LabelData'>");
-
             HTMLString.Append("<b>Data</b>");
             HTMLString.Append("</div>");
             HTMLString.Append("</div>");
 
+            string html = string.Format(HTMLString.ToString(), UsuarioLogado.Nome, curso.Titulo, curso.Instrutor.Nome, UsuarioLogado.Nome, DateTime.Today.ToString("dd/MM/yyyy"));
             string css = @".Nome{padding:320px 0 50px;font-family:'Kunstler Script';font-size:400%;color:#036;text-align:center;position:absolute;width:500px;height:535px;overflow-y:hidden;}.Curso{padding:0px 0 0 20px;font-family:'Arial';color:#036;font-size:100%;text-align:center;position:absolute;width:580px;height:60px;overflow-y:hidden;}.Instrutor{padding:127px 0 0;font-family:'Arial';color:#036;font-size:100%;text-align:center;position:absolute;width:410px}.Aluno{padding:100px 0 0;font-family:'Arial';color:#036;font-size:100%;text-align:center;position:absolute;width:410px}.Data{padding:57px 0 0;font-family:'Freestyle Script';color:#036;font-size:200%;text-align:center;position:absolute;width:320px}.LabelData{padding:0;font-family:'Arial';color:#036;font-size:100%;text-align:center;position:absolute;width:320px}";
 
             if (RequestExtensions.IsMobileBrowser(Request.UserAgent))
@@ -83,7 +80,7 @@ namespace STV.Controllers
 
                     using (var msCss = new MemoryStream(Encoding.UTF8.GetBytes(css)))
                     {
-                        using (var msHtml = new MemoryStream(Encoding.UTF8.GetBytes(HTMLString.ToString())))
+                        using (var msHtml = new MemoryStream(Encoding.UTF8.GetBytes(html)))
                         {
                             iTextSharp.tool.xml.XMLWorkerHelper.GetInstance().ParseXHtml(writer, document, msHtml, msCss);
                         }
@@ -148,7 +145,7 @@ namespace STV.Controllers
 
             //Lista os cursos disponíveis de acordo com o departamento do usuário, exceto os cursos cujo instrutor é o próprio usuário
             var cursos = db.Curso.Where(x => x.Departamentos
-                            .Any(d => d.Iddepartamento == Iddepartamento) && x.IdusuarioInstrutor != Idusuario)
+                            .Any(d => d.Iddepartamento == Iddepartamento) && x.IdusuarioInstrutor != Idusuario && x.Dtinicial <= DateTime.Now)
                                 .Include(u => u.Usuarios);
 
             ViewBag.Idusuario = Idusuario;
@@ -162,9 +159,16 @@ namespace STV.Controllers
 
         public async Task<ActionResult> Inscrever(int Idcurso)
         {
-            int Idusuario = UsuarioLogado.Idusuario;
+            
+            //Verifica permissão
+            var cursosAutorizados = db.Curso.Where(x => x.Departamentos
+                .Any(d => d.Iddepartamento == UsuarioLogado.Iddepartamento) && x.IdusuarioInstrutor != UsuarioLogado.Idusuario && x.Dtinicial <= DateTime.Now)
+                    .Include(u => u.Usuarios);
+            if (cursosAutorizados.Where(c => c.Idcurso == Idcurso).Count() == 0)
+                return View("NaoAutorizado");
+
             var curso = await db.Curso.FindAsync(Idcurso);
-            Usuario usuario = await db.Usuario.FindAsync(Idusuario);
+            Usuario usuario = await db.Usuario.FindAsync(UsuarioLogado.Idusuario);
 
             curso.Usuarios.Add(usuario);
 
@@ -265,6 +269,8 @@ namespace STV.Controllers
                 if (curso == null)
                     throw new ApplicationException("Curso não encontrado.");
 
+                if (!Autorizacao.UsuarioInscrito(curso.Usuarios, UsuarioLogado.Idusuario, User)) return View("NaoAutorizado");
+
                 var detalhesCurso = Mapper.Map<Curso, DetalhesCurso>(curso);
 
                 detalhesCurso.NotaCursoAtual = await db.NotaCurso.FindAsync(UsuarioLogado.Idusuario, detalhesCurso.Idcurso);
@@ -281,7 +287,7 @@ namespace STV.Controllers
                     .SingleOrDefaultAsync();
 
                 detalhesCurso.IsInstutor = cursoVerify != null ? true : false;
-                detalhesCurso.DisponibilizarCertificado = await VerificarCertificado(detalhesCurso);
+                detalhesCurso.DisponibilizarCertificado = VerificarCertificado(detalhesCurso);
                 detalhesCurso.MediaNota = CalcularNotaMedia(detalhesCurso.NotasCurso);
 
                 return View(detalhesCurso);
@@ -311,11 +317,11 @@ namespace STV.Controllers
             return 0;
         }
 
-        private async Task<bool> VerificarCertificado(DetalhesCurso detalhesCurso)
+        private bool VerificarCertificado(DetalhesCurso detalhesCurso)
         {
             if (detalhesCurso.Dtfinal < DateTime.Today && !detalhesCurso.IsInstutor)
             {
-                var usuario = await db.Usuario.FindAsync(UsuarioLogado.Idusuario);
+                var usuario = db.Usuario.Find(UsuarioLogado.Idusuario);
 
                 var notasDoUsuarioNoCurso = usuario.Notas
                     .Where(n => n.Atividade.Unidade.Idcurso == detalhesCurso.Idcurso);

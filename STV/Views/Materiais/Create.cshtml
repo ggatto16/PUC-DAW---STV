@@ -100,7 +100,11 @@
                     //async: false,
                     timeout: 0,
                     beforeSend: function () {
-                        $(".divCarregando").show();
+                        var tipo = $('#Tipo').val();
+                        if (tipo == 1 || tipo == 2 || tipo == 4)
+                            onBeginAjax('Fazendo Upload do Arquivo...');
+                        else
+                            onBeginAjax();
                     },
                     complete: function() {
                         $('#divCarregando').fadeOut();;

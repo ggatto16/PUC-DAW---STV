@@ -12,6 +12,7 @@ using STV.DAL;
 using STV.Auth;
 using AutoMapper;
 using STV.ViewModels;
+using STV.Utils;
 
 namespace STV.Controllers
 {
@@ -49,57 +50,73 @@ namespace STV.Controllers
         // GET: Conteúdo da Unidade
         public async Task<ActionResult> CarregarConteudo(int? idunidade)
         {
-            if (idunidade == null)
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                if (idunidade == null)
+                    throw new ApplicationException("Ops! Requisição inválida.");
+
+                var unidade = await db.Unidade
+                    //.Include(u => u.Atividades)
+                    //.Include(u => u.Materiais)
+                    .Where(u => u.Idunidade == idunidade)
+                    .SingleOrDefaultAsync();
+
+                if (unidade == null)
+                    throw new ApplicationException("Unidade não encontrada.");
+
+                bool autoriza = User.IsInRole("Admin") || unidade.Curso.IdusuarioInstrutor == UsuarioLogado.Idusuario;
+                if (!autoriza)
+                {
+                    if (unidade.Dtabertura > DateTime.Now)
+                        throw new ApplicationException("Unidade ainda não disponível.");
+                }
+
+
+                var unidadeVM = Mapper.Map<Unidade, UnidadeVM>(unidade);
+
+                IEnumerable<Atividade> atividades;
+                if (User.IsInRole("Admin"))
+                {
+                    atividades = db.Atividade
+                        .Where(a => a.Idunidade == unidade.Idunidade).ToList();
+                }
+                else
+                {
+                    atividades = db.Atividade
+                        .Where(a => a.Idunidade == unidade.Idunidade && a.Questoes.Count() > 0).ToList();
+                }
+
+                var atividadesVM = Mapper.Map<IEnumerable<Atividade>, IEnumerable<AtividadeVM>>(atividades);
+
+                unidadeVM.AtividadesVM = atividadesVM;
+
+                foreach (var atividade in unidadeVM.AtividadesVM)
+                {
+                    int respondidas = await db.Resposta
+                        .Where(r => r.Idusuario == UsuarioLogado.Idusuario && r.Questao.Idatividade == atividade.Idatividade)
+                        .CountAsync();
+
+                    atividade.Realizado += atividade.PorcentagemQuestao * respondidas;
+
+                    int nota = db.Nota.Where(n => n.Idusuario == UsuarioLogado.Idusuario && n.Idatividade == atividade.Idatividade).Count();
+                    if (nota > 0)
+                        atividade.IsFinalizada = true;
+                }
+
+                //Verificar se é instrutor
+                var cursoVerify = await db.Curso
+                    .Where(c => c.IdusuarioInstrutor == UsuarioLogado.Idusuario && c.Idcurso == unidadeVM.Idcurso)
+                    .SingleOrDefaultAsync();
+
+                unidadeVM.IsInstutor = cursoVerify != null ? true : false;
+
+                return PartialView("Conteudo", unidadeVM);
             }
-
-            var unidade = await db.Unidade
-                //.Include(u => u.Atividades)
-                //.Include(u => u.Materiais)
-                .Where(u => u.Idunidade == idunidade)
-                .SingleOrDefaultAsync();
-
-            var unidadeVM = Mapper.Map<Unidade, UnidadeVM>(unidade);
-
-            IEnumerable<Atividade> atividades;
-            if (User.IsInRole("Admin"))
+            catch(ApplicationException ex)
             {
-                atividades = db.Atividade
-                    .Where(a => a.Idunidade == unidade.Idunidade).ToList();
+                TempData["MsgErr"] = ex.Message;
+                return RedirectToAction("Index", "Cursos");
             }
-            else
-            {
-                atividades = db.Atividade
-                    .Where(a => a.Idunidade == unidade.Idunidade && a.Questoes.Count() > 0).ToList();
-            }
-
-            var atividadesVM = Mapper.Map<IEnumerable<Atividade>, IEnumerable<AtividadeVM>>(atividades);
-
-            unidadeVM.AtividadesVM = atividadesVM;
-
-            foreach (var atividade in unidadeVM.AtividadesVM)
-            {
-                int respondidas = await db.Resposta
-                    .Where(r => r.Idusuario == UsuarioLogado.Idusuario && r.Questao.Idatividade == atividade.Idatividade)
-                    .CountAsync();
-
-                atividade.Realizado += atividade.PorcentagemQuestao * respondidas;
-
-                int nota = db.Nota.Where(n => n.Idusuario == UsuarioLogado.Idusuario && n.Idatividade == atividade.Idatividade).Count();
-                if (nota > 0)
-                    atividade.IsFinalizada = true;
-            }
-
-            //Verificar se é instrutor
-            var cursoVerify = await db.Curso
-                .Where(c => c.IdusuarioInstrutor == UsuarioLogado.Idusuario && c.Idcurso == unidadeVM.Idcurso)
-                .SingleOrDefaultAsync();
-
-            unidadeVM.IsInstutor = cursoVerify != null ? true : false;
-
-            return PartialView("Conteudo", unidadeVM);
-
         }
 
         // GET: Unidades/Details/5
@@ -113,6 +130,9 @@ namespace STV.Controllers
                 Unidade unidade = await db.Unidade.FindAsync(id);
                 if (unidade == null)
                     throw new ApplicationException("Unidade não encontrada.");
+
+                if (!Autorizacao.UsuarioInscrito(unidade.Curso.Usuarios, UsuarioLogado.Idusuario, User))
+                    return View("NaoAutorizado");
 
                 return View(unidade);
             }

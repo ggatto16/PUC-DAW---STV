@@ -10,6 +10,7 @@ using System.Web.Mvc;
 using STV.Models;
 using STV.DAL;
 using STV.Auth;
+using STV.Utils;
 
 namespace STV.Controllers
 {
@@ -34,18 +35,28 @@ namespace STV.Controllers
         // GET: Conteúdo da Unidade
         public async Task<ActionResult> CarregarAlternativas(int? Idquestao)
         {
-            if (Idquestao == null)
+            try
             {
-                TempData["msgErr"] = "Ops! Requisição inválida.";
+                if (Idquestao == null)
+                    throw new ApplicationException("Ops! Requisição inválida.");
+
+                var questao = await db.Questao.FindAsync(Idquestao);
+
+                if (questao == null)
+                    throw new ApplicationException("Questão não encontrada.");
+
+                if (!Autorizacao.UsuarioInscrito(questao.Atividade.Unidade.Curso.Usuarios, UsuarioLogado.Idusuario, User)) return View("NaoAutorizado");
+
+                var alternativas = from a in db.Alternativa where a.Idquestao == Idquestao select a;
+                questao.Alternativas = await alternativas.ToListAsync();
+
+                return PartialView("Alternativas", questao);
+            }
+            catch (ApplicationException ex)
+            {
+                TempData["msgErr"] = ex.Message;
                 return RedirectToAction("Index", "Home");
             }
-
-            var questao = await db.Questao.FindAsync(Idquestao);
-
-            var alternativas = from a in db.Alternativa where a.Idquestao == Idquestao select a;
-            questao.Alternativas = await alternativas.ToListAsync();
-
-            return PartialView("Alternativas", questao);
 
         }
 
@@ -60,6 +71,8 @@ namespace STV.Controllers
                 Questao questao = await db.Questao.FindAsync(id);
                 if (questao == null)
                     throw new ApplicationException("Questão não encontrada.");
+
+                if (!Autorizacao.UsuarioInscrito(questao.Atividade.Unidade.Curso.Usuarios, UsuarioLogado.Idusuario, User)) return View("NaoAutorizado");
 
                 return View(questao);
             }

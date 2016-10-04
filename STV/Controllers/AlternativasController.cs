@@ -10,6 +10,7 @@ using System.Web.Mvc;
 
 namespace STV.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class AlternativasController : Controller
     {
         private STVDbContext db = new STVDbContext();

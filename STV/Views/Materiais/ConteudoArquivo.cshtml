@@ -1,13 +1,8 @@
 ﻿@model STV.Models.Material
 
-<div id="divVideo">
-    <div class="pull-right">
-        <a href="javascript:void(0);" onclick='$("#divVideo").empty();'>Fechar</a>
-    </div>
-
     @if (Model.Tipo == STV.Models.TipoMaterial.Video)
     {
-        <video id="videoPlay" width="480" height="400" controls autoplay>
+        <video id="videoPlay" width="640" height="480" controls autoplay>
             <source src="/api/MediaStream/@Model.Idmaterial" />
         </video>
     }
@@ -15,19 +10,17 @@
     {
         var base64 = Convert.ToBase64String(Model.Arquivo.Blob);
         var imgSrc = string.Format("data:" + Model.Arquivo.ContentType + ";base64,{0}", base64);
-        <img src="@imgSrc" style="max-height:250px"/>
+        <img src="@imgSrc" style="max-height:250px" />
     }
     else if (Model.Tipo == STV.Models.TipoMaterial.Link)
     {
-        <a href="@Model.URL" >@Model.URL</a>
+        <a href="@Model.URL">@Model.URL</a>
     }
     else if (Model.Tipo == STV.Models.TipoMaterial.Embedded)
     {
-        <iframe width="420" height="315" src="@Model.URL"></iframe>
+        <iframe width="640" height="480" src="@Model.URL allowFullScreen"></iframe>
     }
     else
     {
         <div class="danger">Tipo de arquivo não implementado</div>
     }
-
-</div>

@@ -159,9 +159,13 @@ namespace STV.Controllers
                         {
                             foreach (var atv in unidade.Atividades)
                             {
-                                notaAtividade = notas.Where(n => n.Atividade.Idatividade == atv.Idatividade
+                                var notaUsuario = notas.Where(n => n.Atividade.Idatividade == atv.Idatividade
                                     && n.Idusuario == usuario.Idusuario && n.Atividade.Dtencerramento < DateTime.Now)
-                                    .Select(n => new { Pontos = n.Pontos }).Single().Pontos;
+                                    .Select(n => new { Pontos = n.Pontos }).SingleOrDefault();
+
+                                if (notaUsuario == null) continue;
+
+                                notaAtividade = notaUsuario.Pontos;
 
                                 if (atv.Valor != notaAtividade)
                                 {
@@ -190,11 +194,13 @@ namespace STV.Controllers
                             {
                                 foreach (var atv in uni.Atividades)
                                 {
-                                    notaAtividade = notas.Where(n => n.Atividade.Idatividade == atv.Idatividade
+                                    var notaUsuario = notas.Where(n => n.Atividade.Idatividade == atv.Idatividade
                                         && n.Idusuario == usuario.Idusuario && n.Atividade.Dtencerramento < DateTime.Now)
-                                        .Select(n => new { Pontos = n.Pontos }).Single().Pontos;
+                                        .Select(n => new { Pontos = n.Pontos }).SingleOrDefault();
 
-                                    if (atv.Valor != notaAtividade)
+                                    if (notaUsuario == null) continue;
+
+                                    if (atv.Valor != notaUsuario.Pontos)
                                     {
                                         valeMedalha = false;
                                         break;

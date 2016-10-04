@@ -2,14 +2,12 @@
 using STV.Auth;
 using STV.DAL;
 using STV.Models;
+using STV.Utils;
 using STV.ViewModels;
 using System;
-using System.Activities.Statements;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Data.Entity;
-using System.Data.SqlClient;
-using System.EnterpriseServices;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -62,8 +60,11 @@ namespace STV.Controllers
                 if (id == null)
                     throw new ApplicationException("Ops! Requisição inválida.");
 
-                //Material material = await db.Material.Include(m => m.Arquivo.Nome).SingleOrDefaultAsync(m => m.Idmaterial == id);
                 Material material = await db.Material.FindAsync(id);
+
+                if (!Autorizacao.UsuarioInscrito(material.Unidade.Curso.Usuarios, UsuarioLogado.Idusuario, User))
+                    return View("NaoAutorizado");
+
                 ViewBag.DescricaoTipo = GetText(material.Tipo);
 
                 if (material == null)
@@ -139,7 +140,10 @@ namespace STV.Controllers
             var material = await db.Material.FindAsync(Id);
 
             if (material != null)
+            {
+                if (!Autorizacao.UsuarioInscrito(material.Unidade.Curso.Usuarios, UsuarioLogado.Idusuario, User)) return View("NaoAutorizado");
                 RegistrarVisualizacao(material);
+            }
             else
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
@@ -167,11 +171,13 @@ namespace STV.Controllers
 
         public FileResult BaixarArquivo(int Id)
         {
-
             var material = db.Material.Find(Id);
 
             if (material != null)
+            {
+                if (!Autorizacao.UsuarioInscrito(material.Unidade.Curso.Usuarios, UsuarioLogado.Idusuario, User)) return null;
                 RegistrarVisualizacao(material);
+            }
 
             var blobArquivo = db.Arquivo.Where(a => a.Idmaterial == Id)
                 .Select(a => new
@@ -287,32 +293,18 @@ namespace STV.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "Idmaterial,Idunidade,Descricao,Tipo,URL")] MaterialVM materialVM, HttpPostedFileBase upload)
+        public async Task<ActionResult> Edit([Bind(Include = "Idmaterial,Idunidade,Descricao,Tipo,URL")] MaterialVM materialVM)
         {
             var material = Mapper.Map<MaterialVM, Material>(materialVM);
 
             if (ModelState.IsValid)
             {
-
                 db.Entry(material).State = EntityState.Modified;
                 await db.SaveChangesAsync();
                 TempData["msg"] = "Dados salvos!";
-
-                if (material.Tipo != TipoMaterial.Arquivo && material.Tipo != TipoMaterial.Imagem && material.Tipo != TipoMaterial.Video)
-                    return new HttpStatusCodeResult(HttpStatusCode.OK);
-
-                var arquivo = db.Arquivo.Find(material.Idmaterial);
-                if (arquivo == null)
-                {
-                    ViewBag.IdTipo = (int)material.Tipo;
-                    ViewBag.Idcurso = db.Unidade.Find(material.Idunidade).Idcurso;
-                    return PartialView("Upload", material);
-                }
-                else
-                    return new HttpStatusCodeResult(HttpStatusCode.OK);
             }
 
-            return new HttpStatusCodeResult(HttpStatusCode.InternalServerError);
+            return VoltarParaListagem(material);
         }
 
 
@@ -386,52 +378,16 @@ namespace STV.Controllers
             }
         }
 
-        [HttpDelete]
-        public async Task<ActionResult> ExcluirArquivo(int id)
-        {
-            HttpStatusCodeResult HttpResult;
-
-            using (DbContextTransaction transaction = db.Database.BeginTransaction())
-            {
-                try
-                {
-                    await db.Database.ExecuteSqlCommandAsync(@"DELETE FROM [Arquivo] WHERE Idmaterial = {0}", id);
-
-                    var material = await db.Material.FindAsync(id);
-                    material.Tipo = TipoMaterial.Nenhum;
-                    db.Entry(material).State = EntityState.Modified;
-                    await db.SaveChangesAsync();
-                    transaction.Commit();
-                }
-                catch (Exception ex)
-                {
-                    transaction.Rollback();
-                    HttpResult = new HttpStatusCodeResult(HttpStatusCode.InternalServerError);
-                    ViewBag.MensagemErro = ex.Message;
-                    return HttpResult;
-                }
-            }
-            HttpResult = new HttpStatusCodeResult(HttpStatusCode.OK);
-            return HttpResult;
-        }
-
         private void GetUploadInfo(ref Material material, HttpPostedFileBase upload)
         {
             try
             {
                 if (upload != null && upload.ContentLength > 0)
                 {
-                    //teste myme
-                    string myme = upload.ContentType;
-                    if (Path.GetExtension(upload.FileName) == "docx")
-                    {
-                        myme = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
-                    }
-
                     var arquivo = new Arquivo
                     {
                         Nome = Path.GetFileName(upload.FileName),
-                        ContentType = myme,
+                        ContentType = upload.ContentType,
                         Idmaterial = material.Idmaterial,
                         Tamanho = upload.ContentLength
                     };

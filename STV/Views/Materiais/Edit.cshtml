@@ -1,9 +1,5 @@
 ﻿@model STV.ViewModels.MaterialVM
 
-@section MeusEstilos {
-    @Styles.Render("~/Content/fileinput")
-}
-
 @{
     ViewBag.Title = "Edit";
 }
@@ -18,7 +14,7 @@
 
 <div class="text-danger" id="divErroArquivo"></div>
 
-@using (Ajax.BeginForm("Edit", new AjaxOptions { HttpMethod = "Post", OnBegin = "onBeginAjax", OnComplete = "onCompleteAjax", OnFailure = "OnFailure", OnSuccess = "MaterialSalvo", InsertionMode = InsertionMode.Replace, UpdateTargetId = "containerUpload" }))
+@using (Html.BeginForm("Edit", "Materiais"))
 {
     @Html.AntiForgeryToken()
 
@@ -58,8 +54,6 @@
                     @Html.LabelFor(model => model.Arquivo.Nome, "Idarquivo", htmlAttributes: new { @class = "control-label col-md-2" })
                     <div class="col-md-10">
                         @Html.ActionLink(Model.Arquivo.Nome, "Index", "Arquivos", new { id = Model.Arquivo.Idmaterial }, new { target = "_blank" })
-                        @Ajax.ActionLink("Excluir", "ExcluirArquivo", "Materiais", new { id = Model.Arquivo.Idmaterial }, new AjaxOptions { HttpMethod = "Delete", OnSuccess = "RemoverArquivo();", OnFailure = "MostrarMensagem('Algo deu errado!', 2);", OnBegin = "onBeginAjax", OnComplete = "onCompleteAjax" }, null)
-
                     </div>
                 </div>
             }
@@ -77,73 +71,11 @@
         </div>
 
     </div>
-
-    <div class="col-md-6">
-        <div id="container"></div>
-    </div>
-
 }
 
-<div class="col-md-6">
-    <div id="containerUpload"></div>
-</div>
 
 @section Scripts {
 
     @Scripts.Render("~/bundles/jqueryval")
-    @Scripts.Render("~/bundles/fileinputSetup")
-
-    <script>
-
-        $(function () {
-            $('#Tipo').change(function () {
-                var tipoID = $(this).val();
-                if (tipoID != 1 && tipoID != 2 && tipoID != 4 && tipoID != 0) {
-                    $.ajax({
-                        url: '/Materiais/CarregarTipo',
-                        type: 'GET',
-                        data: { Idtipo: tipoID, URL: "@Html.Raw(Model.URL)" },
-                        cache: false,
-                        success: function (result) {
-                            $('#containerURL').html(result);
-                            PrepararFileUpload(tipoID);
-                        }
-                    });
-                }
-            });
-        });
-
-        $(document).ready(function () {
-            $("select[id^='Tipo']").change();
-            if ($('#Tipo').val() == 0) {
-                $('#Tipo').prop("disabled", false);
-            }
-        });
-
-        function RemoverArquivo() {
-            $('#arquivo').remove();
-            $('#Tipo').val('0');
-            $('#Tipo').prop("disabled", false);
-            MostrarMensagem('Arquivo excluído!', 1);
-        };
-
-        function MaterialSalvo() {
-            var tipo = $('#Tipo').val();
-            if (tipo == 3 || tipo == 5 || temArquivo) {
-                var url = '@Url.Action("Details", "Cursos", new { id = Model.Idcurso, Idunidade = Model.Idunidade })';
-                window.location.href = url;
-            }
-        };
-
-        @if(Model.Arquivo == null)
-        {
-            @Html.Raw("var temArquivo = false;")
-        }
-        else
-        {
-            @Html.Raw("var temArquivo = true;")
-        }
-
-    </script>
 
 }

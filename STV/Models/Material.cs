@@ -8,7 +8,6 @@ namespace STV.Models
 
     public enum TipoMaterial
     {
-        Nenhum = 0,
         [Display(Name = "Arquivo de vídeo")]
         Video = 1,
         Arquivo = 2,

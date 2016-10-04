@@ -1,7 +1,14 @@
 ﻿var mostrarCarregando = true;
 
-function onBeginAjax() {
+function onBeginAjax(msg) {
+
     mostrarCarregando = true;
+
+    if (msg)
+        $('#pLoadMessage').html(msg);
+    else
+        $('#pLoadMessage').html('Carregando...');
+
     setTimeout(showLoading, 1000);
 }
 

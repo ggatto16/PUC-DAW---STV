@@ -43,7 +43,7 @@
                 <dd>
                     @if (Model.Arquivo.ContentType.Substring(0, 5) == "video" || Model.Arquivo.ContentType.Substring(0, 5) == "image")
                     {
-                        @Ajax.ActionLink(Model.Arquivo.Nome, "MostrarArquivo", "Materiais", new { Id = Model.Idmaterial }, new AjaxOptions { UpdateTargetId = "ConteudoMaterial", InsertionMode = InsertionMode.Replace, HttpMethod = "Get", OnBegin = "onBeginAjax", OnComplete = "onCompleteAjax" });
+                        @Ajax.ActionLink(Model.Arquivo.Nome, "MostrarArquivo", "Materiais", new { Id = Model.Idmaterial }, new AjaxOptions { UpdateTargetId = "ConteudoMaterial", InsertionMode = InsertionMode.Replace, HttpMethod = "Get", OnBegin = "onBeginAjax", OnComplete = "AbrirModal" });
                     }
                     else
                     {
@@ -67,7 +67,7 @@
                     Vídeo
                 </dt>
                 <dd>
-                    @Ajax.ActionLink("Assistir", "MostrarArquivo", "Materiais", new { Id = Model.Idmaterial }, new AjaxOptions { UpdateTargetId = "ConteudoMaterial", InsertionMode = InsertionMode.Replace, HttpMethod = "Get", OnBegin = "onBeginAjax", OnComplete = "onCompleteAjax" })
+                    @Ajax.ActionLink("Assistir", "MostrarArquivo", "Materiais", new { Id = Model.Idmaterial }, new AjaxOptions { UpdateTargetId = "ConteudoMaterial", InsertionMode = InsertionMode.Replace, HttpMethod = "Get", OnBegin = "onBeginAjax", OnComplete = "AbrirModal" })
                 </dd>
             }
         </dl>
@@ -78,8 +78,43 @@
     </p>
 </div>
 
-<div id="ConteudoMaterial" class="col-md-6"></div>
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Material @Model.Descricao</h4>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="col-md-12 text-center">
+                        <div id="ConteudoMaterial"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 @section scripts {
     @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+        function AbrirModal() {
+            $('#myModal').modal('show');
+            onCompleteAjax();
+        }
+
+        function FecharModal() {
+            $('#myModal').modal('hide');
+        }
+
+        $('body').on('hidden.bs.modal', '.modal', function () {
+            $('video').trigger('pause');
+        });
+    </script>
 }

@@ -357,7 +357,7 @@
     <Compile Include="Models\Usuario.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
-    <Compile Include="Utils\Mensagens.cs" />
+    <Compile Include="Utils\Autorizacao.cs" />
     <Compile Include="Utils\RequestExtensions.cs" />
     <Compile Include="ViewModels\MaterialVM .cs" />
     <Compile Include="ViewModels\RelatorioUsuario.cs" />
