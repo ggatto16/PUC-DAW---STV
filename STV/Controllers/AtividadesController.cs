@@ -74,6 +74,46 @@ namespace STV.Controllers
             }
         }
 
+        public async Task<ActionResult> Revisao(int? id, int? index)
+        {
+            try
+            {
+                if (id == null)
+                    throw new ApplicationException("Ops! Requisição inválida.");
+
+                Atividade atividade = await db.Atividade
+                    .Where(a => a.Idatividade == id)
+                    .SingleOrDefaultAsync();
+
+                if (atividade == null)
+                    throw new ApplicationException("Ops! Atividade não encontrada.");
+
+                if (!Autorizacao.UsuarioInscrito(atividade.Unidade.Curso.Usuarios, UsuarioLogado.Idusuario, User))
+                {
+                    if (atividade.Dtencerramento <= DateTime.Now)
+                        return View("NaoAutorizado");
+                }
+
+                var AtividadeModel = Mapper.Map<Atividade, AtividadeVM>(atividade);
+                AtividadeModel.IsRevisao = true;
+
+                Resposta resp;
+                foreach(var questao in AtividadeModel.Questoes)
+                {
+                    resp = db.Resposta.Find(UsuarioLogado.Idusuario, questao.Idquestao);
+                    if (resp == null) throw new ApplicationException("Questão não respondida");
+                    questao.IdAlternativaSelecionada = resp.Idalternativa;
+                }
+
+                return View("Revisao", AtividadeModel);
+            }
+            catch (ApplicationException ex)
+            {
+                TempData["msgErr"] = ex.Message;
+                return RedirectToAction("Index", "Home");
+            }
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> SalvarResposta(AtividadeVM atividade)

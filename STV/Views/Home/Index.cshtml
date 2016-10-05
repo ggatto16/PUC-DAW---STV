@@ -1,4 +1,6 @@
-﻿@{
+﻿@model STV.Models.Usuario
+
+@{
     ViewBag.Title = "Home Page";
 }
 
@@ -11,6 +13,25 @@
 <div class="row">
     <div class="col-md-4">
         <h2>Getting started</h2>
+        <div>
+            @foreach(var medalha in Model.Medalhas)
+            {
+                switch ((STV.Models.Medalhas)medalha.Idmedalha)
+                {
+                    case STV.Models.Medalhas.Sortudo:
+                        Html.Raw("<a href=\"#\" onclick=\"MostrarMedalha('Sortudo')\"><img src = \"~/Images/ico-Sortudo.jpg\" width=\"50\" /></a>");
+                        break;
+                    case STV.Models.Medalhas.Nerd:
+                        Html.Raw("<a href=\"#\" onclick=\"MostrarMedalha('Nerd')\"><img src = \"~/Images/ico-Nerd.jpg\" width=\"50\" /></a>");
+                        break;
+                    case STV.Models.Medalhas.Genio:
+                        Html.Raw("<a href=\"#\" onclick=\"MostrarMedalha('Genio')\"><img src = \"~/Images/ico-Genio.jpg\" width=\"50\" /></a>");
+                        break;
+                    default:
+                        break;
+                }
+            }
+        </div>
         <p>
             ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
             enables a clean separation of concerns and gives you full control over markup
@@ -29,3 +50,61 @@
         <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
     </div>
 </div>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Medalha</h4>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="col-md-12 text-center">
+                        <figure>
+                            <img src="" id="imgMedalha" alt="Medalha" width="200"/>
+                            <br />
+                            <figcaption id="capMedalha"></figcaption>
+                        </figure>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+
+        function MostrarMedalha(medalha) {
+            $('#imgMedalha').attr('src', '../Images/' + medalha + '.jpg');
+            switch (medalha) {
+                case 'Sortudo':
+                    $('#capMedalha').html('Acertou todas as questões de uma mesma atividade')
+                    break;
+                case 'Nerd':
+                    $('#capMedalha').html('Acertou todas as questões de todas as atividades de uma mesma unidade')
+                    break;
+                case 'Genio':
+                    $('#capMedalha').html('Acertou todas as questões de todas as atividade de um curso inteiro')
+                    break;
+            }
+            
+            $('#myModal').modal('show');
+        }
+
+        function FecharModal() {
+            $('#ModalMedalha').modal('hide');
+            $('#imgMedalha').attr('src', '');
+            $('#capMedalha').empty();
+        }
+    </script>
+
+}

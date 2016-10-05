@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using iTextSharp.text;
 using MvcRazorToPdf;
 using STV.Auth;
 using STV.DAL;
@@ -31,7 +32,7 @@ namespace STV.Controllers
 
             return new PdfActionResult("PDF", RelatorioUsuario, (writer, document) =>
             {
-                //document.SetPageSize(PageSize.A4.Rotate());
+                document.SetPageSize(PageSize.A4);
                 document.NewPage();
                 document.AddCreator("teste");
                 HttpContext.Response.AddHeader("content-disposition", string.Format("inline; filename=Relatorio-{0}.pdf", usuario.Nome));

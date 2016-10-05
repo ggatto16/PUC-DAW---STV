@@ -29,10 +29,7 @@ namespace STV.Controllers
         {
             if (User.Identity.IsAuthenticated)
             {
-
-
-                return View();
-
+                return View(UsuarioLogado);
             }
             else
                 return RedirectToAction("Login");

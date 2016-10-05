@@ -12,16 +12,44 @@
 </div>
 
 <div style="position:relative;">
+    <div style="text-align: center; width: 100%; overflow: hidden;">
+
+        @if (Model.Medalhas.Count() == 0)
+        {
+            <span>Nenhuma medalha conquistada</span>
+        }
+        else
+        {
+            foreach (var medalha in Model.Medalhas)
+            {
+                switch ((STV.Models.Medalhas)medalha.Idmedalha)
+                {
+                    case STV.Models.Medalhas.Sortudo:
+                        <img src="@Server.MapPath("~/Images/ico-Sortudo.jpg")" width="30" />
+                        break;
+                    case STV.Models.Medalhas.Nerd:
+                        <img src="@Server.MapPath("~/Images/ico-Nerd.jpg")" width="30" />
+                        break;
+                    case STV.Models.Medalhas.Genio:
+                        <img src="@Server.MapPath("~/Images/ico-Genio.jpg")" width="30" />
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    </div>
 
     @foreach (var curso in Model.Cursos)
     {
         var notaMaximaCurso = 0;
         var notaAlunoCurso = 0;
         var qtdMateriaisCurso = 0;
+
         <hr />
-        <div style="padding: 10px 0px 10px 0px; width: 100%; overflow: hidden;">
+        <div style="text-align: center; padding: 10px 0px 10px 0px; width: 100%; overflow: hidden;">
             <div class="col-md-5">
-                <strong>Curso: </strong> @Html.DisplayFor(modelItem => curso.Titulo)
+                <h3><strong>Curso: </strong> @Html.DisplayFor(modelItem => curso.Titulo)</h3>
             </div>
         </div>
         foreach (var unidade in curso.Unidades)
@@ -152,6 +180,6 @@
         {
             <div>Curso em Andamento</div>
         }
-        
+        <div style="page-break-after: always"></div>
     }
 </div>

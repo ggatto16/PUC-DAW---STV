@@ -49,5 +49,7 @@ namespace STV.ViewModels
         public decimal Realizado { get; set; } = 0;
 
         public bool IsFinalizada { get; set; }
+
+        public bool IsRevisao { get; set; }
     }
 }

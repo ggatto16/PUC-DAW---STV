@@ -12,6 +12,8 @@
 
         public string Descricao { get; set; }
 
+        public string Justificativa { get; set; }
+
         public virtual Questao Questao { get; set; }
 
 

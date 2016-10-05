@@ -335,6 +335,10 @@
     <Compile Include="Migrations\201609191540119_SenhaDigitada.Designer.cs">
       <DependentUpon>201609191540119_SenhaDigitada.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201610051217557_Justificativa.cs" />
+    <Compile Include="Migrations\201610051217557_Justificativa.Designer.cs">
+      <DependentUpon>201610051217557_Justificativa.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Alternativa.cs" />
@@ -388,8 +392,14 @@
     <Content Include="Content\Site.css" />
     <Content Include="Images\bad-smile.png" />
     <Content Include="Images\bg-certificado.jpg" />
+    <Content Include="Images\Genio.jpg" />
     <Content Include="Images\GreenCheck.jpg" />
+    <Content Include="Images\ico-Genio.jpg" />
+    <Content Include="Images\ico-Nerd.jpg" />
+    <Content Include="Images\ico-Sortudo.jpg" />
+    <Content Include="Images\Nerd.jpg" />
     <Content Include="Images\RedX.jpg" />
+    <Content Include="Images\Sortudo.jpg" />
     <Content Include="Scripts\ai.0.22.19-build00125.js" />
     <Content Include="Scripts\ai.0.22.19-build00125.min.js" />
     <Content Include="ApplicationInsights.config">
@@ -535,6 +545,7 @@
     <Content Include="Views\Cursos\Certificado.cshtml" />
     <Content Include="Views\Cursos\Comentarios.cshtml" />
     <Content Include="Views\Shared\NaoAutorizado.cshtml" />
+    <Content Include="Views\Atividades\Revisao.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
@@ -605,6 +616,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201609191540119_SenhaDigitada.resx">
       <DependentUpon>201609191540119_SenhaDigitada.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201610051217557_Justificativa.resx">
+      <DependentUpon>201610051217557_Justificativa.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -63,7 +63,7 @@ namespace STV.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Idalternativa,Idquestao,Descricao,IsCorreta")] AlternativaVM alternativa)
+        public async Task<ActionResult> Create([Bind(Include = "Idalternativa,Idquestao,Descricao,IsCorreta,Justificativa")] AlternativaVM alternativa)
         {
             if (ModelState.IsValid)
             {
@@ -119,7 +119,7 @@ namespace STV.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "Idalternativa,Idquestao,Descricao, IsCorreta")] AlternativaVM alternativa)
+        public async Task<ActionResult> Edit([Bind(Include = "Idalternativa,Idquestao,Descricao, IsCorreta,Justificativa")] AlternativaVM alternativa)
         {
             if (ModelState.IsValid)
             {

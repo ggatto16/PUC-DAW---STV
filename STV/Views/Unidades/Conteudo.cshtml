@@ -108,14 +108,17 @@
                         {
                             <td class="danger">
                                 @Html.Raw("Pazo Encerrado")
+                                @Html.ActionLink("Revisão", "Revisao", "Atividades", new { id = item.Idatividade }, null)
                             </td>
                         }
                         else
                         {
                             <td class="success">
                                 @Html.Raw("Pazo Encerrado")
+                                @Html.ActionLink("Revisão", "Revisao", "Atividades", new { id = item.Idatividade }, null)
                             </td>
                         }
+                        
                     }
                 }
             }
