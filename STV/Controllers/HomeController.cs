@@ -189,6 +189,7 @@ namespace STV.Controllers
                         {
                             foreach (var uni in curso.Unidades)
                             {
+                                //Verificar Data de encerramento da unidade
                                 foreach (var atv in uni.Atividades)
                                 {
                                     var notaUsuario = notas.Where(n => n.Atividade.Idatividade == atv.Idatividade
