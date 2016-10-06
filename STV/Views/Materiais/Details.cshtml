@@ -4,6 +4,13 @@
     ViewBag.Title = "Details";
 }
 
+<style>
+    video.loading {
+        background: black url("/Images/video-loading.gif") center center no-repeat;
+        background-size: 50%;
+    }
+</style>
+
 <ol class="breadcrumb">
     <li><a href="~/Cursos/Details/@Model.Unidade.Curso.Idcurso">@Model.Unidade.Curso.Titulo</a></li>
     <li><a href="~/Cursos/Details/@Model.Unidade.Curso.Idcurso?Idunidade=@Model.Unidade.Idunidade">@Model.Unidade.Titulo</a></li>
@@ -103,14 +110,25 @@
         </div>
     </div>
 </div>
-
 @section scripts {
     @Scripts.Render("~/bundles/jqueryval")
 
     <script>
         function AbrirModal() {
+
             $('#myModal').modal('show');
             onCompleteAjax();
+
+            var vid = document.getElementById("videoPlay");
+
+            vid.onloadstart = function () {
+                vid.classList.add("loading");
+            };
+
+            vid.oncanplay = function () {
+                vid.classList.remove("loading");
+                vid.setAttribute("poster", "")
+            };
         }
 
         function FecharModal() {

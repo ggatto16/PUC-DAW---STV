@@ -248,6 +248,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\MateriaisController.cs" />
+    <Compile Include="Controllers\MediaController.cs" />
     <Compile Include="Controllers\MediaStreamController.cs" />
     <Compile Include="Controllers\NotasController.cs" />
     <Compile Include="Controllers\NotasCursoController.cs" />
@@ -400,6 +401,9 @@
     <Content Include="Images\Nerd.jpg" />
     <Content Include="Images\RedX.jpg" />
     <Content Include="Images\Sortudo.jpg" />
+    <Content Include="Images\video-loading.gif" />
+    <Content Include="Images\video-loading1.gif" />
+    <Content Include="Images\video-loading2.gif" />
     <Content Include="Scripts\ai.0.22.19-build00125.js" />
     <Content Include="Scripts\ai.0.22.19-build00125.min.js" />
     <Content Include="ApplicationInsights.config">

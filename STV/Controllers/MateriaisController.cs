@@ -238,7 +238,7 @@ namespace STV.Controllers
                                 "Arquivo",
                                 "Blob",
                                 "Idmaterial",
-                                material.Idmaterial, db))
+                                material.Idmaterial, db, fileContent.ContentLength))
                             {
                                 await fileContent.InputStream.CopyToAsync(blob, 65536);
                             }

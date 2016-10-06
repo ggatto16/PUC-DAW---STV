@@ -3,7 +3,7 @@
     @if (Model.Tipo == STV.Models.TipoMaterial.Video)
     {
         <video id="videoPlay" width="420" height="280" controls autoplay style="width: 100%; height: 100%;">
-            <source src="/api/MediaStream/@Model.Idmaterial" />
+            <source src="/api/Media/Play/@Model.Idmaterial" />
         </video>
     }
     else if (Model.Tipo == STV.Models.TipoMaterial.Imagem)

@@ -42,6 +42,7 @@ namespace STV.Controllers
                                                     "Idmaterial",
                                                     id,
                                                     null,
+                                                    (long)arquivoInfo.Tamanho,
                                                     true);
                 local = "2";
 

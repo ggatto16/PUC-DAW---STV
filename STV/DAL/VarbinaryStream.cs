@@ -18,6 +18,7 @@ namespace STV.DAL
         private string _BinaryColumn;
         private string _KeyColumn;
         private int _KeyValue;
+        private long _Tamanho;
 
         private long _Offset;
 
@@ -33,6 +34,7 @@ namespace STV.DAL
         string KeyColumn,
         int KeyValue,
         STVDbContext db,
+        long Tamanho,
         bool AllowRead = false)
         {
             // create own connection with the connection string.
@@ -47,7 +49,7 @@ namespace STV.DAL
             _BinaryColumn = BinaryColumn;
             _KeyColumn = KeyColumn;
             _KeyValue = KeyValue;
-
+            _Tamanho = Tamanho;
 
             // only query the database for a result if we are going to be reading, otherwise skip.
             _AllowedToRead = AllowRead;
@@ -184,23 +186,25 @@ namespace STV.DAL
 
         public override void Flush()
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         public override long Length
         {
-            get { throw new NotImplementedException(); }
+            get { return _Tamanho; }
+            //get { throw new NotImplementedException(); }
         }
 
         public override long Position
         {
             get
             {
-                throw new NotImplementedException();
+                return _SQLReadPosition;
+                //throw new NotImplementedException();
             }
             set
             {
-                throw new NotImplementedException();
+                _SQLReadPosition = value;
             }
         }
         public override long Seek(long offset, SeekOrigin origin)
