@@ -33,7 +33,7 @@ namespace STV.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
             var notas = db.Nota.Include(n => n.Atividade)
-                .Where(n => n.Idusuario == UsuarioLogado.Idusuario && n.Atividade.Idunidade == Idunidade && n.Atividade.Dtencerramento < DateTime.Now);
+                .Where(n => n.Idusuario == UsuarioLogado.Idusuario && n.Atividade.Idunidade == Idunidade && n.Atividade.DataEncerramento < DateTime.Now);
 
             ViewBag.Unidade = await db.Unidade.Where(u => u.Idunidade == Idunidade)
                 .Select(u => u.Titulo).SingleAsync();

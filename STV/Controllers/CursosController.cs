@@ -145,7 +145,7 @@ namespace STV.Controllers
 
             //Lista os cursos disponíveis de acordo com o departamento do usuário, exceto os cursos cujo instrutor é o próprio usuário
             var cursos = db.Curso.Where(x => x.Departamentos
-                            .Any(d => d.Iddepartamento == Iddepartamento) && x.IdusuarioInstrutor != Idusuario && x.Dtinicial <= DateTime.Now)
+                            .Any(d => d.Iddepartamento == Iddepartamento) && x.IdusuarioInstrutor != Idusuario && x.DataInicial <= DateTime.Now && x.Encerrado == false)
                                 .Include(u => u.Usuarios);
 
             ViewBag.Idusuario = Idusuario;
@@ -162,7 +162,7 @@ namespace STV.Controllers
             
             //Verifica permissão
             var cursosAutorizados = db.Curso.Where(x => x.Departamentos
-                .Any(d => d.Iddepartamento == UsuarioLogado.Iddepartamento) && x.IdusuarioInstrutor != UsuarioLogado.Idusuario && x.Dtinicial <= DateTime.Now)
+                .Any(d => d.Iddepartamento == UsuarioLogado.Iddepartamento) && x.IdusuarioInstrutor != UsuarioLogado.Idusuario && x.DataInicial <= DateTime.Now && x.Encerrado == false)
                     .Include(u => u.Usuarios);
             if (cursosAutorizados.Where(c => c.Idcurso == Idcurso).Count() == 0)
                 return View("NaoAutorizado");
@@ -371,7 +371,7 @@ namespace STV.Controllers
         [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Idcurso,Titulo,Dtinicial,Dtfinal,IdusuarioInstrutor,Categoria,Palavraschave")] Curso curso, string[] departamentosSelecionados)
+        public async Task<ActionResult> Create([Bind(Include = "Idcurso,Titulo,DataInicial,Encerrado,IdusuarioInstrutor,Categoria,Palavraschave")] Curso curso, string[] departamentosSelecionados)
         {
             if (departamentosSelecionados != null)
             {
@@ -410,6 +410,9 @@ namespace STV.Controllers
                 if (curso == null)
                     throw new ApplicationException("Curso não encontrado.");
 
+                if (curso.Encerrado)
+                    throw new ApplicationException("Curso encerrado. Não pode ser alterado.");
+
                 CarregarDepartamentos(curso);
 
                 ViewBag.IdusuarioInstrutor = new SelectList(db.Usuario, "Idusuario", "Nome", curso.IdusuarioInstrutor);
@@ -443,7 +446,7 @@ namespace STV.Controllers
                   .SingleAsync();
 
             if (TryUpdateModel(cursoToUpdate, "",
-                   new string[] { "Titulo", "Dtinicial", "Dtfinal", "IdusuarioInstrutor", "Categoria", "Palavraschave" }))
+                   new string[] { "Titulo", "DataInicial", "Encerrado", "IdusuarioInstrutor", "Categoria", "Palavraschave" }))
             {
                 try
                 {
@@ -514,6 +517,9 @@ namespace STV.Controllers
                 Curso curso = await db.Curso.FindAsync(id);
                 if (curso == null)
                     throw new ApplicationException("Curso não encontrado.");
+
+                if (curso.Encerrado)
+                    throw new ApplicationException("Curso encerrado. Não pode ser excluído.");
 
                 return View(curso);
             }

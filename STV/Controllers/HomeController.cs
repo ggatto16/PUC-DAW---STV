@@ -114,7 +114,7 @@ namespace STV.Controllers
         private ICollection<Medalha> AtribuirMedalhas(int Idusuario)
         {
             var notas = db.Nota.Include(n => n.Atividade)
-            .Where(n => n.Idusuario == Idusuario && n.Atividade.Dtencerramento < DateTime.Now);
+            .Where(n => n.Idusuario == Idusuario && n.Atividade.DataEncerramento < DateTime.Now);
 
 
             var usuario = db.Usuario.Find(Idusuario);
@@ -156,8 +156,10 @@ namespace STV.Controllers
                         {
                             foreach (var atv in unidade.Atividades)
                             {
+                                if (atv.DataEncerramento <= DateTime.Now) continue;
+
                                 var notaUsuario = notas.Where(n => n.Atividade.Idatividade == atv.Idatividade
-                                    && n.Idusuario == usuario.Idusuario && n.Atividade.Dtencerramento < DateTime.Now)
+                                    && n.Idusuario == usuario.Idusuario && n.Atividade.DataEncerramento < DateTime.Now)
                                     .Select(n => new { Pontos = n.Pontos }).SingleOrDefault();
 
                                 if (notaUsuario == null) continue;
@@ -189,11 +191,12 @@ namespace STV.Controllers
                         {
                             foreach (var uni in curso.Unidades)
                             {
-                                //Verificar Data de encerramento da unidade
+                                if (!uni.Encerrada) continue;
+
                                 foreach (var atv in uni.Atividades)
                                 {
                                     var notaUsuario = notas.Where(n => n.Atividade.Idatividade == atv.Idatividade
-                                        && n.Idusuario == usuario.Idusuario && n.Atividade.Dtencerramento < DateTime.Now)
+                                        && n.Idusuario == usuario.Idusuario && n.Atividade.DataEncerramento < DateTime.Now)
                                         .Select(n => new { Pontos = n.Pontos }).SingleOrDefault();
 
                                     if (notaUsuario == null) continue;

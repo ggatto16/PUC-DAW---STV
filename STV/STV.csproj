@@ -260,85 +260,9 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="GravarArquivo.cs" />
-    <Compile Include="Migrations\201607291603568_Initial.cs" />
-    <Compile Include="Migrations\201607291603568_Initial.Designer.cs">
-      <DependentUpon>201607291603568_Initial.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201607291807499_acerto1.cs" />
-    <Compile Include="Migrations\201607291807499_acerto1.Designer.cs">
-      <DependentUpon>201607291807499_acerto1.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201607291913572_acerto2.cs" />
-    <Compile Include="Migrations\201607291913572_acerto2.Designer.cs">
-      <DependentUpon>201607291913572_acerto2.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201607291936398_acerto3.cs" />
-    <Compile Include="Migrations\201607291936398_acerto3.Designer.cs">
-      <DependentUpon>201607291936398_acerto3.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201608021458198_Notas.cs" />
-    <Compile Include="Migrations\201608021458198_Notas.Designer.cs">
-      <DependentUpon>201608021458198_Notas.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201608021508234_UsuarioQuestao].cs" />
-    <Compile Include="Migrations\201608021508234_UsuarioQuestao].Designer.cs">
-      <DependentUpon>201608021508234_UsuarioQuestao].cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201608031503306_numeroquestao.cs" />
-    <Compile Include="Migrations\201608031503306_numeroquestao.Designer.cs">
-      <DependentUpon>201608031503306_numeroquestao.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201608031945035_RealizadoOK.cs" />
-    <Compile Include="Migrations\201608031945035_RealizadoOK.Designer.cs">
-      <DependentUpon>201608031945035_RealizadoOK.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201608032009258_RealizadoOKOK.cs" />
-    <Compile Include="Migrations\201608032009258_RealizadoOKOK.Designer.cs">
-      <DependentUpon>201608032009258_RealizadoOKOK.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201608032022487_RemoveRealizado.cs" />
-    <Compile Include="Migrations\201608032022487_RemoveRealizado.Designer.cs">
-      <DependentUpon>201608032022487_RemoveRealizado.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201608041548294_DataAtividade.cs" />
-    <Compile Include="Migrations\201608041548294_DataAtividade.Designer.cs">
-      <DependentUpon>201608041548294_DataAtividade.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201608041740106_DateTime.cs" />
-    <Compile Include="Migrations\201608041740106_DateTime.Designer.cs">
-      <DependentUpon>201608041740106_DateTime.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201608041929213_DateTime2.cs" />
-    <Compile Include="Migrations\201608041929213_DateTime2.Designer.cs">
-      <DependentUpon>201608041929213_DateTime2.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201608081502267_requireddtabertura.cs" />
-    <Compile Include="Migrations\201608081502267_requireddtabertura.Designer.cs">
-      <DependentUpon>201608081502267_requireddtabertura.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201608091331552_NotasCurso.cs" />
-    <Compile Include="Migrations\201608091331552_NotasCurso.Designer.cs">
-      <DependentUpon>201608091331552_NotasCurso.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201608171510499_MaterialUsuario.cs" />
-    <Compile Include="Migrations\201608171510499_MaterialUsuario.Designer.cs">
-      <DependentUpon>201608171510499_MaterialUsuario.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201608171612448_UsuarioMedalha.cs" />
-    <Compile Include="Migrations\201608171612448_UsuarioMedalha.Designer.cs">
-      <DependentUpon>201608171612448_UsuarioMedalha.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201608291507046_URL-Material.cs" />
-    <Compile Include="Migrations\201608291507046_URL-Material.Designer.cs">
-      <DependentUpon>201608291507046_URL-Material.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201609191540119_SenhaDigitada.cs" />
-    <Compile Include="Migrations\201609191540119_SenhaDigitada.Designer.cs">
-      <DependentUpon>201609191540119_SenhaDigitada.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201610051217557_Justificativa.cs" />
-    <Compile Include="Migrations\201610051217557_Justificativa.Designer.cs">
-      <DependentUpon>201610051217557_Justificativa.cs</DependentUpon>
+    <Compile Include="Migrations\201610071603360_Encerramento.cs" />
+    <Compile Include="Migrations\201610071603360_Encerramento.Designer.cs">
+      <DependentUpon>201610071603360_Encerramento.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -564,65 +488,8 @@
     <Folder Include="Views\NotasCurso\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201607291603568_Initial.resx">
-      <DependentUpon>201607291603568_Initial.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201607291807499_acerto1.resx">
-      <DependentUpon>201607291807499_acerto1.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201607291913572_acerto2.resx">
-      <DependentUpon>201607291913572_acerto2.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201607291936398_acerto3.resx">
-      <DependentUpon>201607291936398_acerto3.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201608021458198_Notas.resx">
-      <DependentUpon>201608021458198_Notas.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201608021508234_UsuarioQuestao].resx">
-      <DependentUpon>201608021508234_UsuarioQuestao].cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201608031503306_numeroquestao.resx">
-      <DependentUpon>201608031503306_numeroquestao.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201608031945035_RealizadoOK.resx">
-      <DependentUpon>201608031945035_RealizadoOK.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201608032009258_RealizadoOKOK.resx">
-      <DependentUpon>201608032009258_RealizadoOKOK.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201608032022487_RemoveRealizado.resx">
-      <DependentUpon>201608032022487_RemoveRealizado.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201608041548294_DataAtividade.resx">
-      <DependentUpon>201608041548294_DataAtividade.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201608041740106_DateTime.resx">
-      <DependentUpon>201608041740106_DateTime.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201608041929213_DateTime2.resx">
-      <DependentUpon>201608041929213_DateTime2.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201608081502267_requireddtabertura.resx">
-      <DependentUpon>201608081502267_requireddtabertura.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201608091331552_NotasCurso.resx">
-      <DependentUpon>201608091331552_NotasCurso.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201608171510499_MaterialUsuario.resx">
-      <DependentUpon>201608171510499_MaterialUsuario.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201608171612448_UsuarioMedalha.resx">
-      <DependentUpon>201608171612448_UsuarioMedalha.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201608291507046_URL-Material.resx">
-      <DependentUpon>201608291507046_URL-Material.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201609191540119_SenhaDigitada.resx">
-      <DependentUpon>201609191540119_SenhaDigitada.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201610051217557_Justificativa.resx">
-      <DependentUpon>201610051217557_Justificativa.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201610071603360_Encerramento.resx">
+      <DependentUpon>201610071603360_Encerramento.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

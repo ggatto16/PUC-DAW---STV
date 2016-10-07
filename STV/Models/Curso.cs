@@ -18,12 +18,9 @@ namespace STV.Models
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-dd}")]
         [Column(TypeName = "date")]
         [DataType(DataType.Date, ErrorMessage = "Data em formato inválido")]
-        public DateTime? Dtinicial { get; set; }
+        public DateTime? DataInicial { get; set; }
 
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-dd}")]
-        [Column(TypeName = "date")]
-        [DataType(DataType.Date, ErrorMessage = "Data em formato inválido")]
-        public DateTime? Dtfinal { get; set; }
+        public bool Encerrado { get; set; }
 
         public int IdusuarioInstrutor { get; set; }
 

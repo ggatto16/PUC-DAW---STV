@@ -21,9 +21,9 @@
         [Column(TypeName = "date")]
         [DataType(DataType.Date, ErrorMessage = "Data em formato inválido")]
         [Required]
-        public DateTime? Dtabertura { get; set; }
+        public DateTime DataAbertura { get; set; }
 
-        public bool Status { get; set; }
+        public bool Encerrada { get; set; }
 
         public DateTime Stamp { get; set; }
 

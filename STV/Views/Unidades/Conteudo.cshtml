@@ -54,8 +54,8 @@
 
     @foreach (var item in Model.AtividadesVM)
     {
-        bool encerrada = item.Dtencerramento < DateTime.Now;
-        bool aberta = item.Dtabertura < DateTime.Now;
+        bool encerrada = item.DataEncerramento < DateTime.Now;
+        bool aberta = item.DataAbertura < DateTime.Now;
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Descricao)
@@ -64,7 +64,7 @@
             @if (!encerrada)
             {
                 <td>
-                    @Html.Raw("Encerra em ") @Html.DisplayFor(modelItem => item.Dtencerramento);
+                    @Html.Raw("Encerra em ") @Html.DisplayFor(modelItem => item.DataEncerramento);
                 </td>
             }
             else
@@ -72,7 +72,7 @@
                 if (!aberta)
                 {
                     <td>
-                        @Html.Raw("Inicia em ") @Html.DisplayFor(modelItem => item.Dtabertura);
+                        @Html.Raw("Inicia em ") @Html.DisplayFor(modelItem => item.DataAbertura);
                     </td>
                 }
             }

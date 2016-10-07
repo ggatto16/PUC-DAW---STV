@@ -144,13 +144,13 @@
             {
                 <tr>
                     <td>
-                        @if (unidade.Dtabertura < DateTime.Now || User.IsInRole("Admin") || Model.IsInstutor)
+                        @if (unidade.DataAbertura < DateTime.Now || User.IsInRole("Admin") || Model.IsInstutor)
                         {
                             @Ajax.ActionLink(unidade.Titulo, "CarregarConteudo", "Unidades", new { idunidade = unidade.Idunidade }, new AjaxOptions { UpdateTargetId = "ConteudoUnidade", InsertionMode = InsertionMode.Replace, HttpMethod = "Get", OnBegin = "onBeginAjax", OnComplete = "onCompleteAjax" })
                         }
                         else
                         {
-                            @Html.Raw("<td>" + unidade.Titulo + "</td><td>Abrirá em " + unidade.Dtabertura + "</td>");
+                            @Html.Raw("<td>" + unidade.Titulo + "</td><td>Abrirá em " + unidade.DataAbertura + "</td>");
                         }
                     </td>
                     <td>

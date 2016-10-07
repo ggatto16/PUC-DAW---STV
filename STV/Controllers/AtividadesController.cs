@@ -90,7 +90,7 @@ namespace STV.Controllers
 
                 if (!Autorizacao.UsuarioInscrito(atividade.Unidade.Curso.Usuarios, UsuarioLogado.Idusuario, User))
                 {
-                    if (atividade.Dtencerramento <= DateTime.Now)
+                    if (atividade.DataEncerramento <= DateTime.Now)
                         return View("NaoAutorizado");
                 }
 
@@ -153,7 +153,7 @@ namespace STV.Controllers
                     throw new ApplicationException("Ops! Requisição inválida.");
 
                 Atividade atividade = await db.Atividade
-                    .Where(a => a.Idatividade == id)
+                    .Where(a => a.Idatividade == id && a.DataEncerramento <= DateTime.Now)
                     .SingleOrDefaultAsync();
 
                 if (atividade == null)
@@ -241,13 +241,36 @@ namespace STV.Controllers
             return View(atividade);
         }
 
+        private void ValidarDatas(ref Atividade atv)
+        {
+            List<string> erros = null;
+
+            if (atv.DataAbertura > atv.DataEncerramento)
+                erros.Add("Data de abertura não pode ser posterior à data de encerramento.");
+
+            if (atv.DataAbertura < atv.Unidade.DataAbertura)
+                erros.Add("Data de abertura não pode ser anterior à data de abertura da unidade.");
+
+            AddErrors(erros);
+        }
+
+        private void AddErrors(List<string> erros)
+        {
+            foreach (var error in erros)
+            {
+                ModelState.AddModelError("", error);
+            }
+        }
+
         // POST: Atividades/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Idatividade,Idunidade,Descricao,Valor,Dtabertura,Dtencerramento")] Atividade atividade)
+        public async Task<ActionResult> Create([Bind(Include = "Idatividade,Idunidade,Descricao,Valor,DataAbertura,DataEncerramento")] Atividade atividade)
         {
+            ValidarDatas(ref atividade);
+
             if (ModelState.IsValid)
             {
                 db.Atividade.Add(atividade);
@@ -263,19 +286,28 @@ namespace STV.Controllers
         // GET: Atividades/Edit/5
         public async Task<ActionResult> Edit(int? id)
         {
+            Atividade atividade = null;
             try
             {
                 if (id == null)
-                    throw new ApplicationException("Ops! Requisição inválida.");
+                    throw new Exception("Ops! Requisição inválida.");
 
-                Atividade atividade = await db.Atividade.FindAsync(id);
+                atividade = await db.Atividade.FindAsync(id);
                 if (atividade == null)
-                    throw new ApplicationException("Atividade não encontrada.");
+                    throw new Exception("Atividade não encontrada.");
+
+                if (atividade.DataEncerramento < DateTime.Now)
+                    throw new ApplicationException("Atividade encerrada. Não pode ser alterada.");
 
                 ViewBag.Idunidade = new SelectList(db.Unidade, "Idunidade", "Titulo", atividade.Idunidade);
                 return View(atividade);
             }
             catch (ApplicationException ex)
+            {
+                TempData["msgErr"] = ex.Message;
+                return VoltarParaListagem(atividade);
+            }
+            catch (Exception ex)
             {
                 TempData["msgErr"] = ex.Message;
                 return RedirectToAction("Index", "Home");
@@ -287,8 +319,15 @@ namespace STV.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "Idatividade,Idunidade,Descricao,Valor,Dtabertura,Dtencerramento")] Atividade atividade)
+        public async Task<ActionResult> Edit([Bind(Include = "Idatividade,Idunidade,Descricao,Valor,DataAbertura,DataEncerramento")] Atividade atividade)
         {
+            if (atividade.DataEncerramento < DateTime.Now)
+            {
+                TempData["msgErr"] = "Atividade encerrada. Não pode ser alterada.";
+                return VoltarParaListagem(atividade);
+            }
+
+
             if (ModelState.IsValid)
             {
                 db.Entry(atividade).State = EntityState.Modified;
@@ -303,18 +342,27 @@ namespace STV.Controllers
         // GET: Atividades/Delete/5
         public async Task<ActionResult> Delete(int? id)
         {
+            Atividade atividade = null;
             try
             {
                 if (id == null)
-                    throw new ApplicationException("Ops! Requisição inválida.");
+                    throw new Exception("Ops! Requisição inválida.");
 
-                Atividade atividade = await db.Atividade.FindAsync(id);
+                atividade = await db.Atividade.FindAsync(id);
                 if (atividade == null)
-                    throw new ApplicationException("Atividade não econtrada.");
+                    throw new Exception("Atividade não econtrada.");
+
+                if (atividade.DataAbertura > DateTime.Now && atividade.DataEncerramento <= DateTime.Now)
+                    throw new ApplicationException("Atividade em aberto. Não pode ser excluída.");
 
                 return View(atividade);
             }
             catch (ApplicationException ex)
+            {
+                TempData["msgErr"] = ex.Message;
+                return VoltarParaListagem(atividade);
+            }
+            catch (Exception ex)
             {
                 TempData["msgErr"] = ex.Message;
                 return RedirectToAction("Index", "Home");
@@ -344,6 +392,7 @@ namespace STV.Controllers
         //Retorna para a tela principal do Curso
         private RedirectToRouteResult VoltarParaListagem(Atividade atividade)
         {
+            if (atividade == null) return RedirectToAction("Index", "Home");
             Unidade unidade = db.Unidade.Find(atividade.Idunidade);
             return RedirectToAction("Details", "Cursos", new { id = unidade.Idcurso, Idunidade = atividade.Idunidade });
         }

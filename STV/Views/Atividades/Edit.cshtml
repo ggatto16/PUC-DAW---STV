@@ -24,8 +24,8 @@
         @Html.HiddenFor(model => model.Idatividade)
 
         @{ 
-            bool encerrada = Model.Dtencerramento < DateTime.Now;
-            bool aberta = Model.Dtabertura < DateTime.Now;
+            bool encerrada = Model.DataEncerramento < DateTime.Now;
+            bool aberta = Model.DataAbertura < DateTime.Now;
         }
         <div class="form-group">
             @Html.LabelFor(model => model.Idunidade, "Idunidade", htmlAttributes: new { @class = "control-label col-md-2" })
@@ -52,18 +52,18 @@
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.Dtabertura, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.DataAbertura, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.Dtabertura, aberta? (object)new { htmlAttributes = new { @readonly = "readonly", @class = "form-control" } } : new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Dtabertura, "", new { @class = "text-danger" })
+                @Html.EditorFor(model => model.DataAbertura, aberta? (object)new { htmlAttributes = new { @readonly = "readonly", @class = "form-control" } } : new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.DataAbertura, "", new { @class = "text-danger" })
             </div>
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.Dtencerramento, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.DataEncerramento, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.Dtencerramento, encerrada ? (object)new { htmlAttributes = new { @readonly = "readonly", @class = "form-control" } } : new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Dtencerramento, "", new { @class = "text-danger" })
+                @Html.EditorFor(model => model.DataEncerramento, encerrada ? (object)new { htmlAttributes = new { @readonly = "readonly", @class = "form-control" } } : new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.DataEncerramento, "", new { @class = "text-danger" })
             </div>
         </div>
 

@@ -22,7 +22,7 @@ namespace STV.ViewModels
         [Column(TypeName = "date")]
         [DataType(DataType.Date, ErrorMessage = "Data em formato inválido")]
         [Required]
-        public DateTime? Dtabertura { get; set; }
+        public DateTime? DataAbertura { get; set; }
 
         public bool Status { get; set; }
 

@@ -1,18 +1,16 @@
-﻿using System;
+﻿using AutoMapper;
+using STV.Auth;
+using STV.DAL;
+using STV.Models;
+using STV.Utils;
+using STV.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Net;
-using System.Web;
 using System.Web.Mvc;
-using STV.Models;
-using STV.DAL;
-using STV.Auth;
-using AutoMapper;
-using STV.ViewModels;
-using STV.Utils;
 
 namespace STV.Controllers
 {
@@ -67,7 +65,7 @@ namespace STV.Controllers
                 bool autoriza = User.IsInRole("Admin") || unidade.Curso.IdusuarioInstrutor == UsuarioLogado.Idusuario;
                 if (!autoriza)
                 {
-                    if (unidade.Dtabertura > DateTime.Now)
+                    if (unidade.DataAbertura > DateTime.Now)
                         throw new ApplicationException("Unidade ainda não disponível.");
                 }
 
@@ -181,7 +179,7 @@ namespace STV.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Idunidade,Idcurso,Titulo,Dtabertura,Status")] Unidade unidade)
+        public async Task<ActionResult> Create([Bind(Include = "Idunidade,Idcurso,Titulo,DataAbertura,Encerrada")] Unidade unidade)
         {
             if (!Autorizarado(unidade.Idcurso)) return View("NaoAutorizado");
 
@@ -227,7 +225,7 @@ namespace STV.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "Idunidade,Idcurso,Titulo,Dtabertura,Status")] Unidade unidade)
+        public async Task<ActionResult> Edit([Bind(Include = "Idunidade,Idcurso,Titulo,DataAbertura,Encerrada")] Unidade unidade)
         {
             if (!Autorizarado(unidade.Idcurso)) return View("NaoAutorizado");
 

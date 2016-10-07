@@ -20,12 +20,12 @@ namespace STV.ViewModels
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-dd}")]
         [Column(TypeName = "date")]
         [DataType(DataType.Date, ErrorMessage = "Data em formato inválido")]
-        public DateTime? Dtabertura { get; set; }
+        public DateTime DataAbertura { get; set; }
 
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-dd}")]
         [Column(TypeName = "date")]
         [DataType(DataType.Date, ErrorMessage = "Data em formato inválido")]
-        public DateTime? Dtencerramento { get; set; }
+        public DateTime DataEncerramento { get; set; }
 
         public virtual Unidade Unidade { get; set; }
 
