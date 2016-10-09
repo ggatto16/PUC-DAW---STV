@@ -14,8 +14,6 @@ namespace STV.Models
         [StringLength(50)]
         public string Descricao { get; set; }
 
-        public bool Status { get; set; }
-
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy hh:mm:ss}", ApplyFormatInEditMode = true)]
         public DateTime? Stamp { get; set; }

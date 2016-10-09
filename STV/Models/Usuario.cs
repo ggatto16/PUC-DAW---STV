@@ -32,8 +32,6 @@ namespace STV.Models
 
         public int Iddepartamento { get; set; }
 
-        public bool Status { get; set; }
-
         public virtual ICollection<Medalha> Medalhas { get; set; }
 
         public DateTime Stamp { get; set; }

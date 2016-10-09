@@ -58,15 +58,16 @@ namespace STV.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public ActionResult Login(UsuarioVM Anonymous, string returnUrl = "")
+        public ActionResult Login(Anonymous Anonymous, string returnUrl = "")
         {
             if (ModelState.IsValid) 
             {
                 using (STVDbContext db = new STVDbContext())
                 {
+                    var login = (Anonymous.UserId.ToLower() == "admin") ? Anonymous.UserId : Anonymous.CpfLoginSoNumeros;
                     var senha = Crypt.Encrypt(Anonymous.Senha);
                     var usuarioAutenticado = db.Usuario
-                        .Where(a => a.Cpf.Equals(Anonymous.CpfSoNumeros) && a.Senha.Equals(senha))
+                        .Where(a => a.Cpf.Equals(login) && a.Senha.Equals(senha))
                         .Select(a => new 
                         {
                             Idusuario = a.Idusuario,

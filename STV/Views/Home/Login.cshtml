@@ -1,4 +1,4 @@
-﻿@model STV.ViewModels.UsuarioVM
+﻿@model STV.ViewModels.Anonymous
 
 @{
     Layout = null;
@@ -143,8 +143,8 @@
                 <div class="form">
                     <form class="login-form">
 
-                        @Html.TextBoxFor(a => a.Cpf, new { @placeholder = "CPF" })
-                        @Html.ValidationMessageFor(a => a.Cpf)
+                        @Html.TextBoxFor(a => a.UserId, new { @placeholder = "CPF" })
+                        @Html.ValidationMessageFor(a => a.UserId)
                         @Html.PasswordFor(a => a.Senha, new { @placeholder = "Senha" })
                         @Html.ValidationMessageFor(a => a.Senha)
 

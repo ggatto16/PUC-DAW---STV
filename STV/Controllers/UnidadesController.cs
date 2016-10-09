@@ -2,6 +2,7 @@
 using STV.Auth;
 using STV.DAL;
 using STV.Models;
+using STV.Models.Validation;
 using STV.Utils;
 using STV.ViewModels;
 using System;
@@ -9,6 +10,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 
@@ -59,16 +61,8 @@ namespace STV.Controllers
                     .Where(u => u.Idunidade == idunidade)
                     .SingleOrDefaultAsync();
 
-                if (unidade == null)
-                    throw new ApplicationException("Unidade não encontrada.");
-
-                bool autoriza = User.IsInRole("Admin") || unidade.Curso.IdusuarioInstrutor == UsuarioLogado.Idusuario;
-                if (!autoriza)
-                {
-                    if (unidade.DataAbertura > DateTime.Now)
-                        throw new ApplicationException("Unidade ainda não disponível.");
-                }
-
+                if (!UnidadeValidation.CanSee(unidade, UsuarioLogado.Idusuario, User))
+                    return View("NaoAutorizado");
 
                 var unidadeVM = Mapper.Map<Unidade, UnidadeVM>(unidade);
 
@@ -129,7 +123,7 @@ namespace STV.Controllers
                 if (unidade == null)
                     throw new ApplicationException("Unidade não encontrada.");
 
-                if (!Autorizacao.UsuarioInscrito(unidade.Curso.Usuarios, UsuarioLogado.Idusuario, User))
+                if (!UnidadeValidation.CanSee(unidade, UsuarioLogado.Idusuario, User))
                     return View("NaoAutorizado");
 
                 return View(unidade);
@@ -161,17 +155,27 @@ namespace STV.Controllers
         public ActionResult Create(int? Idcurso)
         {
             if (Idcurso == null)
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            Unidade unidade = null;
+            try
             {
-                TempData["msgErr"] = "Ops! Requisição inválida.";
-                return RedirectToAction("Index", "Home");
+                Curso curso = db.Curso.Find(Idcurso);
+
+                if (!CursoValidation.CanEdit(curso, UsuarioLogado.Idusuario, User))
+                    return View("NaoAutorizado");
+
+                unidade = new Unidade { Curso = curso };
+
+                ViewBag.Idcurso = new SelectList(db.Curso, "Idcurso", "Titulo");
+                return View(unidade);
             }
-
-            if (!Autorizarado(Idcurso)) return View("NaoAutorizado");
-
-            var unidade = new Unidade { Curso = db.Curso.Where(c => c.Idcurso == Idcurso).FirstOrDefault() };
-
-            ViewBag.Idcurso = new SelectList(db.Curso, "Idcurso", "Titulo");
-            return View(unidade);
+            catch (ApplicationException ex)
+            {
+                TempData["msgErr"] = ex.Message;
+                if (unidade == null) return RedirectToAction("Index", "Cursos");
+                return VoltarParaListagem(unidade);
+            }
         }
 
         // POST: Unidades/Create
@@ -181,8 +185,6 @@ namespace STV.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create([Bind(Include = "Idunidade,Idcurso,Titulo,DataAbertura,Encerrada")] Unidade unidade)
         {
-            if (!Autorizarado(unidade.Idcurso)) return View("NaoAutorizado");
-
             if (ModelState.IsValid)
             {
                 unidade.Stamp = DateTime.Now;
@@ -198,17 +200,16 @@ namespace STV.Controllers
         // GET: Unidades/Edit/5
         public async Task<ActionResult> Edit(int? id)
         {
+            if (id == null)
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             try
             {
-                if (id == null)
-                    throw new ApplicationException("Ops! Requisição inválida.");
-
                 Unidade unidade = await db.Unidade.FindAsync(id);
                 if (unidade == null)
                     throw new ApplicationException("Unidade não encontrada.");
 
-                Autorizarado(unidade.Idcurso);
-                if (!Autorizarado(unidade.Idcurso)) return View("NaoAutorizado");
+                if (!CursoValidation.CanEdit(unidade.Curso, UsuarioLogado.Idusuario, User))
+                    return View("NaoAutorizado");
 
                 ViewBag.Idcurso = new SelectList(db.Curso, "Idcurso", "Titulo");
                 return View(unidade);
@@ -227,8 +228,6 @@ namespace STV.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit([Bind(Include = "Idunidade,Idcurso,Titulo,DataAbertura,Encerrada")] Unidade unidade)
         {
-            if (!Autorizarado(unidade.Idcurso)) return View("NaoAutorizado");
-
             if (ModelState.IsValid)
             {
                 unidade.Stamp = DateTime.Now;
@@ -243,21 +242,28 @@ namespace STV.Controllers
         // GET: Unidades/Delete/5
         public async Task<ActionResult> Delete(int? id)
         {
+            Unidade unidade = null;
             try
             {
                 if (id == null)
-                    throw new ApplicationException("Ops! Requisição inválida.");
+                    throw new Exception("Ops! Requisição inválida.");
 
-                Unidade unidade = await db.Unidade.FindAsync(id);
+                unidade = await db.Unidade.FindAsync(id);
 
                 if (unidade == null)
-                    throw new ApplicationException("Unidade não encontrada.");
+                    throw new Exception("Unidade não encontrada.");
 
-                if (!Autorizarado(unidade.Idcurso)) return View("NaoAutorizado");
+                if (!CursoValidation.CanEdit(unidade.Curso, UsuarioLogado.Idusuario, User))
+                    return View("NaoAutorizado");
 
                 return View(unidade);
             }
             catch (ApplicationException ex)
+            {
+                TempData["msgErr"] = ex.Message;
+                return VoltarParaListagem(unidade);
+            }
+            catch (Exception ex)
             {
                 TempData["msgErr"] = ex.Message;
                 return RedirectToAction("Index", "Home");
@@ -269,10 +275,11 @@ namespace STV.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
+            Unidade unidade = await db.Unidade.FindAsync(id);
             try
             {
-                Unidade unidade = await db.Unidade.FindAsync(id);
-                if (!Autorizarado(unidade.Idcurso)) return View("NaoAutorizado");
+                db.Entry(unidade).Collection("Atividades").Load(); //Para remover também a referência
+                db.Entry(unidade).Collection("Materiais").Load(); //Para remover também a referência
                 db.Unidade.Remove(unidade);
                 await db.SaveChangesAsync();
                 TempData["msg"] = "Unidade excluída!";

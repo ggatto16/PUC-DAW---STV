@@ -16,12 +16,12 @@ using System.Web.Mvc;
 
 namespace STV.Controllers
 {
-    //[Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     public class UsuariosController : Controller
     {
         private STVDbContext db = new STVDbContext();
 
-        public ActionResult PDF(int id)
+        public ActionResult Relatorio(int id)
         {
             Usuario usuario = db.Usuario.Find(id);
 
@@ -30,7 +30,7 @@ namespace STV.Controllers
             // return new PdfActionResult("PDF", RelatorioUsuario);
             //return View("PDF", RelatorioUsuario);
 
-            return new PdfActionResult("PDF", RelatorioUsuario, (writer, document) =>
+            return new PdfActionResult("Relatorio", RelatorioUsuario, (writer, document) =>
             {
                 document.SetPageSize(PageSize.A4);
                 document.NewPage();
@@ -48,16 +48,14 @@ namespace STV.Controllers
             ViewBag.MensagemErro = TempData["msgErr"];
             TempData.Clear();
 
-            var usuarios = from u in db.Usuario select u;
+            IQueryable<Usuario> usuarios;
 
             if (!string.IsNullOrEmpty(cpf))
-            {
-                usuarios = usuarios.Where(u => u.Cpf == cpf);
-            }
+                usuarios = db.Usuario.Where(u => u.Cpf == cpf);
             else if (!string.IsNullOrEmpty(nome))
-            {
-                usuarios = usuarios.Where(u => u.Nome.Contains(nome));
-            }
+                usuarios = db.Usuario.Where(u => u.Nome.Contains(nome));
+            else
+                usuarios = db.Usuario;
 
             return View(await usuarios.ToListAsync());
         }
@@ -118,7 +116,6 @@ namespace STV.Controllers
             if (ModelState.IsValid)
             {
                 usuario.Stamp = DateTime.Now;
-                usuario.Status = false;
                 usuario.Senha = Crypt.Encrypt(usuario.Senha);
                 db.Usuario.Add(usuario);
                 await db.SaveChangesAsync();

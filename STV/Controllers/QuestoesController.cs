@@ -11,6 +11,7 @@ using STV.Models;
 using STV.DAL;
 using STV.Auth;
 using STV.Utils;
+using STV.Models.Validation;
 
 namespace STV.Controllers
 {
@@ -42,10 +43,8 @@ namespace STV.Controllers
 
                 var questao = await db.Questao.FindAsync(Idquestao);
 
-                if (questao == null)
-                    throw new ApplicationException("Questão não encontrada.");
-
-                if (!Autorizacao.UsuarioInscrito(questao.Atividade.Unidade.Curso.Usuarios, UsuarioLogado.Idusuario, User)) return View("NaoAutorizado");
+                if (!QuestaoValidation.CanSee(questao, UsuarioLogado.Idusuario, User))
+                    return View("NaoAutorizado");
 
                 var alternativas = from a in db.Alternativa where a.Idquestao == Idquestao select a;
                 questao.Alternativas = await alternativas.ToListAsync();
@@ -69,10 +68,9 @@ namespace STV.Controllers
                     throw new ApplicationException("Ops! Requisição inválida.");
 
                 Questao questao = await db.Questao.FindAsync(id);
-                if (questao == null)
-                    throw new ApplicationException("Questão não encontrada.");
 
-                if (!Autorizacao.UsuarioInscrito(questao.Atividade.Unidade.Curso.Usuarios, UsuarioLogado.Idusuario, User)) return View("NaoAutorizado");
+                if (!QuestaoValidation.CanSee(questao, UsuarioLogado.Idusuario, User))
+                    return View("NaoAutorizado");
 
                 return View(questao);
             }
@@ -84,15 +82,28 @@ namespace STV.Controllers
         }
 
         // GET: Questoes/Create
-        public ActionResult Create(int Idatividade)
+        public ActionResult Create(int? Idatividade)
         {
-            ViewBag.IdalternativaCorreta = new SelectList(db.Alternativa, "Idalternativa", "Descricao");
-            ViewBag.Idatividade = new SelectList(db.Atividade, "Idatividade", "Descricao");
+            if (Idatividade == null)
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
             Questao questao = new Questao();
-            questao.Idatividade = Idatividade;
-            questao.Atividade = db.Atividade.Find(Idatividade);
-            return View(questao);
+            try
+            {
+                questao.Atividade = db.Atividade.Find(Idatividade);
+                AtividadeValidation.CanEdit(questao.Atividade);
+
+                ViewBag.IdalternativaCorreta = new SelectList(db.Alternativa, "Idalternativa", "Descricao");
+                ViewBag.Idatividade = new SelectList(db.Atividade, "Idatividade", "Descricao");
+                questao.Idatividade = (int)Idatividade;
+
+                return View(questao);
+            }
+            catch (ApplicationException ex)
+            {
+                TempData["msgErr"] = ex.Message;
+                return VoltarParaListagem(questao);
+            }
         }
 
         // POST: Questoes/Create
@@ -118,20 +129,28 @@ namespace STV.Controllers
         // GET: Questoes/Edit/5
         public async Task<ActionResult> Edit(int? id)
         {
+            Questao questao = null;
             try
             {
                 if (id == null)
-                    throw new ApplicationException("Ops! Requisição inválida.");
+                    throw new Exception("Ops! Requisição inválida.");
 
-                Questao questao = await db.Questao.FindAsync(id);
+                questao = await db.Questao.FindAsync(id);
                 if (questao == null)
-                    throw new ApplicationException("Questão não encontrada.");
+                    throw new Exception("Questão não encontrada.");
+
+                AtividadeValidation.CanEdit(questao.Atividade);
 
                 ViewBag.IdalternativaCorreta = new SelectList(db.Alternativa.Where(a => a.Idquestao == id), "Idalternativa", "Descricao");
                 ViewBag.Idatividade = new SelectList(db.Atividade, "Idatividade", "Idatividade", questao.Idatividade);
                 return View(questao);
             }
             catch (ApplicationException ex)
+            {
+                TempData["msgErr"] = ex.Message;
+                return VoltarParaListagem(questao);
+            }
+            catch (Exception ex)
             {
                 TempData["msgErr"] = ex.Message;
                 return RedirectToAction("Index", "Home");
@@ -160,18 +179,26 @@ namespace STV.Controllers
         // GET: Questoes/Delete/5
         public async Task<ActionResult> Delete(int? id)
         {
+            Questao questao = null;
             try
             {
                 if (id == null)
-                    throw new ApplicationException("Ops! Requisição inválida.");
+                    throw new Exception("Ops! Requisição inválida.");
 
-                Questao questao = await db.Questao.FindAsync(id);
+                questao = await db.Questao.FindAsync(id);
                 if (questao == null)
-                    throw new ApplicationException("Questão não econtrada.");
+                    throw new Exception("Questão não econtrada.");
+
+                AtividadeValidation.CanEdit(questao.Atividade);
 
                 return View(questao);
             }
             catch (ApplicationException ex)
+            {
+                TempData["msgErr"] = ex.Message;
+                return VoltarParaListagem(questao);
+            }
+            catch (Exception ex)
             {
                 TempData["msgErr"] = ex.Message;
                 return RedirectToAction("Index", "Home");
@@ -186,6 +213,7 @@ namespace STV.Controllers
             Questao questao = await db.Questao.FindAsync(id);
             try
             {
+                db.Entry(questao).Collection("Alternativas").Load(); //Para remover também a referência
                 db.Questao.Remove(questao);
                 await db.SaveChangesAsync();
                 TempData["msg"] = "Questão excluída!";

@@ -4,10 +4,10 @@ using MvcRazorToPdf;
 using STV.Auth;
 using STV.DAL;
 using STV.Models;
+using STV.Models.Validation;
 using STV.Utils;
 using STV.ViewModels;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
@@ -145,7 +145,9 @@ namespace STV.Controllers
 
             //Lista os cursos disponíveis de acordo com o departamento do usuário, exceto os cursos cujo instrutor é o próprio usuário
             var cursos = db.Curso.Where(x => x.Departamentos
-                            .Any(d => d.Iddepartamento == Iddepartamento) && x.IdusuarioInstrutor != Idusuario && x.DataInicial <= DateTime.Now && x.Encerrado == false)
+                            .Any(d => d.Iddepartamento == Iddepartamento) 
+                            && x.IdusuarioInstrutor != Idusuario 
+                            && x.DataInicial <= DateTime.Now && !x.Encerrado)
                                 .Include(u => u.Usuarios);
 
             ViewBag.Idusuario = Idusuario;
@@ -157,12 +159,15 @@ namespace STV.Controllers
             return View(await cursos.ToListAsync());
         }
 
+        [HttpPost]
         public async Task<ActionResult> Inscrever(int Idcurso)
         {
             
             //Verifica permissão
             var cursosAutorizados = db.Curso.Where(x => x.Departamentos
-                .Any(d => d.Iddepartamento == UsuarioLogado.Iddepartamento) && x.IdusuarioInstrutor != UsuarioLogado.Idusuario && x.DataInicial <= DateTime.Now && x.Encerrado == false)
+                .Any(d => d.Iddepartamento == UsuarioLogado.Iddepartamento) 
+                && x.IdusuarioInstrutor != UsuarioLogado.Idusuario 
+                && x.DataInicial <= DateTime.Now && !x.Encerrado)
                     .Include(u => u.Usuarios);
             if (cursosAutorizados.Where(c => c.Idcurso == Idcurso).Count() == 0)
                 return View("NaoAutorizado");
@@ -211,6 +216,7 @@ namespace STV.Controllers
             return PartialView("Comentarios", curso);
         }
 
+        [HttpPost]
         public async Task<ActionResult> SalvarComentario(int? Idcurso, string Comentario)
         {
             if (Idcurso == null)
@@ -269,7 +275,8 @@ namespace STV.Controllers
                 if (curso == null)
                     throw new ApplicationException("Curso não encontrado.");
 
-                if (!Autorizacao.UsuarioInscrito(curso.Usuarios, UsuarioLogado.Idusuario, User)) return View("NaoAutorizado");
+                if (!CommonValidation.UsuarioEstaInscrito(curso.Usuarios, UsuarioLogado.Idusuario, User))
+                    return View("NaoAutorizado");
 
                 var detalhesCurso = Mapper.Map<Curso, DetalhesCurso>(curso);
 
@@ -515,11 +522,8 @@ namespace STV.Controllers
                     throw new ApplicationException("Ops! Requisição inválida.");
 
                 Curso curso = await db.Curso.FindAsync(id);
-                if (curso == null)
-                    throw new ApplicationException("Curso não encontrado.");
 
-                if (curso.Encerrado)
-                    throw new ApplicationException("Curso encerrado. Não pode ser excluído.");
+                CursoValidation.CanDelete(curso);
 
                 return View(curso);
             }
@@ -540,6 +544,7 @@ namespace STV.Controllers
             {
                 Curso curso = await db.Curso.FindAsync(id);
                 db.Entry(curso).Collection("Departamentos").Load(); //Para remover também a referência
+                db.Entry(curso).Collection("NotasCurso").Load();
                 db.Curso.Remove(curso);
                 await db.SaveChangesAsync();
                 TempData["msg"] = "Curso excluído!";
@@ -547,7 +552,7 @@ namespace STV.Controllers
             }
             catch (Exception)
             {
-                TempData["msgErr"] = "Usuário não pode ser excluído.";
+                TempData["msgErr"] = "Curso não pode ser excluído.";
                 return RedirectToAction("Index");
             }
         }

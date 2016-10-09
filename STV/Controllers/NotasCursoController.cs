@@ -1,6 +1,7 @@
 ﻿using STV.Auth;
 using STV.DAL;
 using STV.Models;
+using STV.Models.Validation;
 using STV.Utils;
 using System;
 using System.Collections.Generic;
@@ -25,14 +26,15 @@ namespace STV.Controllers
             UsuarioLogado = auth.GetUserData();
         }
 
-
+        [HttpPost]
         public async Task<ActionResult> Avaliar(int? Idcurso, int nota)
         {
             if (Idcurso == null)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
             var curso = db.Curso.Find(Idcurso);
-            if (!Autorizacao.UsuarioInscrito(curso.Usuarios, UsuarioLogado.Idusuario, User)) return View("NaoAutorizado");
+            if (!CommonValidation.UsuarioEstaInscrito(curso.Usuarios, UsuarioLogado.Idusuario, User))
+                return View("NaoAutorizado");
 
             var notaAtual = await db.NotaCurso.FindAsync(UsuarioLogado.Idusuario, Idcurso);
 

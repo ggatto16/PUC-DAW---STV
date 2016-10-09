@@ -1,19 +1,16 @@
-﻿using System;
+﻿using AutoMapper;
+using STV.Auth;
+using STV.DAL;
+using STV.Models;
+using STV.Models.Validation;
+using STV.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Net;
-using System.Web;
 using System.Web.Mvc;
-using STV.Models;
-using STV.DAL;
-using Microsoft.Owin;
-using STV.Auth;
-using AutoMapper;
-using STV.ViewModels;
-using STV.Utils;
 
 namespace STV.Controllers
 {
@@ -41,10 +38,8 @@ namespace STV.Controllers
                     .Where(a => a.Idatividade == id)
                     .SingleOrDefaultAsync();
 
-                if (atividade == null)
-                    throw new ApplicationException("Ops! Atividade não encontrada.");
-
-                if (!Autorizacao.UsuarioInscrito(atividade.Unidade.Curso.Usuarios, UsuarioLogado.Idusuario, User)) return View("NaoAutorizado");
+                if (!AtividadeValidation.CanDo(atividade, UsuarioLogado.Idusuario, User))
+                    return View("NaoAutorizado");
 
                 var AtividadeModel = Mapper.Map<Atividade, AtividadeVM>(atividade);
 
@@ -88,12 +83,9 @@ namespace STV.Controllers
                 if (atividade == null)
                     throw new ApplicationException("Ops! Atividade não encontrada.");
 
-                if (!Autorizacao.UsuarioInscrito(atividade.Unidade.Curso.Usuarios, UsuarioLogado.Idusuario, User))
-                {
-                    if (atividade.DataEncerramento <= DateTime.Now)
-                        return View("NaoAutorizado");
-                }
-
+                if (!CommonValidation.UsuarioEstaInscrito(atividade.Unidade.Curso.Usuarios, UsuarioLogado.Idusuario, User))
+                    return View("NaoAutorizado");
+                
                 var AtividadeModel = Mapper.Map<Atividade, AtividadeVM>(atividade);
                 AtividadeModel.IsRevisao = true;
 
@@ -153,13 +145,11 @@ namespace STV.Controllers
                     throw new ApplicationException("Ops! Requisição inválida.");
 
                 Atividade atividade = await db.Atividade
-                    .Where(a => a.Idatividade == id && a.DataEncerramento <= DateTime.Now)
+                    .Where(a => a.Idatividade == id)
                     .SingleOrDefaultAsync();
 
-                if (atividade == null)
-                    throw new ApplicationException("Atividade não encontrada.");
-
-                if (!Autorizacao.UsuarioInscrito(atividade.Unidade.Curso.Usuarios, UsuarioLogado.Idusuario, User)) return View("NaoAutorizado");
+                if (!AtividadeValidation.CanDo(atividade, UsuarioLogado.Idusuario, User))
+                    return View("NaoAutorizado");
 
                 var corretas = db.Resposta
                     .Where(r => r.Idusuario == UsuarioLogado.Idusuario && r.Questao.Idatividade == atividade.Idatividade)
@@ -215,7 +205,8 @@ namespace STV.Controllers
                 if (atividade == null)
                     throw new ApplicationException("Atividade não encontrada.");
 
-                if (!Autorizacao.UsuarioInscrito(atividade.Unidade.Curso.Usuarios, UsuarioLogado.Idusuario, User)) return View("NaoAutorizado");
+                if (!CommonValidation.UsuarioEstaInscrito(atividade.Unidade.Curso.Usuarios, UsuarioLogado.Idusuario, User))
+                    return View("NaoAutorizado");
 
                 ViewBag.MensagemSucesso = TempData["msg"];
                 ViewBag.MensagemErro = TempData["msgErr"];
@@ -238,6 +229,11 @@ namespace STV.Controllers
             Atividade atividade = new Atividade();
             atividade.Idunidade = Idunidade;
             atividade.Unidade = db.Unidade.Find(Idunidade);
+            if (atividade.Unidade.Encerrada)
+            {
+                TempData["msgErr"] = "Unidade encerrada. Não pode ser alterada.";
+                return VoltarParaListagem(atividade);
+            }
             return View(atividade);
         }
 
@@ -250,6 +246,9 @@ namespace STV.Controllers
 
             if (atv.DataAbertura < atv.Unidade.DataAbertura)
                 erros.Add("Data de abertura não pode ser anterior à data de abertura da unidade.");
+
+            if (CommonValidation.Encerrada(atv.DataEncerramento))
+                erros.Add("Data de encerramento não pode ser anterior à data atual.");
 
             AddErrors(erros);
         }
@@ -296,8 +295,7 @@ namespace STV.Controllers
                 if (atividade == null)
                     throw new Exception("Atividade não encontrada.");
 
-                if (atividade.DataEncerramento < DateTime.Now)
-                    throw new ApplicationException("Atividade encerrada. Não pode ser alterada.");
+                AtividadeValidation.CanEdit(atividade);
 
                 ViewBag.Idunidade = new SelectList(db.Unidade, "Idunidade", "Titulo", atividade.Idunidade);
                 return View(atividade);
@@ -321,12 +319,7 @@ namespace STV.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit([Bind(Include = "Idatividade,Idunidade,Descricao,Valor,DataAbertura,DataEncerramento")] Atividade atividade)
         {
-            if (atividade.DataEncerramento < DateTime.Now)
-            {
-                TempData["msgErr"] = "Atividade encerrada. Não pode ser alterada.";
-                return VoltarParaListagem(atividade);
-            }
-
+            ValidarDatas(ref atividade);
 
             if (ModelState.IsValid)
             {
@@ -335,6 +328,7 @@ namespace STV.Controllers
                 TempData["msg"] = "Dados salvos!";
                 return VoltarParaListagem(atividade);
             }
+
             ViewBag.Idunidade = new SelectList(db.Unidade, "Idunidade", "Titulo", atividade.Idunidade);
             return View(atividade);
         }
@@ -349,11 +343,8 @@ namespace STV.Controllers
                     throw new Exception("Ops! Requisição inválida.");
 
                 atividade = await db.Atividade.FindAsync(id);
-                if (atividade == null)
-                    throw new Exception("Atividade não econtrada.");
 
-                if (atividade.DataAbertura > DateTime.Now && atividade.DataEncerramento <= DateTime.Now)
-                    throw new ApplicationException("Atividade em aberto. Não pode ser excluída.");
+                AtividadeValidation.CanDelete(atividade);
 
                 return View(atividade);
             }
@@ -377,6 +368,7 @@ namespace STV.Controllers
             Atividade atividade = await db.Atividade.FindAsync(id);
             try
             {
+                db.Entry(atividade).Collection("Questoes").Load(); //Para remover também a referência
                 db.Atividade.Remove(atividade);
                 await db.SaveChangesAsync();
                 TempData["msg"] = "Atividade excluída!";

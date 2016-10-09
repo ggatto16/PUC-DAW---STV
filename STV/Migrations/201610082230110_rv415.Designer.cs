@@ -7,13 +7,13 @@ namespace STV.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class Encerramento : IMigrationMetadata
+    public sealed partial class rv415 : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(Encerramento));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(rv415));
         
         string IMigrationMetadata.Id
         {
-            get { return "201610071603360_Encerramento"; }
+            get { return "201610082230110_rv415"; }
         }
         
         string IMigrationMetadata.Source

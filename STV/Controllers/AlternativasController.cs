@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using STV.DAL;
 using STV.Models;
+using STV.Models.Validation;
+using STV.Utils;
 using STV.ViewModels;
 using System;
 using System.Data.Entity;
@@ -50,12 +52,27 @@ namespace STV.Controllers
         // GET: Alternativas/Create
         public async Task<ActionResult> Create(int Idquestao)
         {
-            ViewBag.Idquestao = new SelectList(db.Questao, "Idquestao", "Descricao");
             Alternativa alternativa = new Alternativa();
-            alternativa.Idquestao = Idquestao;
-            alternativa.Questao = await db.Questao.FindAsync(Idquestao);
-            var alternativaVM = Mapper.Map<Alternativa, AlternativaVM>(alternativa);
-            return View(alternativaVM);
+            try
+            {
+                ViewBag.Idquestao = new SelectList(db.Questao, "Idquestao", "Descricao");
+                alternativa.Idquestao = Idquestao;
+                alternativa.Questao = await db.Questao.FindAsync(Idquestao);
+
+                if (alternativa.Questao == null)
+                    throw new ApplicationException("Questão não encontrada.");
+
+                AtividadeValidation.CanEdit(alternativa.Questao.Atividade);
+
+                var alternativaVM = Mapper.Map<Alternativa, AlternativaVM>(alternativa);
+                return View(alternativaVM);
+            }
+            catch (ApplicationException ex)
+            {
+                TempData["msgErr"] = ex.Message;
+                return VoltarParaListagem(alternativa);
+            }
+
         }
 
         // POST: Alternativas/Create
@@ -92,22 +109,29 @@ namespace STV.Controllers
         // GET: Alternativas/Edit/5
         public async Task<ActionResult> Edit(int? id)
         {
+            Alternativa alternativa = null;
             try
             {
                 if (id == null)
-                    throw new ApplicationException("Ops! Requisição inválida.");
+                    throw new Exception("Ops! Requisição inválida.");
 
-                Alternativa alternativa = await db.Alternativa.FindAsync(id);
+                alternativa = await db.Alternativa.FindAsync(id);
 
                 if (alternativa == null)
-                    throw new ApplicationException("Alternativa não encontrada.");
+                    throw new Exception("Alternativa não encontrada.");
+
+                AtividadeValidation.CanEdit(alternativa.Questao.Atividade);
 
                 var alternativaVM = Mapper.Map<Alternativa, AlternativaVM>(alternativa);
-
                 ViewBag.Idquestao = new SelectList(db.Questao, "Idquestao", "Descricao", alternativa.Idquestao);
                 return View(alternativaVM);
             }
             catch (ApplicationException ex)
+            {
+                TempData["msgErr"] = ex.Message;
+                return VoltarParaListagem(alternativa);
+            }
+            catch (Exception ex)
             {
                 TempData["msgErr"] = ex.Message;
                 return RedirectToAction("Index", "Home");
@@ -145,18 +169,26 @@ namespace STV.Controllers
         // GET: Alternativas/Delete/5
         public async Task<ActionResult> Delete(int? id)
         {
+            Alternativa alternativa = null;
             try
             {
                 if (id == null)
-                    throw new ApplicationException("Ops! Requisição inválida.");
+                    throw new Exception("Ops! Requisição inválida.");
 
-                Alternativa alternativa = await db.Alternativa.FindAsync(id);
+                alternativa = await db.Alternativa.FindAsync(id);
                 if (alternativa == null)
-                    throw new ApplicationException("Alternativa não encontrada.");
+                    throw new Exception("Alternativa não encontrada.");
+
+                AtividadeValidation.CanEdit(alternativa.Questao.Atividade);
 
                 return View(alternativa);
             }
             catch (ApplicationException ex)
+            {
+                TempData["msgErr"] = ex.Message;
+                return VoltarParaListagem(alternativa);
+            }
+            catch (Exception ex)
             {
                 TempData["msgErr"] = ex.Message;
                 return RedirectToAction("Index", "Home");

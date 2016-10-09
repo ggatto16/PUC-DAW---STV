@@ -21,7 +21,7 @@ namespace STV.Controllers
         public HttpResponseMessage Get(int id)
         {
             string cs = db.Database.Connection.ConnectionString;
-            string local = "0";
+
             try
             {
 
@@ -34,7 +34,7 @@ namespace STV.Controllers
                         ContentType = a.ContentType,
                         Tamanho = a.Tamanho
                     }).Single();
-                local = "1";
+
                 VarbinaryStream filestream = new VarbinaryStream(
                                                     cs,
                                                     "Arquivo",
@@ -44,11 +44,9 @@ namespace STV.Controllers
                                                     null,
                                                     (long)arquivoInfo.Tamanho,
                                                     true);
-                local = "2";
 
                 var response = Request.CreateResponse();
 
-                local = "3";
 
                 response.Content = new PushStreamContent(
                      async (Stream outputStream, HttpContent content, TransportContext context) =>
@@ -59,18 +57,15 @@ namespace STV.Controllers
 
                                 using (Stream stream = filestream)
                                 {
-                                    local = "4";
                                     var length = (int)arquivoInfo.Tamanho;
                                     var bytesRead = 1;
 
-                                    local = "5";
                                     while (length > 0 && bytesRead > 0)
                                     {
                                         bytesRead = stream.Read(buffer, 0, Math.Min(length, buffer.Length));
                                         await outputStream.WriteAsync(buffer, 0, bytesRead);
                                         length -= bytesRead;
                                     }
-                                    local = "6";
                                 }
 
                             }

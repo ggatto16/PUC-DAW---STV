@@ -2,6 +2,7 @@
 using STV.Auth;
 using STV.DAL;
 using STV.Models;
+using STV.Models.Validation;
 using STV.Utils;
 using STV.ViewModels;
 using System;
@@ -20,9 +21,16 @@ namespace STV.Controllers
 {
     public class MateriaisController : Controller
     {
+
+        #region Propriedades
+
         private STVDbContext db = new STVDbContext();
 
         private Usuario UsuarioLogado;
+
+        #endregion
+
+        #region Construtor
 
         public MateriaisController()
         {
@@ -30,27 +38,26 @@ namespace STV.Controllers
             UsuarioLogado = auth.GetUserData();
         }
 
-        // GET: Materiais
-        public async Task<ActionResult> Index(int idunidade = 0)
-        {
-            if (idunidade != 0)
-            {
-                var materiais = from m in db.Material where m.Unidade.Idunidade == idunidade select m;
-                return PartialView(await materiais.ToListAsync());
-            }
-            else
-            {
-                var material = db.Material.Include(m => m.Unidade);
-                return PartialView(await material.ToListAsync());
-            }
-        }
+        #endregion
 
-        private static string GetText(object e)
-        {
-            FieldInfo fieldInfo = e.GetType().GetField(e.ToString());
-            DisplayAttribute[] displayAttributes = fieldInfo.GetCustomAttributes(typeof(DisplayAttribute), false) as DisplayAttribute[];
-            return null != displayAttributes && displayAttributes.Length > 0 ? displayAttributes[0].Name : e.ToString();
-        }
+        #region Actions
+
+        // GET: Materiais
+        //public async Task<ActionResult> Index(int? idunidade)
+        //{
+
+        //    if (idunidade == null)
+        //    {
+        //        TempData["msgErr"] = "Ops! Requisição inválida.";
+        //        return RedirectToAction("Index", "Home");
+        //    }
+
+        //    var materiais = db.Material.Where(m => m.Unidade.Idunidade == idunidade);
+
+        //    return PartialView(await materiais.ToListAsync());
+        //}
+
+
 
         // GET: Materiais/Details/5
         public async Task<ActionResult> Details(int? id)
@@ -62,13 +69,13 @@ namespace STV.Controllers
 
                 Material material = await db.Material.FindAsync(id);
 
-                if (!Autorizacao.UsuarioInscrito(material.Unidade.Curso.Usuarios, UsuarioLogado.Idusuario, User))
-                    return View("NaoAutorizado");
-
                 ViewBag.DescricaoTipo = GetText(material.Tipo);
 
                 if (material == null)
                     throw new ApplicationException("Material não encontrado.");
+
+                if (!CommonValidation.UsuarioEstaInscrito(material.Unidade.Curso.Usuarios, UsuarioLogado.Idusuario, User))
+                    return View("NaoAutorizado");
 
                 GetArquivoInfo(ref material);
 
@@ -81,59 +88,6 @@ namespace STV.Controllers
             }
         }
 
-        private void GetArquivoInfo(ref Material material)
-        {
-            int Idmaterial = material.Idmaterial;
-
-            var arquivoInfo = db.Arquivo.Where(a => a.Idmaterial == Idmaterial)
-                .Select(a => new
-                {
-                    Idmaterial = a.Idmaterial,
-                    Nome = a.Nome,
-                    ContentType = a.ContentType,
-                    Tamanho = a.Tamanho
-                }).FirstOrDefault();
-
-            if (arquivoInfo != null)
-            {
-                material.Arquivo = new Arquivo
-                {
-                    Nome = arquivoInfo.Nome,
-                    Idmaterial = arquivoInfo.Idmaterial,
-                    ContentType = arquivoInfo.ContentType,
-                    Tamanho = arquivoInfo.Tamanho
-                };
-            }
-        }
-
-        // GET: Tipo
-        public ActionResult CarregarTipo(int Idtipo, string url)
-        {
-            ViewBag.Tipo = (TipoMaterial)Idtipo;
-            ViewBag.URL = url;
-            return PartialView("Upload");
-        }
-
-        private void RegistrarVisualizacao(Material material)
-        {
-            if (User.IsInRole("Admin")) return;
-
-            var isInstrutor = db.Curso.Where(c => c.Idcurso == material.Unidade.Idcurso).FirstOrDefault()
-                .IdusuarioInstrutor == UsuarioLogado.Idusuario;
-            if (isInstrutor) return;
-
-            var usuarioToUpdate = db.Usuario
-                    .Include(u => u.MateriaisConsultados)
-                    .Where(i => i.Idusuario == UsuarioLogado.Idusuario)
-                    .Single();
-
-            if (!usuarioToUpdate.MateriaisConsultados.Contains(material))
-            {
-                usuarioToUpdate.MateriaisConsultados.Add(material);
-                db.SaveChanges();
-            }
-        }
-
         // GET: Tipo
         public async Task<ActionResult> MostrarArquivo(int Id)
         {
@@ -141,7 +95,9 @@ namespace STV.Controllers
 
             if (material != null)
             {
-                if (!Autorizacao.UsuarioInscrito(material.Unidade.Curso.Usuarios, UsuarioLogado.Idusuario, User)) return View("NaoAutorizado");
+                if (!CommonValidation.UsuarioEstaInscrito(material.Unidade.Curso.Usuarios, UsuarioLogado.Idusuario, User))
+                    return View("NaoAutorizado");
+
                 RegistrarVisualizacao(material);
             }
             else
@@ -175,7 +131,9 @@ namespace STV.Controllers
 
             if (material != null)
             {
-                if (!Autorizacao.UsuarioInscrito(material.Unidade.Curso.Usuarios, UsuarioLogado.Idusuario, User)) return null;
+                if (!CommonValidation.UsuarioEstaInscrito(material.Unidade.Curso.Usuarios, UsuarioLogado.Idusuario, User))
+                    return null;
+
                 RegistrarVisualizacao(material);
             }
 
@@ -191,7 +149,6 @@ namespace STV.Controllers
             return File(blobArquivo.Blob, blobArquivo.ContentType);
         }
 
-
         // GET: Materiais/Create
         public ActionResult Create(int Idunidade)
         {
@@ -206,6 +163,7 @@ namespace STV.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<JsonResult> UploadFile(int id)
         {
             using (DbContextTransaction transaction = db.Database.BeginTransaction())
@@ -262,26 +220,36 @@ namespace STV.Controllers
         // GET: Materiais/Edit/5
         public async Task<ActionResult> Edit(int? id)
         {
+            Material material = null;
             try
             {
                 if (id == null)
-                    throw new ApplicationException("Ops! Requisição inválida.");
+                    throw new Exception("Ops! Requisição inválida.");
 
-                Material material = await db.Material.FindAsync(id);
+                material = await db.Material.FindAsync(id);
+
+                if (material == null)
+                    throw new Exception("Material não encontrado.");
+
+                if (material.Unidade.Encerrada)
+                    throw new ApplicationException("Unidade encerrada. Material não pode ser alterado.");
+
                 GetArquivoInfo(ref material);
 
                 var materialVM = Mapper.Map<Material, MaterialVM>(material);
                 materialVM.Idunidade = material.Unidade.Idunidade;
                 materialVM.Idcurso = material.Unidade.Idcurso;
 
-                if (material == null)
-                    throw new ApplicationException("Material não encontrado.");
-
                 ViewBag.URL = material.URL;
 
                 return View(materialVM);
             }
             catch (ApplicationException ex)
+            {
+                TempData["msgErr"] = ex.Message;
+                return VoltarParaListagem(material);
+            }
+            catch (Exception ex)
             {
                 TempData["msgErr"] = ex.Message;
                 return RedirectToAction("Index", "Home");
@@ -311,18 +279,27 @@ namespace STV.Controllers
         // GET: Materiais/Delete/5
         public async Task<ActionResult> Delete(int? id)
         {
+            Material material = null;
             try
             {
                 if (id == null)
-                    throw new ApplicationException("Ops! Requisição inválida.");
+                    throw new Exception("Ops! Requisição inválida.");
 
-                Material material = await db.Material.FindAsync(id);
+                material = await db.Material.FindAsync(id);
                 if (material == null)
-                    throw new ApplicationException("Material não econtrado.");
+                    throw new Exception("Material não econtrado.");
+
+                if (material.Unidade.Encerrada)
+                    throw new ApplicationException("Unidade encerrada. Material não pode eser excluído.");
 
                 return View(material);
             }
             catch (ApplicationException ex)
+            {
+                TempData["msgErr"] = ex.Message;
+                return VoltarParaListagem(material);
+            }
+            catch (Exception ex)
             {
                 TempData["msgErr"] = ex.Message;
                 return RedirectToAction("Index", "Home");
@@ -349,6 +326,81 @@ namespace STV.Controllers
                 TempData["msgErr"] = "Material não pode ser excluído.";
                 return RedirectToAction("Details", "Cursos", new { id = material.Unidade.Idcurso, Idunidade = material.Unidade.Idunidade });
             }
+        }
+
+        //Retorna para a tela principal do Curso
+        private RedirectToRouteResult VoltarParaListagem(Material material)
+        {
+            Unidade unidade = db.Unidade.Find(material.Idunidade);
+            return RedirectToAction("Details", "Cursos", new { id = unidade.Idcurso, Idunidade = material.Idunidade });
+        }
+
+        #endregion
+
+        #region Métodos Locais
+
+        private static string GetText(object e)
+        {
+            FieldInfo fieldInfo = e.GetType().GetField(e.ToString());
+            DisplayAttribute[] displayAttributes = fieldInfo.GetCustomAttributes(typeof(DisplayAttribute), false) as DisplayAttribute[];
+            return null != displayAttributes && displayAttributes.Length > 0 ? displayAttributes[0].Name : e.ToString();
+        }
+
+        private void GetArquivoInfo(ref Material material)
+        {
+            int Idmaterial = material.Idmaterial;
+
+            var arquivoInfo = db.Arquivo.Where(a => a.Idmaterial == Idmaterial)
+                .Select(a => new
+                {
+                    Idmaterial = a.Idmaterial,
+                    Nome = a.Nome,
+                    ContentType = a.ContentType,
+                    Tamanho = a.Tamanho
+                }).FirstOrDefault();
+
+            if (arquivoInfo != null)
+            {
+                material.Arquivo = new Arquivo
+                {
+                    Nome = arquivoInfo.Nome,
+                    Idmaterial = arquivoInfo.Idmaterial,
+                    ContentType = arquivoInfo.ContentType,
+                    Tamanho = arquivoInfo.Tamanho
+                };
+            }
+        }
+
+        private void GetUploadInfo(ref Material material, HttpPostedFileBase upload)
+        {
+            try
+            {
+                if (upload != null && upload.ContentLength > 0)
+                {
+                    var arquivo = new Arquivo
+                    {
+                        Nome = Path.GetFileName(upload.FileName),
+                        ContentType = upload.ContentType,
+                        Idmaterial = material.Idmaterial,
+                        Tamanho = upload.ContentLength
+                    };
+
+                    material.Arquivo = arquivo;
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                db.Dispose();
+            }
+            base.Dispose(disposing);
         }
 
         private void GetUploadContent(ref Material material, HttpPostedFileBase upload)
@@ -378,44 +430,33 @@ namespace STV.Controllers
             }
         }
 
-        private void GetUploadInfo(ref Material material, HttpPostedFileBase upload)
+        public ActionResult CarregarTipo(int Idtipo, string url)
         {
-            try
-            {
-                if (upload != null && upload.ContentLength > 0)
-                {
-                    var arquivo = new Arquivo
-                    {
-                        Nome = Path.GetFileName(upload.FileName),
-                        ContentType = upload.ContentType,
-                        Idmaterial = material.Idmaterial,
-                        Tamanho = upload.ContentLength
-                    };
+            ViewBag.Tipo = (TipoMaterial)Idtipo;
+            ViewBag.URL = url;
+            return PartialView("Upload");
+        }
 
-                    material.Arquivo = arquivo;
-                }
-            }
-            catch (Exception)
+        private void RegistrarVisualizacao(Material material)
+        {
+            if (User.IsInRole("Admin")) return;
+
+            var isInstrutor = db.Curso.Where(c => c.Idcurso == material.Unidade.Idcurso).FirstOrDefault()
+                .IdusuarioInstrutor == UsuarioLogado.Idusuario;
+            if (isInstrutor) return;
+
+            var usuarioToUpdate = db.Usuario
+                    .Include(u => u.MateriaisConsultados)
+                    .Where(i => i.Idusuario == UsuarioLogado.Idusuario)
+                    .Single();
+
+            if (!usuarioToUpdate.MateriaisConsultados.Contains(material))
             {
-                throw;
+                usuarioToUpdate.MateriaisConsultados.Add(material);
+                db.SaveChanges();
             }
         }
 
-
-        //Retorna para a tela principal do Curso
-        private RedirectToRouteResult VoltarParaListagem(Material material)
-        {
-            Unidade unidade = db.Unidade.Find(material.Idunidade);
-            return RedirectToAction("Details", "Cursos", new { id = unidade.Idcurso, Idunidade = material.Idunidade });
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
-        }
+        #endregion
     }
 }
