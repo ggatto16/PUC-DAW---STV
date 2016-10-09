@@ -19,21 +19,28 @@ namespace STV.Models
         public int Idusuario { get; set; }
 
         [StringLength(15)]
+        [Required]
+        [Display(Name = "CPF")]
         public string Cpf { get; set; }
 
         [StringLength(60)]
+        [Required]
         public string Nome { get; set; }
 
         [StringLength(70)]
         public string Email { get; set; }
 
         [StringLength(500)]
+        [Required]
         public string Senha { get; set; }
 
-        public int Iddepartamento { get; set; }
+        public int? Iddepartamento { get; set; }
 
         public virtual ICollection<Medalha> Medalhas { get; set; }
 
+        [Display(Name = "Data de Criação")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-dd}")]
+        [Column(TypeName = "date")]
         public DateTime Stamp { get; set; }
 
         public virtual Departamento Departamento { get; set; }

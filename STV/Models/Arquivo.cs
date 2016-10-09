@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace STV.Models
 {
@@ -13,6 +9,8 @@ namespace STV.Models
 
         public byte[] Blob { get; set; }
 
+        [Required(AllowEmptyStrings = false, ErrorMessage = "Este campo é obrigatório")]
+        [StringLength(200, ErrorMessage = "Este campo suporta até 200 caracteres")]
         public string Nome { get; set; }
 
         public string ContentType { get; set; }

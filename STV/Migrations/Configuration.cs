@@ -10,6 +10,7 @@ namespace STV.Migrations
     using System.Collections;
     using System.Collections.Generic;
     using Auth;
+    using System.Configuration;
 
     internal sealed class Configuration : DbMigrationsConfiguration<STV.DAL.STVDbContext>
     {
@@ -47,14 +48,11 @@ namespace STV.Migrations
                 new Medalha() { Idmedalha = 8, Descricao = "Prata" },
                 new Medalha() { Idmedalha = 9, Descricao = "Ouro" });
 
-            context.Departamento.AddOrUpdate(d => d.Iddepartamento,
-                new Departamento() { Descricao = "Admin", Stamp = DateTime.Now });
-
             ICollection<Role> roleAdmin;
             roleAdmin = context.Role.Where(r => r.Idrole == 1).ToList();
 
             context.Usuario.AddOrUpdate(u => u.Idusuario,
-                new Usuario() { Cpf = "admin", Nome = "Administrador", Email = "", Senha = Crypt.Encrypt("admin"), Iddepartamento = 0,
+                new Usuario() { Cpf = ConfigurationManager.AppSettings["AdmUserId"], Nome = "Administrador", Email = "", Senha = Crypt.Encrypt("admin"),
                     Roles = roleAdmin, Stamp = DateTime.Now
                 });
         }

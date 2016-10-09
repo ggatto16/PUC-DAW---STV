@@ -7,6 +7,7 @@ using STV.Models;
 using STV.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
@@ -20,6 +21,7 @@ namespace STV.Controllers
     public class UsuariosController : Controller
     {
         private STVDbContext db = new STVDbContext();
+        private string admin = ConfigurationManager.AppSettings["AdmUserId"].ToString();
 
         public ActionResult Relatorio(int id)
         {
@@ -51,11 +53,11 @@ namespace STV.Controllers
             IQueryable<Usuario> usuarios;
 
             if (!string.IsNullOrEmpty(cpf))
-                usuarios = db.Usuario.Where(u => u.Cpf == cpf);
+                usuarios = db.Usuario.Where(u => u.Cpf == cpf && u.Cpf != admin);
             else if (!string.IsNullOrEmpty(nome))
-                usuarios = db.Usuario.Where(u => u.Nome.Contains(nome));
+                usuarios = db.Usuario.Where(u => u.Nome.Contains(nome) && u.Cpf != admin);
             else
-                usuarios = db.Usuario;
+                usuarios = db.Usuario.Where(u => u.Cpf != admin);
 
             return View(await usuarios.ToListAsync());
         }
@@ -89,7 +91,7 @@ namespace STV.Controllers
             var usuario = new UsuarioVM();
             usuario.Roles = new List<Role>();
             CarregarRolesDisponiveis(usuario);
-            ViewBag.Iddepartamento = new SelectList(db.Departamento, "Iddepartamento", "Descricao");
+            ViewBag.Iddepartamento = new SelectList(db.Departamento, "Iddepartamento", "Descricao", "Selecione");
 
             return View(usuario);
         }
@@ -99,7 +101,7 @@ namespace STV.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Idusuario,Cpf,Nome,Email,Senha,Iddepartamento")] UsuarioVM usuarioVM, string[] rolesSelecionadas)
+        public async Task<ActionResult> Create([Bind(Include = "Idusuario,Cpf,Nome,Email,SenhaDigitada,Iddepartamento")] UsuarioVM usuarioVM, string[] rolesSelecionadas)
         {
             var usuario = Mapper.Map<UsuarioVM, Usuario>(usuarioVM);
 
@@ -112,11 +114,16 @@ namespace STV.Controllers
                     usuario.Roles.Add(roleToAdd);
                 }
             }
+            else
+                ModelState.AddModelError("", "Selecione uma role para atribuir ao usuário.");
+
+            if (!usuarioVM.SenhaDigitada.Equals(usuarioVM.SenhaDigitadaConfirmacao))
+                ModelState.AddModelError("", "Senha e Confirmação de Senha não correspondem.");
 
             if (ModelState.IsValid)
             {
                 usuario.Stamp = DateTime.Now;
-                usuario.Senha = Crypt.Encrypt(usuario.Senha);
+                usuario.Senha = Crypt.Encrypt(usuarioVM.SenhaDigitada);
                 db.Usuario.Add(usuario);
                 await db.SaveChangesAsync();
                 TempData["msg"] = "Usuário criado!";

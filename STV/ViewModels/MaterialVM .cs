@@ -10,14 +10,16 @@ namespace STV.ViewModels
 
         public int Idunidade { get; set; }
 
-        [Required]
-        [StringLength(40)]
+        [Display(Name = "Descrição")]
+        [Required(AllowEmptyStrings = false, ErrorMessage = "Este campo é obrigatório")]
+        [StringLength(70, ErrorMessage = "Este campo suporta até 70 caracteres")]
         public string Descricao { get; set; }
 
-        [Required]
+        [Required(AllowEmptyStrings = false, ErrorMessage = "Este campo é obrigatório")]
         public TipoMaterial Tipo { get; set; }
 
-        [Url]
+        [Url(ErrorMessage = "URL inválida")]
+        [StringLength(300, ErrorMessage = "Este campo suporta até 300 caracteres. Utilize um encurtador de URL se necessário.")]
         public string URL { get; set; }
 
         public virtual Unidade Unidade { get; set; }

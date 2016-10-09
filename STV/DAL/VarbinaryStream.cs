@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Entity;
 using System.Data.SqlClient;
 using System.IO;
 
@@ -162,7 +161,7 @@ namespace STV.DAL
                 _SQLReadPosition += bytesRead;
                 return (int)bytesRead;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 // log errors here
             }

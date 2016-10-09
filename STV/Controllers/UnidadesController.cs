@@ -3,7 +3,6 @@ using STV.Auth;
 using STV.DAL;
 using STV.Models;
 using STV.Models.Validation;
-using STV.Utils;
 using STV.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -16,6 +15,7 @@ using System.Web.Mvc;
 
 namespace STV.Controllers
 {
+    [Authorize]
     public class UnidadesController : Controller
     {
         private STVDbContext db = new STVDbContext();
@@ -112,6 +112,7 @@ namespace STV.Controllers
         }
 
         // GET: Unidades/Details/5
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Details(int? id)
         {
             try
@@ -135,23 +136,8 @@ namespace STV.Controllers
             }
         }
 
-        private bool Autorizarado(int? Idcurso)
-        {
-            if (User.IsInRole("Admin")) return true;
-
-            var curso = db.Curso
-                .Where(c => c.IdusuarioInstrutor == UsuarioLogado.Idusuario && c.Idcurso == Idcurso)
-                .SingleOrDefault();
-
-            return curso == null ? false : true;
-        }
-
-        public ActionResult NaoAutorizado()
-        {
-            return View();
-        }
-
         // GET: Unidades/Create
+        [Authorize(Roles = "Admin")]
         public ActionResult Create(int? Idcurso)
         {
             if (Idcurso == null)
@@ -183,6 +169,7 @@ namespace STV.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Create([Bind(Include = "Idunidade,Idcurso,Titulo,DataAbertura,Encerrada")] Unidade unidade)
         {
             if (ModelState.IsValid)
@@ -198,6 +185,7 @@ namespace STV.Controllers
         }
 
         // GET: Unidades/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Edit(int? id)
         {
             if (id == null)
@@ -226,6 +214,7 @@ namespace STV.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Edit([Bind(Include = "Idunidade,Idcurso,Titulo,DataAbertura,Encerrada")] Unidade unidade)
         {
             if (ModelState.IsValid)
@@ -240,6 +229,7 @@ namespace STV.Controllers
         }
 
         // GET: Unidades/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Delete(int? id)
         {
             Unidade unidade = null;
@@ -273,6 +263,7 @@ namespace STV.Controllers
         // POST: Unidades/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
             Unidade unidade = await db.Unidade.FindAsync(id);

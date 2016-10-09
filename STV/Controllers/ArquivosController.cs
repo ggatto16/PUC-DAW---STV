@@ -1,16 +1,13 @@
-﻿using STV.Models;
+﻿using STV.DAL;
 using System;
-using System.Collections.Generic;
 using System.Data.Entity;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Mvc;
-using STV.DAL;
 
 namespace STV.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class ArquivosController : Controller
     {
         private STVDbContext db = new STVDbContext();

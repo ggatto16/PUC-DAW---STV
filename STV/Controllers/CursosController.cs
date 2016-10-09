@@ -141,7 +141,7 @@ namespace STV.Controllers
             int Idusuario = UsuarioLogado.Idusuario;
 
             //int Iddepartamento = db.Usuario.Where(u => u.Idusuario == Idusuario).Select(u => u.Iddepartamento).FirstOrDefault();
-            int Iddepartamento = UsuarioLogado.Iddepartamento;
+            int Iddepartamento = (int)UsuarioLogado.Iddepartamento;
 
             //Lista os cursos disponíveis de acordo com o departamento do usuário, exceto os cursos cujo instrutor é o próprio usuário
             var cursos = db.Curso.Where(x => x.Departamentos
@@ -326,7 +326,7 @@ namespace STV.Controllers
 
         private bool VerificarCertificado(DetalhesCurso detalhesCurso)
         {
-            if (detalhesCurso.Dtfinal < DateTime.Today && !detalhesCurso.IsInstutor)
+            if (detalhesCurso.Encerrado && !detalhesCurso.IsInstutor)
             {
                 var usuario = db.Usuario.Find(UsuarioLogado.Idusuario);
 

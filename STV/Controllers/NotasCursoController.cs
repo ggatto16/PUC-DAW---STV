@@ -2,17 +2,13 @@
 using STV.DAL;
 using STV.Models;
 using STV.Models.Validation;
-using STV.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Mvc;
 
 namespace STV.Controllers
 {
+    [Authorize]
     public class NotasCursoController : Controller
     {
 

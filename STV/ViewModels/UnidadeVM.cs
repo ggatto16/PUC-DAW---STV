@@ -3,8 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Web;
 
 namespace STV.ViewModels
 {
@@ -14,18 +12,20 @@ namespace STV.ViewModels
 
         public int Idcurso { get; set; }
 
-        [StringLength(60)]
-        [Required]
+        [Display(Name = "Título")]
+        [Required(AllowEmptyStrings = false, ErrorMessage = "Este campo é obrigatório")]
+        [StringLength(100, ErrorMessage = "Este campo suporta até 100 caracteres")]
         public string Titulo { get; set; }
 
+        [Display(Name = "Data Abertura")]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-dd}")]
         [Column(TypeName = "date")]
         [DataType(DataType.Date, ErrorMessage = "Data em formato inválido")]
-        [Required]
         public DateTime? DataAbertura { get; set; }
 
-        public bool Status { get; set; }
-
+        [Display(Name = "Data de Criação")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-dd}")]
+        [Column(TypeName = "date")]
         public DateTime Stamp { get; set; }
 
         public bool IsInstutor { get; set; }

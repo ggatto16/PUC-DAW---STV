@@ -6,24 +6,31 @@
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
-    using System.Data.Entity.Spatial;
 
     public class DetalhesCurso
     {
         public int Idcurso { get; set; }
 
+        [StringLength(80, ErrorMessage = "Este campo suporta até 80 caracteres")]
+        [Required(AllowEmptyStrings = false, ErrorMessage = "Este campo é obrigatório")]
         public string Titulo { get; set; }
 
+        [Display(Name = "Data Início")]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-dd}")]
+        [Column(TypeName = "date")]
+        [DataType(DataType.Date, ErrorMessage = "Data em formato inválido")]
         public DateTime? Dtinicial { get; set; }
 
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-dd}")]
-        public DateTime? Dtfinal { get; set; }
+        public bool Encerrado { get; set; }
 
         public int IdusuarioInstrutor { get; set; }
 
+        [StringLength(100, ErrorMessage = "Este campo suporta até 100 caracteres")]
+        [Required(AllowEmptyStrings = false, ErrorMessage = "Este campo é obrigatório")]
         public string Categoria { get; set; }
 
+        [StringLength(150, ErrorMessage = "Este campo suporta até 150 caracteres")]
+        [Required(AllowEmptyStrings = false, ErrorMessage = "Este campo é obrigatório")]
         public string Palavraschave { get; set; }
 
         public virtual ICollection<Departamento> Departamentos { get; set; }

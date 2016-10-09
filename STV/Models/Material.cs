@@ -1,20 +1,21 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Reflection;
 
 namespace STV.Models
 {
 
     public enum TipoMaterial
     {
-        [Display(Name = "Arquivo de vídeo")]
+        [Display(Name = "Vídeo(arquivo)")]
         Video = 1,
+        [Display(Name = "Outros Arquivos")]
         Arquivo = 2,
         [Display(Name = "Link para site ou arquivo")]
         Link = 3,
+        [Display(Name = "Imagem(arquivo)")]
         Imagem = 4,
-        [Display(Name = "URL para vídeo incorporado", Description = "URL para vídeo incorporado" )]
+        [Display(Name = "Vídeo Incorporado (URL)", Description = "URL para vídeo incorporado (embedded)" )]
         Embedded = 5
     };
 
@@ -25,14 +26,16 @@ namespace STV.Models
 
         public int Idunidade { get; set; }
 
-        [Required]
-        [StringLength(40)]
+        [Display(Name = "Descrição")]
+        [Required(AllowEmptyStrings = false, ErrorMessage = "Este campo é obrigatório")]
+        [StringLength(70, ErrorMessage = "Este campo suporta até 70 caracteres")]
         public string Descricao { get; set; }
 
-        [Required]
+        [Required(AllowEmptyStrings = false, ErrorMessage = "Este campo é obrigatório")]
         public TipoMaterial Tipo { get; set; }
 
-        [Url]
+        [Url(ErrorMessage = "URL inválida")]
+        [StringLength(300, ErrorMessage = "Este campo suporta até 300 caracteres. Utilize um encurtador de URL se necessário.")]
         public string URL { get; set; }
 
         public virtual Unidade Unidade { get; set; }

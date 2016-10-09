@@ -1,8 +1,5 @@
 ﻿using STV.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+using System.ComponentModel.DataAnnotations;
 
 namespace STV.ViewModels
 {
@@ -12,8 +9,12 @@ namespace STV.ViewModels
 
         public int Idquestao { get; set; }
 
+        [Required(AllowEmptyStrings = false, ErrorMessage = "Este campo é obrigatório")]
+        [StringLength(1000, ErrorMessage = "Este campo suporta até 1000 caracteres")]
+        [Display(Name = "Descrição")]
         public string Descricao { get; set; }
 
+        [StringLength(1000, ErrorMessage = "Este campo suporta até 1000 caracteres")]
         public string Justificativa { get; set; }
 
         public virtual Questao Questao { get; set; }

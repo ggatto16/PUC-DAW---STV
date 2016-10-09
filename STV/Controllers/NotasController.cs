@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using STV.Auth;
+using STV.DAL;
+using STV.Models;
+using System;
 using System.Data;
 using System.Data.Entity;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Net;
-using System.Web;
+using System.Threading.Tasks;
 using System.Web.Mvc;
-using STV.Models;
-using STV.DAL;
-using Microsoft.Owin;
-using STV.Auth;
 
 namespace STV.Controllers
 {

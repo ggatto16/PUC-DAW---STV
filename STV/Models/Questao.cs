@@ -1,9 +1,9 @@
 ﻿namespace STV.Models
 {
 
+    using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
-    using System.Collections.Generic;
 
     [Table("Questao")]
     public partial class Questao
@@ -15,6 +15,9 @@
         [ForeignKey("AlternativaCorreta")]
         public int? IdalternativaCorreta { get; set; }
 
+        [Display(Name = "Enunciado")]
+        [Required(AllowEmptyStrings = false, ErrorMessage = "Este campo é obrigatório")]
+        [StringLength(1000, ErrorMessage = "Este campo suporta um mínimo 10 e um máximo de 1000 caracteres", MinimumLength = 10)]
         public string Descricao { get; set; }
 
         public int? Numero { get; set; }

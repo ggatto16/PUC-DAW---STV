@@ -12,17 +12,27 @@
 
 @using (Ajax.BeginForm("Index", new AjaxOptions { HttpMethod = "Get", OnBegin = "onBeginAjax", OnComplete = "onCompleteAjax", OnFailure = "OnFailure" }))
 {
-    <p>
-        Informe o CPF: @Html.TextBox("Cpf", ViewBag.FiltroCPF as string)
-    </p>
-    <p>
-        Ou o nome se preferir: @Html.TextBox("Nome", ViewBag.FiltroNome as string)
-    </p>
-    <p>
-        <input type="submit" value="Filtrar" />
-        <input type="button" value="Limpar" onclick="location.href='@Url.Action("Index", "Usuarios")'" />
-    </p>
-} 
+    <div class="form-horizontal">
+        <div class="form-group">
+            @Html.Label("Informe o CPF: ", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextBox("Cpf", ViewBag.FiltroCPF as string, new { @class = "form-control", @placeholder = "CPF" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.Label("Ou o nome: ", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextBox("Nome", ViewBag.FiltroNome as string, new { @class = "form-control", @placeholder = "Nome" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-10 col-md-offset-2">
+                <input type="submit" value="Filtrar" class="btn btn-warning"/>
+                <input type="button" value="Limpar" onclick="location.href='@Url.Action("Index", "Usuarios")'" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
 
 <table class="table">
     <tr>
@@ -32,30 +42,25 @@
         <th>
             @Html.DisplayNameFor(model => model.Nome)
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Status)
-        </th>
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Cpf)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Nome)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Status)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Idusuario }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Idusuario }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Idusuario }) |
-            @Html.ActionLink("Relatório", "Relatorio", new { id = item.Idusuario }, new { target = "_blank" })
-        </td>
-    </tr>
-}
+    @foreach (var item in Model)
+            {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Cpf)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Nome)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.Idusuario }) |
+                @Html.ActionLink("Details", "Details", new { id = item.Idusuario }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.Idusuario }) |
+                @Html.ActionLink("Relatório", "Relatorio", new { id = item.Idusuario }, new { target = "_blank" })
+            </td>
+        </tr>
+    }
 
 </table>

@@ -1,11 +1,4 @@
-﻿using STV.Models;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
-
-namespace STV.ViewModels
+﻿namespace STV.ViewModels
 {
     public class DepartamentosAtribuidos
     {

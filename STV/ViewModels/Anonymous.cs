@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace STV.ViewModels
 {
     public class Anonymous
     {
 
-        [StringLength(15)]
+        [StringLength(15, ErrorMessage = "Este campo suporta até 15 caracteres")]
         [Required(ErrorMessage = "CPF obrigatório")]
         public string UserId { get; set; }
 
@@ -23,7 +19,8 @@ namespace STV.ViewModels
             }
         }
 
-        [StringLength(500)]
+        [StringLength(500, ErrorMessage = "Este campo suporta até 500 caracteres")]
+        [Required(ErrorMessage = "Senha obrigatória")]
         public string Senha { get; set; }
 
     }

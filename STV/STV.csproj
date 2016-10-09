@@ -259,10 +259,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="GravarArquivo.cs" />
-    <Compile Include="Migrations\201610082230110_rv415.cs" />
-    <Compile Include="Migrations\201610082230110_rv415.Designer.cs">
-      <DependentUpon>201610082230110_rv415.cs</DependentUpon>
+    <Compile Include="Migrations\201610092312031_CorrecoesAzure.cs" />
+    <Compile Include="Migrations\201610092312031_CorrecoesAzure.Designer.cs">
+      <DependentUpon>201610092312031_CorrecoesAzure.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -303,7 +302,6 @@
     <Compile Include="ViewModels\DetalhesCurso.cs" />
     <Compile Include="ViewModels\DadosUsuario.cs" />
     <Compile Include="ViewModels\DepartamentosAtribuidos.cs" />
-    <Compile Include="ViewModels\RespostasAtividade.cs" />
     <Compile Include="ViewModels\RolesAtribuidas.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -339,7 +337,6 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="App_Data\stvdb_13072016.dacpac" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\CustomValidation.js" />
@@ -494,8 +491,8 @@
     <Folder Include="Views\NotasCurso\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201610082230110_rv415.resx">
-      <DependentUpon>201610082230110_rv415.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201610092312031_CorrecoesAzure.resx">
+      <DependentUpon>201610092312031_CorrecoesAzure.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

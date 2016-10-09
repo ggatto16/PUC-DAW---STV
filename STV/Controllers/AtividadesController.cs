@@ -223,6 +223,7 @@ namespace STV.Controllers
         }
 
         // GET: Atividades/Create
+        [Authorize(Roles = "Admin")]
         public ActionResult Create(int Idunidade)
         {
             ViewBag.Idunidade = new SelectList(db.Unidade, "Idunidade", "Titulo");
@@ -264,6 +265,7 @@ namespace STV.Controllers
         // POST: Atividades/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create([Bind(Include = "Idatividade,Idunidade,Descricao,Valor,DataAbertura,DataEncerramento")] Atividade atividade)
@@ -283,6 +285,7 @@ namespace STV.Controllers
         }
 
         // GET: Atividades/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Edit(int? id)
         {
             Atividade atividade = null;
@@ -317,6 +320,7 @@ namespace STV.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Edit([Bind(Include = "Idatividade,Idunidade,Descricao,Valor,DataAbertura,DataEncerramento")] Atividade atividade)
         {
             ValidarDatas(ref atividade);
@@ -334,6 +338,7 @@ namespace STV.Controllers
         }
 
         // GET: Atividades/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Delete(int? id)
         {
             Atividade atividade = null;
@@ -363,6 +368,7 @@ namespace STV.Controllers
         // POST: Atividades/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
             Atividade atividade = await db.Atividade.FindAsync(id);

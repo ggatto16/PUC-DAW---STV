@@ -1,14 +1,13 @@
-﻿using STV.Models;
+﻿using STV.Auth;
+using STV.DAL;
+using STV.Models;
 using STV.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
-using STV.DAL;
-using STV.Auth;
-using System.Data.Entity;
 
 namespace STV.Controllers
 {
@@ -64,7 +63,7 @@ namespace STV.Controllers
             {
                 using (STVDbContext db = new STVDbContext())
                 {
-                    var login = (Anonymous.UserId.ToLower() == "admin") ? Anonymous.UserId : Anonymous.CpfLoginSoNumeros;
+                    var login = (Anonymous.UserId.ToLower() == "admin") ? Anonymous.UserId.ToLower() : Anonymous.CpfLoginSoNumeros;
                     var senha = Crypt.Encrypt(Anonymous.Senha);
                     var usuarioAutenticado = db.Usuario
                         .Where(a => a.Cpf.Equals(login) && a.Senha.Equals(senha))

@@ -13,6 +13,7 @@ namespace STV.ViewModels
         [StringLength(15)]
         [Required(ErrorMessage = "CPF obrigatório")]
         [CustomValidationCPF(ErrorMessage = "CPF inválido")]
+        [Display(Name = "CPF")]
         public string Cpf { get; set; }
 
         public string CpfSoNumeros
@@ -25,18 +26,29 @@ namespace STV.ViewModels
             }
         }
 
-        [StringLength(60)]
+        [StringLength(60, ErrorMessage = "Este campo suporta até 60 caracteres")]
+        [Required(AllowEmptyStrings = false, ErrorMessage = "Este campo é obrigatório")]
         public string Nome { get; set; }
 
-        [StringLength(70)]
+        [StringLength(100, ErrorMessage = "Este campo suporta até 100 caracteres")]
+        [Required(AllowEmptyStrings = false, ErrorMessage = "Este campo é obrigatório")]
         public string Email { get; set; }
 
         [StringLength(500)]
         public string Senha { get; set; }
 
-        [StringLength(20)]
+        [StringLength(20, MinimumLength = 6, ErrorMessage = "A senha deve conter de 6 a 20 caracteres")]
+        [Required(AllowEmptyStrings = false, ErrorMessage = "Este campo é obrigatório")]
+        [Display(Name = "Senha")]
         public string SenhaDigitada { get; set; }
 
+        [StringLength(20, MinimumLength = 6, ErrorMessage = "A senha deve conter de 6 a 20 caracteres")]
+        [Required(AllowEmptyStrings = false, ErrorMessage = "Este campo é obrigatório")]
+        [Display(Name = "Confirmar Senha")]
+        public string SenhaDigitadaConfirmacao { get; set; }
+
+        [Required(AllowEmptyStrings = false, ErrorMessage = "Este campo é obrigatório")]
+        [Display(Name = "Departamento")]
         public int Iddepartamento { get; set; }
 
         public bool Status { get; set; }

@@ -14,20 +14,26 @@ namespace STV.Models
 
         public int Idunidade { get; set; }
 
+        [Display(Name = "Descrição")]
+        [Required(AllowEmptyStrings = false, ErrorMessage = "Este campo é obrigatório")]
+        [StringLength(200, ErrorMessage = "Este campo suporta até 200 caracteres")]
         public string Descricao { get; set; }
 
+        [Required(AllowEmptyStrings = false, ErrorMessage = "Este campo é obrigatório")]
         public int Valor { get; set; }
 
+        [Display(Name = "Data Abertura")]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-dd}")]
         [Column(TypeName = "date")]
         [DataType(DataType.Date, ErrorMessage = "Data em formato inválido")]
-        [Required]
+        [Required(AllowEmptyStrings = false, ErrorMessage = "Este campo é obrigatório")]
         public DateTime DataAbertura { get; set; }
 
+        [Display(Name = "Data Encerramento")]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-dd}")]
         [Column(TypeName = "date")]
         [DataType(DataType.Date, ErrorMessage = "Data em formato inválido")]
-        [Required]
+        [Required(AllowEmptyStrings = false, ErrorMessage = "Este campo é obrigatório")]
         public DateTime DataEncerramento { get; set; }
 
         public virtual Unidade Unidade { get; set; }
@@ -35,26 +41,6 @@ namespace STV.Models
         public virtual ICollection<Questao> Questoes { get; set; }
 
         public virtual ICollection<Nota> Notas { get; set; }
-
-        //[NotMapped]
-        //public Questao QuestaoToShow { get; set; }
-
-        //public decimal PorcentagemQuestao
-        //{
-        //    get
-        //    {
-        //        if (Questoes != null && Questoes.Count > 0)
-        //            return (decimal)100 / Questoes.Count;
-        //        else
-        //            return 0;
-        //    }
-        //}
-
-        //[NotMapped]
-        //public decimal Realizado { get; set; } = 0;
-
-        //[NotMapped]
-        //public bool IsFinalizada { get; set; }
 
     }
 }

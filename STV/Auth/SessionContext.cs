@@ -32,20 +32,12 @@ namespace STV.Auth
         {
             Usuario userData = null;
 
-            try
+            HttpCookie cookie = HttpContext.Current.Request.Cookies[FormsAuthentication.FormsCookieName];
+            if (cookie != null)
             {
-                HttpCookie cookie = HttpContext.Current.Request.Cookies[FormsAuthentication.FormsCookieName];
-                if (cookie != null)
-                {
-                    FormsAuthenticationTicket ticket = FormsAuthentication.Decrypt(cookie.Value);
-                    userData = JsonConvert.DeserializeObject(ticket.UserData, typeof(Usuario)) as Usuario;
-                }
+                FormsAuthenticationTicket ticket = FormsAuthentication.Decrypt(cookie.Value);
+                userData = JsonConvert.DeserializeObject(ticket.UserData, typeof(Usuario)) as Usuario;
             }
-            catch (Exception)
-            {
-                throw;
-            }
-
             return userData;
         }
     }

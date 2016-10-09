@@ -4,19 +4,21 @@ namespace STV.Models
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
-    using System.Data.Entity.Spatial;
 
     [Table("Departamento")]
     public partial class Departamento
     {
         public int Iddepartamento { get; set; }
 
-        [StringLength(50)]
+        [Display(Name = "Descrição")]
+        [StringLength(100, ErrorMessage = "Este campo suporta até 100 caracteres")]
+        [Required(AllowEmptyStrings = false, ErrorMessage = "Este campo é obrigatório")]
         public string Descricao { get; set; }
 
-        [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy hh:mm:ss}", ApplyFormatInEditMode = true)]
-        public DateTime? Stamp { get; set; }
+        [Display(Name = "Data de Criação")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-dd}")]
+        [Column(TypeName = "date")]
+        public DateTime Stamp { get; set; }
 
         public virtual ICollection<Curso> Cursos { get; set; }
 

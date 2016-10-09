@@ -1,9 +1,9 @@
 namespace STV.DAL
 {
-    using System.Data.Entity;
-    using System.Data.Entity.ModelConfiguration.Conventions;
     using STV.Models;
+    using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
+    using System.Data.Entity.ModelConfiguration.Conventions;
 
     public partial class STVDbContext : DbContext
     {
@@ -42,7 +42,7 @@ namespace STV.DAL
                 .HasKey(x => x.Idusuario);
 
             modelBuilder.Entity<Usuario>()
-                .HasRequired(x => x.Departamento).WithMany(x => x.Usuarios).HasForeignKey(x => x.Iddepartamento);
+                .HasOptional(x => x.Departamento).WithMany(x => x.Usuarios).HasForeignKey(x => x.Iddepartamento);
 
             modelBuilder.Entity<Curso>()
                 .ToTable("Curso")

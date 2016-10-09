@@ -16,6 +16,7 @@ using System.Web.Http;
 
 namespace STV.Controllers
 {
+    [Authorize]
     public class MediaController : ApiController
     {
 
