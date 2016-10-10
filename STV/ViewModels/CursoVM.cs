@@ -1,13 +1,14 @@
-namespace STV.Models
+namespace STV.ViewModels
 {
+    using Models;
     using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
 
-    [Table("Curso")]
-    public partial class Curso
+
+    public partial class CursoVM
     {
         public int Idcurso { get; set; }
 
@@ -17,7 +18,7 @@ namespace STV.Models
         public string Titulo { get; set; }
 
         [Display(Name = "Data Início")]
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd/MM/yyyy}")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-dd}")]
         [Column(TypeName = "date")]
         [DataType(DataType.Date, ErrorMessage = "Data em formato inválido")]
         public DateTime? DataInicial { get; set; }
@@ -36,7 +37,7 @@ namespace STV.Models
         public string Palavraschave { get; set; }
 
         [Display(Name = "Data de Criação")]
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd/MM/yyyy}")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-dd}")]
         [Column(TypeName = "date")]
         public DateTime Stamp { get; set; }
 

@@ -29,7 +29,7 @@ namespace STV.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
             var curso = db.Curso.Find(Idcurso);
-            if (!CommonValidation.UsuarioEstaInscrito(curso.Usuarios, UsuarioLogado.Idusuario, User))
+            if (!CommonValidation.CanSee(curso, UsuarioLogado.Idusuario, User))
                 return View("NaoAutorizado");
 
             var notaAtual = await db.NotaCurso.FindAsync(UsuarioLogado.Idusuario, Idcurso);

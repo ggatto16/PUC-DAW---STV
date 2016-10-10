@@ -275,7 +275,7 @@ namespace STV.Controllers
                 if (curso == null)
                     throw new ApplicationException("Curso não encontrado.");
 
-                if (!CommonValidation.UsuarioEstaInscrito(curso.Usuarios, UsuarioLogado.Idusuario, User))
+                if (!CommonValidation.CanSee(curso, UsuarioLogado.Idusuario, User))
                     return View("NaoAutorizado");
 
                 var detalhesCurso = Mapper.Map<Curso, DetalhesCurso>(curso);
@@ -423,7 +423,7 @@ namespace STV.Controllers
                 CarregarDepartamentos(curso);
 
                 ViewBag.IdusuarioInstrutor = new SelectList(db.Usuario, "Idusuario", "Nome", curso.IdusuarioInstrutor);
-                return View(curso);
+                return View(Mapper.Map<Curso, CursoVM>(curso));
             }
             catch (ApplicationException ex)
             {

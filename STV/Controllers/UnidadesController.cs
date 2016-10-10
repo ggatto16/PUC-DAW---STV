@@ -78,7 +78,7 @@ namespace STV.Controllers
                         .Where(a => a.Idunidade == unidade.Idunidade && a.Questoes.Count() > 0).ToList();
                 }
 
-                var atividadesVM = Mapper.Map<IEnumerable<Atividade>, IEnumerable<AtividadeVM>>(atividades);
+                var atividadesVM = Mapper.Map<IEnumerable<Atividade>, IEnumerable<AtividadeVM2>>(atividades);
 
                 unidadeVM.AtividadesVM = atividadesVM;
 
@@ -102,6 +102,7 @@ namespace STV.Controllers
 
                 unidadeVM.IsInstutor = cursoVerify != null ? true : false;
 
+                ViewBag.UnidadeSelecionada = unidadeVM.Idunidade;
                 return PartialView("Conteudo", unidadeVM);
             }
             catch(ApplicationException ex)
@@ -133,6 +134,37 @@ namespace STV.Controllers
             {
                 TempData["msgErr"] = ex.Message;
                 return RedirectToAction("Index", "Home");
+            }
+        }
+
+        private void ValidarDatas(ref Unidade uni)
+        {
+            List<string> erros = new List<string>();
+
+            //Verificar se não nenhuma atividade com data de encerramento anterior a data de abertura da unidade em questão
+            int Idunidade = uni.Idunidade;
+            var atividades = db.Atividade.Where(a => a.Unidade.Idunidade == Idunidade);
+            foreach (var atv in atividades)
+            {
+                if(atv.DataEncerramento < uni.DataAbertura)
+                    erros.Add(string.Format("Data de abertura não pode ser posterior à data de encerramento de qualquer uma das atividades. Atividade {0} tem data de encerramento para {1}", atv.Descricao, atv.DataEncerramento));
+            }
+
+            var dataAberturaCurso = db.Curso.Find(uni.Idcurso).DataInicial;
+            if (dataAberturaCurso != null)
+            {
+                if (uni.DataAbertura < dataAberturaCurso)
+                    erros.Add("Data de abertura não pode ser anterior à data de abertura do curso.");
+            }
+
+            AddErrors(erros);
+        }
+
+        private void AddErrors(List<string> erros)
+        {
+            foreach (var error in erros)
+            {
+                ModelState.AddModelError("", error);
             }
         }
 
@@ -172,6 +204,8 @@ namespace STV.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Create([Bind(Include = "Idunidade,Idcurso,Titulo,DataAbertura,Encerrada")] Unidade unidade)
         {
+            ValidarDatas(ref unidade);
+
             if (ModelState.IsValid)
             {
                 unidade.Stamp = DateTime.Now;
@@ -181,6 +215,8 @@ namespace STV.Controllers
                 return VoltarParaListagem(unidade);
             }
 
+            Curso curso = db.Curso.Find(unidade.Idcurso);
+            unidade = new Unidade { Curso = curso };
             return View(unidade);
         }
 
@@ -217,6 +253,8 @@ namespace STV.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Edit([Bind(Include = "Idunidade,Idcurso,Titulo,DataAbertura,Encerrada")] Unidade unidade)
         {
+            ValidarDatas(ref unidade);
+
             if (ModelState.IsValid)
             {
                 unidade.Stamp = DateTime.Now;
@@ -286,7 +324,10 @@ namespace STV.Controllers
         //Retorna para a tela principal do Curso
         private RedirectToRouteResult VoltarParaListagem(Unidade unidade)
         {
-            return RedirectToAction("Details", "Cursos", new { id = unidade.Idcurso, Idunidade = unidade.Idunidade });
+            if (unidade.Idunidade == 0)
+                return RedirectToAction("Details", "Cursos", new { id = unidade.Idcurso });
+            else
+                return RedirectToAction("Details", "Cursos", new { id = unidade.Idcurso, Idunidade = unidade.Idunidade });
         }
 
         protected override void Dispose(bool disposing)

@@ -1,16 +1,16 @@
 ﻿@model STV.Models.Questao 
 
-<h3> Alternativas </h3>
+<h4> Alternativas </h4>
 
 <div class="pull-right">
-    <a href="javascript:void(0);" onclick='$("#Alternativas").empty();'>Fechar</a>
+    <a href="javascript:void(0);" onclick='$("#Alternativas").empty(); $("#" + trSelecionada).removeClass("info");'>Fechar</a>
 </div>
 
 <p>
     @Html.ActionLink("Adicionar", "Create", "Alternativas", new { Idquestao = Model.Idquestao }, null)
 </p>
 
-<table class="table">
+<table class="table table-striped table-responsive">
     <tr>
         <th>
             @Html.DisplayNameFor(model => model.Alternativas.FirstOrDefault().Descricao)

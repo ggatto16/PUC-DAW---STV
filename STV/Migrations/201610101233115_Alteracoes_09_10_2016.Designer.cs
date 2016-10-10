@@ -7,13 +7,13 @@ namespace STV.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class CorrecoesAzure : IMigrationMetadata
+    public sealed partial class Alteracoes_09_10_2016 : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(CorrecoesAzure));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(Alteracoes_09_10_2016));
         
         string IMigrationMetadata.Id
         {
-            get { return "201610092312031_CorrecoesAzure"; }
+            get { return "201610101233115_Alteracoes_09_10_2016"; }
         }
         
         string IMigrationMetadata.Source

@@ -8,9 +8,9 @@ namespace STV.Models.Validation
 {
     public static class CommonValidation
     {
-        public static bool UsuarioEstaInscrito(ICollection<Usuario> UsuariosInscritos, int Idusuario, IPrincipal User)
+        public static bool CanSee(Curso curso, int Idusuario, IPrincipal User)
         {
-            if (UsuariosInscritos.Where(u => u.Idusuario == Idusuario).Count() > 0 || User.IsInRole("Admin"))
+            if (User.IsInRole("Admin") || curso.Usuarios.Where(u => u.Idusuario == Idusuario).Count() > 0 || curso.IdusuarioInstrutor == Idusuario)
                 return true;
             else
                 return false;

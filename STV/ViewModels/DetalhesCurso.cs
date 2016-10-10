@@ -13,13 +13,14 @@
 
         [StringLength(80, ErrorMessage = "Este campo suporta até 80 caracteres")]
         [Required(AllowEmptyStrings = false, ErrorMessage = "Este campo é obrigatório")]
+        [Display(Name = "Título")]
         public string Titulo { get; set; }
 
         [Display(Name = "Data Início")]
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-dd}")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd/MM/yyyy}")]
         [Column(TypeName = "date")]
         [DataType(DataType.Date, ErrorMessage = "Data em formato inválido")]
-        public DateTime? Dtinicial { get; set; }
+        public DateTime? DataInicial { get; set; }
 
         public bool Encerrado { get; set; }
 
@@ -31,6 +32,7 @@
 
         [StringLength(150, ErrorMessage = "Este campo suporta até 150 caracteres")]
         [Required(AllowEmptyStrings = false, ErrorMessage = "Este campo é obrigatório")]
+        [Display(Name = "Palavras-chave")]
         public string Palavraschave { get; set; }
 
         public virtual ICollection<Departamento> Departamentos { get; set; }

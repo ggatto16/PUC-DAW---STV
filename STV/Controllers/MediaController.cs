@@ -1,6 +1,7 @@
 ﻿using STV.Auth;
 using STV.DAL;
 using STV.Models;
+using STV.Models.Validation;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -142,20 +143,21 @@ namespace STV.Controllers
             string cs = db.Database.Connection.ConnectionString;
 
             //Recuperar informações do arquivo
-            var arquivoInfo = db.Arquivo.Where(a => a.Idmaterial == id 
-                                                    && a.Material.Unidade.Curso.Usuarios
-                                                    .Where(u => u.Idusuario == UsuarioLogado.Idusuario).Count() > 0 || User.IsInRole("Admin"))
+            var arquivoInfo = db.Arquivo.Where(a => a.Idmaterial == id)
                 .Select(a => new
                 {
                     Idmaterial = a.Idmaterial,
                     Nome = a.Nome,
                     ContentType = a.ContentType,
                     Tamanho = a.Tamanho,
-                    //Blob = a.Blob
+                    Material = a.Material
                 }).Single();
 
             if (arquivoInfo == null)
                 throw new HttpResponseException(HttpStatusCode.NotFound);
+
+            if (!CommonValidation.CanSee(arquivoInfo.Material.Unidade.Curso, UsuarioLogado.Idusuario, User))
+                throw new HttpResponseException(HttpStatusCode.Forbidden);
 
             VarbinaryStream filestream = new VarbinaryStream(
                                                 cs,

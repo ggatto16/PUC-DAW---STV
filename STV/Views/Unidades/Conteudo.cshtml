@@ -1,9 +1,9 @@
 ﻿@model STV.ViewModels.UnidadeVM
 
 <h3> Conteúdo - @Html.DisplayFor(item => item.Titulo)</h3>
-
+<hr />
 <div class="pull-right">
-    <a href="javascript:void(0);" onclick='$("#ConteudoUnidade").empty();'>Fechar</a>
+    <a href="javascript:void(0);" onclick='$("#ConteudoUnidade").empty(); $("#" + trSelecionada).removeClass("info");'>Fechar</a>
 </div>
 
 <h4>Materiais</h4>
@@ -12,7 +12,7 @@
     @Html.ActionLink("Adicionar", "Create", "Materiais", new { Idunidade = Model.Idunidade }, null)
 </p>
 
-<table class="table">
+<table class="table table-striped">
     <tr>
         <th>
             @Html.DisplayNameFor(model => model.Materiais.FirstOrDefault().Descricao)
@@ -50,7 +50,7 @@
     @Html.ActionLink("Adicionar", "Create", "Atividades", new { idUnidade = Model.Idunidade }, null)
 </p>
 
-<table class="table">
+<table class="table table-striped">
 
     @foreach (var item in Model.AtividadesVM)
     {
@@ -61,22 +61,19 @@
                 @Html.DisplayFor(modelItem => item.Descricao)
             </td>
 
-            @if (!encerrada)
-            {
-                <td>
-                    @Html.Raw("Encerra em ") @Html.DisplayFor(modelItem => item.DataEncerramento);
-                </td>
-            }
-            else
-            {
-                if (!aberta)
+            <td>
+                @if (!encerrada)
                 {
-                    <td>
-                        @Html.Raw("Inicia em ") @Html.DisplayFor(modelItem => item.DataAbertura);
-                    </td>
+                    @Html.Raw("Encerra em ") @Html.DisplayFor(modelItem => item.DataEncerramento)
                 }
-            }
-
+                else
+                {
+                    if (!aberta)
+                    {
+                        @Html.Raw("Inicia em ") @Html.DisplayFor(modelItem => item.DataAbertura)
+                    }
+                }
+            </td>
             <td>
                 @if (User.IsInRole("Default"))
                 {
@@ -97,9 +94,9 @@
                     if (!encerrada)
                     {
                         <td>
-                            @Html.ActionLink("Responder", "CarregarAtividade", "Atividades", new { id = item.Idatividade }, null);
-                            @Html.Raw(" | ");
-                            @Html.ActionLink("Finalizar", "Finalizar", "Atividades", new { id = item.Idatividade }, null);
+                            @Html.ActionLink("Responder", "CarregarAtividade", "Atividades", new { id = item.Idatividade }, null)
+                            @Html.Raw(" | ")
+                            @Html.ActionLink("Finalizar", "Finalizar", "Atividades", new { id = item.Idatividade }, null)
                         </td>
                     }
                     else
@@ -128,10 +125,10 @@
                     @if (!encerrada)
                     {
                         @Html.ActionLink("Edit", "Edit", "Atividades", new { id = item.Idatividade }, null)
-                        @Html.Raw(" | ");
+                        @Html.Raw(" | ")
                     }
                     @Html.ActionLink("Details", "Details", "Atividades", new { id = item.Idatividade }, null)
-                    @Html.Raw(" | ");
+                    @Html.Raw(" | ")
                     @Html.ActionLink("Delete", "Delete", "Atividades", new { id = item.Idatividade }, null)
                 </td>
             }

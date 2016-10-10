@@ -39,7 +39,7 @@ namespace STV.Models
         public virtual ICollection<Medalha> Medalhas { get; set; }
 
         [Display(Name = "Data de Criação")]
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-dd}")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd/MM/yyyy}")]
         [Column(TypeName = "date")]
         public DateTime Stamp { get; set; }
 

@@ -18,7 +18,7 @@ namespace STV.Models.Validation
                 return true;
             if (uni.DataAbertura > DateTime.Now || uni.Encerrada)
                 return false;
-            if (!CommonValidation.UsuarioEstaInscrito(uni.Curso.Usuarios, Idusuario, User))
+            if (!CommonValidation.CanSee(uni.Curso, Idusuario, User))
                 return false;
 
             return true;

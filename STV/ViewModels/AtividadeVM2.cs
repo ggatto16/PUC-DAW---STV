@@ -1,15 +1,13 @@
-﻿using System;
+﻿using STV.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace STV.Models
+namespace STV.ViewModels
 {
-
-    [Table("Atividade")]
-    public partial class Atividade
+    public class AtividadeVM2
     {
-        [Key]
         public int Idatividade { get; set; }
 
         public int Idunidade { get; set; }
@@ -30,7 +28,7 @@ namespace STV.Models
         public DateTime DataAbertura { get; set; }
 
         [Display(Name = "Data Encerramento")]
-        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd/MM/yyyy}")]
         [Column(TypeName = "date")]
         [DataType(DataType.Date, ErrorMessage = "Data em formato inválido")]
         [Required(AllowEmptyStrings = false, ErrorMessage = "Este campo é obrigatório")]
@@ -42,5 +40,23 @@ namespace STV.Models
 
         public virtual ICollection<Nota> Notas { get; set; }
 
+        public Questao QuestaoToShow { get; set; }
+
+        public decimal PorcentagemQuestao
+        {
+            get
+            {
+                if (Questoes != null && Questoes.Count > 0)
+                    return (decimal)100 / Questoes.Count;
+                else
+                    return 0;
+            }
+        }
+
+        public decimal Realizado { get; set; } = 0;
+
+        public bool IsFinalizada { get; set; }
+
+        public bool IsRevisao { get; set; }
     }
 }

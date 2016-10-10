@@ -18,13 +18,13 @@ namespace STV.ViewModels
         public string Titulo { get; set; }
 
         [Display(Name = "Data Abertura")]
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-dd}")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd/MM/yyyy}")]
         [Column(TypeName = "date")]
         [DataType(DataType.Date, ErrorMessage = "Data em formato inválido")]
         public DateTime? DataAbertura { get; set; }
 
         [Display(Name = "Data de Criação")]
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-dd}")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd/MM/yyyy}")]
         [Column(TypeName = "date")]
         public DateTime Stamp { get; set; }
 
@@ -32,7 +32,7 @@ namespace STV.ViewModels
 
         public virtual Curso Curso { get; set; }
 
-        public virtual IEnumerable<AtividadeVM> AtividadesVM { get; set; }
+        public virtual IEnumerable<AtividadeVM2> AtividadesVM { get; set; }
 
         public virtual ICollection<Material> Materiais { get; set; }
     }

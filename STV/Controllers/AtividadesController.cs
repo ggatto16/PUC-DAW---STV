@@ -83,7 +83,7 @@ namespace STV.Controllers
                 if (atividade == null)
                     throw new ApplicationException("Ops! Atividade não encontrada.");
 
-                if (!CommonValidation.UsuarioEstaInscrito(atividade.Unidade.Curso.Usuarios, UsuarioLogado.Idusuario, User))
+                if (!CommonValidation.CanSee(atividade.Unidade.Curso, UsuarioLogado.Idusuario, User))
                     return View("NaoAutorizado");
                 
                 var AtividadeModel = Mapper.Map<Atividade, AtividadeVM>(atividade);
@@ -205,7 +205,7 @@ namespace STV.Controllers
                 if (atividade == null)
                     throw new ApplicationException("Atividade não encontrada.");
 
-                if (!CommonValidation.UsuarioEstaInscrito(atividade.Unidade.Curso.Usuarios, UsuarioLogado.Idusuario, User))
+                if (!CommonValidation.CanSee(atividade.Unidade.Curso, UsuarioLogado.Idusuario, User))
                     return View("NaoAutorizado");
 
                 ViewBag.MensagemSucesso = TempData["msg"];
@@ -240,13 +240,17 @@ namespace STV.Controllers
 
         private void ValidarDatas(ref Atividade atv)
         {
-            List<string> erros = null;
+            List<string> erros = new List<string>();
 
             if (atv.DataAbertura > atv.DataEncerramento)
                 erros.Add("Data de abertura não pode ser posterior à data de encerramento.");
 
-            if (atv.DataAbertura < atv.Unidade.DataAbertura)
-                erros.Add("Data de abertura não pode ser anterior à data de abertura da unidade.");
+            var dataAberturaUnidade = db.Unidade.Find(atv.Idunidade).DataAbertura;
+            if (dataAberturaUnidade != null)
+            {
+                if (atv.DataAbertura < dataAberturaUnidade)
+                    erros.Add("Data de abertura não pode ser anterior à data de abertura da unidade.");
+            }
 
             if (CommonValidation.Encerrada(atv.DataEncerramento))
                 erros.Add("Data de encerramento não pode ser anterior à data atual.");
@@ -280,6 +284,8 @@ namespace STV.Controllers
                 return VoltarParaListagem(atividade);
             }
 
+            atividade.Idunidade = atividade.Idunidade;
+            atividade.Unidade = db.Unidade.Find(atividade.Idunidade);
             ViewBag.Idunidade = new SelectList(db.Unidade, "Idunidade", "Titulo", atividade.Idunidade);
             return View(atividade);
         }
@@ -301,7 +307,7 @@ namespace STV.Controllers
                 AtividadeValidation.CanEdit(atividade);
 
                 ViewBag.Idunidade = new SelectList(db.Unidade, "Idunidade", "Titulo", atividade.Idunidade);
-                return View(atividade);
+                return View(Mapper.Map<Atividade, AtividadeVM>(atividade));
             }
             catch (ApplicationException ex)
             {
@@ -321,8 +327,10 @@ namespace STV.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public async Task<ActionResult> Edit([Bind(Include = "Idatividade,Idunidade,Descricao,Valor,DataAbertura,DataEncerramento")] Atividade atividade)
+        public async Task<ActionResult> Edit([Bind(Include = "Idatividade,Idunidade,Descricao,Valor,DataAbertura,DataEncerramento")] AtividadeVM atividadeVM)
         {
+            var atividade = Mapper.Map<AtividadeVM, Atividade>(atividadeVM);
+
             ValidarDatas(ref atividade);
 
             if (ModelState.IsValid)

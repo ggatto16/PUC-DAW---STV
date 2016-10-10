@@ -25,7 +25,7 @@ namespace STV.Models.Validation
             if (atv == null)
                 throw new ApplicationException("Ops! Atividade não encontrada.");
 
-            if (!CommonValidation.UsuarioEstaInscrito(atv.Unidade.Curso.Usuarios, Idusuario, User)
+            if (!CommonValidation.CanSee(atv.Unidade.Curso, Idusuario, User)
                     || CommonValidation.Encerrada(atv.DataEncerramento))
                 return false;
 

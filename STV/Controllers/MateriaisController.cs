@@ -74,7 +74,7 @@ namespace STV.Controllers
                 if (material == null)
                     throw new ApplicationException("Material não encontrado.");
 
-                if (!CommonValidation.UsuarioEstaInscrito(material.Unidade.Curso.Usuarios, UsuarioLogado.Idusuario, User))
+                if (!CommonValidation.CanSee(material.Unidade.Curso, UsuarioLogado.Idusuario, User))
                     return View("NaoAutorizado");
 
                 GetArquivoInfo(ref material);
@@ -95,7 +95,7 @@ namespace STV.Controllers
 
             if (material != null)
             {
-                if (!CommonValidation.UsuarioEstaInscrito(material.Unidade.Curso.Usuarios, UsuarioLogado.Idusuario, User))
+                if (!CommonValidation.CanSee(material.Unidade.Curso, UsuarioLogado.Idusuario, User))
                     return View("NaoAutorizado");
 
                 RegistrarVisualizacao(material);
@@ -131,7 +131,7 @@ namespace STV.Controllers
 
             if (material != null)
             {
-                if (!CommonValidation.UsuarioEstaInscrito(material.Unidade.Curso.Usuarios, UsuarioLogado.Idusuario, User))
+                if (!CommonValidation.CanSee(material.Unidade.Curso, UsuarioLogado.Idusuario, User))
                     return null;
 
                 RegistrarVisualizacao(material);

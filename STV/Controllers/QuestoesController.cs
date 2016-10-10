@@ -91,11 +91,11 @@ namespace STV.Controllers
             try
             {
                 questao.Atividade = db.Atividade.Find(Idatividade);
-                AtividadeValidation.CanEdit(questao.Atividade);
-
+                questao.Idatividade = (int)Idatividade;
                 ViewBag.IdalternativaCorreta = new SelectList(db.Alternativa, "Idalternativa", "Descricao");
                 ViewBag.Idatividade = new SelectList(db.Atividade, "Idatividade", "Descricao");
-                questao.Idatividade = (int)Idatividade;
+
+                AtividadeValidation.CanEdit(questao.Atividade);
 
                 return View(questao);
             }
@@ -141,10 +141,11 @@ namespace STV.Controllers
                 if (questao == null)
                     throw new Exception("Questão não encontrada.");
 
-                AtividadeValidation.CanEdit(questao.Atividade);
-
                 ViewBag.IdalternativaCorreta = new SelectList(db.Alternativa.Where(a => a.Idquestao == id), "Idalternativa", "Descricao");
                 ViewBag.Idatividade = new SelectList(db.Atividade, "Idatividade", "Idatividade", questao.Idatividade);
+
+                AtividadeValidation.CanEdit(questao.Atividade);
+
                 return View(questao);
             }
             catch (ApplicationException ex)
@@ -239,7 +240,10 @@ namespace STV.Controllers
         private RedirectToRouteResult VoltarParaListagem(Questao questao)
         {
             Atividade atividade = db.Atividade.Find(questao.Idatividade);
-            return RedirectToAction("Details", "Atividades", new { id = atividade.Idatividade, Idquestao = questao.Idquestao });
+            if (questao.Idquestao == 0)
+                return RedirectToAction("Details", "Atividades", new { id = atividade.Idatividade });
+            else
+                return RedirectToAction("Details", "Atividades", new { id = atividade.Idatividade, Idquestao = questao.Idquestao });
         }
 
         protected override void Dispose(bool disposing)
