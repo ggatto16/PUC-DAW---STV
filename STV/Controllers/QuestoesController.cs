@@ -217,22 +217,32 @@ namespace STV.Controllers
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
             Questao questao = await db.Questao.FindAsync(id);
-            try
+
+            using (DbContextTransaction transaction = db.Database.BeginTransaction())
             {
-                db.Entry(questao).Collection("Alternativas").Load(); //Para remover também a referência
-                db.Questao.Remove(questao);
-                await db.SaveChangesAsync();
-                TempData["msg"] = "Questão excluída!";
-                return VoltarParaListagem(questao);
-            }
-            catch (Exception)
-            {
-                TempData["msgErr"] = "Questão não pode ser excluída.";
-                return RedirectToAction("Details", "Atividades", new
+                try
                 {
-                    id = questao.Idatividade,
-                    Idquestao = questao.Idquestao
-                });
+                    questao.IdalternativaCorreta = null;
+                    db.Entry(questao).State = EntityState.Modified;
+                    await db.SaveChangesAsync();
+                    db.Entry(questao).Collection("Alternativas").Load(); //Para remover também a referência
+                    db.Questao.Remove(questao);
+                    await db.SaveChangesAsync();
+                    transaction.Commit();
+                    TempData["msg"] = "Questão excluída!";
+                    return RedirectToAction("Details", "Atividades", new { id = questao.Idatividade });
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    TempData["msgErr"] = "Questão não pode ser excluída.";
+                    TempData["msgErr"] = ex.Message;
+                    return RedirectToAction("Details", "Atividades", new
+                    {
+                        id = questao.Idatividade,
+                        Idquestao = questao.Idquestao
+                    });
+                }
             }
         }
 

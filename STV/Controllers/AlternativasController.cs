@@ -63,6 +63,8 @@ namespace STV.Controllers
                 AtividadeValidation.CanEdit(alternativa.Questao.Atividade);
 
                 var alternativaVM = Mapper.Map<Alternativa, AlternativaVM>(alternativa);
+                if (alternativaVM.Questao.IdalternativaCorreta == null) alternativaVM.IsCorreta = true; //caso ainda não tenha alternativa correta
+
                 return View(alternativaVM);
             }
             catch (ApplicationException ex)
@@ -78,7 +80,7 @@ namespace STV.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Idalternativa,Idquestao,Descricao,IsCorreta,Justificativa")] AlternativaVM alternativa)
+        public async Task<ActionResult> Create([Bind(Include = "Idalternativa,Idquestao,IsCorreta,Descricao,Justificativa")] AlternativaVM alternativa)
         {
             if (ModelState.IsValid)
             {
@@ -178,6 +180,9 @@ namespace STV.Controllers
                     throw new Exception("Alternativa não encontrada.");
 
                 AtividadeValidation.CanEdit(alternativa.Questao.Atividade);
+
+                if (alternativa.Idalternativa == alternativa.Questao.IdalternativaCorreta)
+                    throw new ApplicationException("Este alternativa é a correta. Não pode ser excluída.");
 
                 return View(alternativa);
             }

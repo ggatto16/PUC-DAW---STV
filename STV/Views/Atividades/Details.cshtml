@@ -4,7 +4,7 @@
     ViewBag.Title = "Details";
 }
 
-<script>var trSelecionada = 'tr_@ViewBag.UnidadeSelecionada';</script>
+<script>var trSelecionada = 'tr_@ViewBag.QuestaoSelecionada';</script>
 
 <ol class="breadcrumb">
     <li><a href="~/Cursos/Details/@Model.Unidade.Curso.Idcurso">@Model.Unidade.Curso.Titulo</a></li>
@@ -86,7 +86,7 @@
                     }
                     if (questao.IdalternativaCorreta == null)
                     {
-                        tooltip = "Atenção! Questão sem alternativa correta";
+                        tooltip = "Atenção! Questão sem alternativas não será publicada.";
                         questaoSelecionada = "danger";
                     }
                     <tr class="@questaoSelecionada" id="tr_@questao.Idquestao" data-toggle="tooltip" title="@tooltip">
@@ -102,6 +102,10 @@
                             @Ajax.ActionLink("Alternativas", "CarregarAlternativas", "Questoes", new { Idquestao = questao.Idquestao }, new AjaxOptions { UpdateTargetId = "Alternativas", InsertionMode = InsertionMode.Replace, HttpMethod = "Get", OnBegin = "onBeginAjax", OnComplete = "debugger; SetInfoClass(tr_" + questao.Idquestao + ")" }) |
                             @Html.ActionLink("Delete", "Delete", "Questoes", new { id = questao.Idquestao }, null)
                         </td>
+                        @if (questaoSelecionada == "danger")
+                        {
+                            <td><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span></td>
+                        }
                     </tr>
                 }
             </table>

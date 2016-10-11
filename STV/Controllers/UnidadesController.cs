@@ -75,7 +75,8 @@ namespace STV.Controllers
                 else
                 {
                     atividades = db.Atividade
-                        .Where(a => a.Idunidade == unidade.Idunidade && a.Questoes.Count() > 0).ToList();
+                        .Where(a => a.Idunidade == unidade.Idunidade && a.Questoes
+                            .Where(q => q.Alternativas.Count() > 0).Count() > 0).ToList();
                 }
 
                 var atividadesVM = Mapper.Map<IEnumerable<Atividade>, IEnumerable<AtividadeVM2>>(atividades);

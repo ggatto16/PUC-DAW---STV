@@ -27,7 +27,7 @@ namespace STV.Controllers
             UsuarioLogado = auth.GetUserData();
         }
 
-        public async Task<ActionResult> CarregarAtividade(int? id, int? index)
+        public async Task<ActionResult> Responder(int? id, int? index)
         {
             try
             {
@@ -134,7 +134,7 @@ namespace STV.Controllers
                 await db.SaveChangesAsync();
             }
 
-            return RedirectToAction("CarregarAtividade", new { Id = atividade.Idatividade, index = atividade.QuestaoToShow.Indice });
+            return RedirectToAction("Responder", new { Id = atividade.Idatividade, index = atividade.QuestaoToShow.Indice });
         }
 
         public async Task<ActionResult> Finalizar(int? id)
