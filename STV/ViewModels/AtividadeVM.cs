@@ -35,6 +35,33 @@ namespace STV.ViewModels
         [Required(AllowEmptyStrings = false, ErrorMessage = "Este campo é obrigatório")]
         public DateTime DataEncerramento { get; set; }
 
+        [Display(Name = "Data Abertura")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd/MM/yyyy}")]
+        [Column(TypeName = "date")]
+        [DataType(DataType.Date, ErrorMessage = "Data em formato inválido")]
+        [Required(AllowEmptyStrings = false, ErrorMessage = "Este campo é obrigatório")]
+        public DateTime DataAberturaShow
+        {
+            get
+            {
+                return DataAbertura;
+            }
+
+        }
+
+        [Display(Name = "Data Encerramento")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd/MM/yyyy}")]
+        [Column(TypeName = "date")]
+        [DataType(DataType.Date, ErrorMessage = "Data em formato inválido")]
+        [Required(AllowEmptyStrings = false, ErrorMessage = "Este campo é obrigatório")]
+        public DateTime DataEncerramentoShow
+        {
+            get
+            {
+                return DataEncerramento;
+            }
+        }
+
         public virtual Unidade Unidade { get; set; }
 
         public virtual ICollection<Questao> Questoes { get; set; }

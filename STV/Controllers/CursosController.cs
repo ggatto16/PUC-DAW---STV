@@ -159,7 +159,6 @@ namespace STV.Controllers
             return View(await cursos.ToListAsync());
         }
 
-        [HttpPost]
         public async Task<ActionResult> Inscrever(int Idcurso)
         {
             

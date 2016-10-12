@@ -101,11 +101,11 @@ namespace STV.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Idusuario,Cpf,Nome,Email,SenhaDigitada,Iddepartamento")] UsuarioVM usuarioVM, string[] rolesSelecionadas)
+        public async Task<ActionResult> Create([Bind(Include = "Idusuario,Cpf,Nome,Email,SenhaDigitada,SenhaDigitadaConfirmacao,Iddepartamento")] UsuarioVM usuarioVM, string[] rolesSelecionadas)
         {
             var usuario = Mapper.Map<UsuarioVM, Usuario>(usuarioVM);
 
-            if (rolesSelecionadas != null)
+            if (rolesSelecionadas != null && rolesSelecionadas.Count() > 0)
             {
                 usuario.Roles = new List<Role>();
                 foreach (var role in rolesSelecionadas)
@@ -124,6 +124,7 @@ namespace STV.Controllers
             {
                 usuario.Stamp = DateTime.Now;
                 usuario.Senha = Crypt.Encrypt(usuarioVM.SenhaDigitada);
+                usuario.Cpf = usuarioVM.CpfSoNumeros;
                 db.Usuario.Add(usuario);
                 await db.SaveChangesAsync();
                 TempData["msg"] = "Usuário criado!";

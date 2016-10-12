@@ -30,48 +30,100 @@
             @Html.DisplayNameFor(model => model.DataAbertura)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.DataAbertura)
+            @Html.DisplayFor(model => model.DataAberturaShow)
         </dd>
         <dt>
             @Html.DisplayNameFor(model => model.DataEncerramento)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.DataEncerramento)
+            @Html.DisplayFor(model => model.DataEncerramentoShow)
         </dd>
     </dl>
 </div>
 
 <div class="col-md-6">
-    
+
     <h4>Questão</h4>
     <hr />
 
-    @using (Html.BeginForm("SalvarResposta", "Atividades"))
-    {
-        @Html.AntiForgeryToken()
+    <div id="divQuestao">
+        <form id="formQuestao" method="post" action="/Atividades/SalvarResposta?finalizar=true">
+            @Html.AntiForgeryToken()
 
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-        @Html.HiddenFor(model => model.QuestaoToShow.Idquestao)
-        @Html.HiddenFor(model => model.QuestaoToShow.Indice)
-        @Html.HiddenFor(model => model.Idatividade)
+            @Html.HiddenFor(model => model.QuestaoToShow.Idquestao)
+            @Html.HiddenFor(model => model.QuestaoToShow.Indice)
+            @Html.HiddenFor(model => model.Idatividade)
 
-        <h4> @Model.QuestaoToShow.Numero - @Model.QuestaoToShow.Descricao </h4>
-
-        <div>
-            @foreach (var alternativa in Model.QuestaoToShow.Alternativas)
-            {
-                <div>
-                    @Html.RadioButtonFor(modelItem => Model.QuestaoToShow.IdAlternativaSelecionada, alternativa.Idalternativa, (Model.QuestaoToShow.Respostas.Count() > 0 && alternativa.Idalternativa == Model.QuestaoToShow.Respostas.FirstOrDefault().Idalternativa) ? new { @checked = "checked" } : null) @alternativa.Descricao
+            <div class="row">
+                <div class="col-md-12">
+                    <h4> @Model.QuestaoToShow.Numero - @Model.QuestaoToShow.Descricao </h4>
                 </div>
-            }
-        </div>
-
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Salvar" class="btn btn-default" />
             </div>
-        </div>
+            <div class="row">
+                <div class="col-md-12">
+                    @foreach (var alternativa in Model.QuestaoToShow.Alternativas)
+                    {
+                        <div>
+                            @Html.RadioButtonFor(modelItem => Model.QuestaoToShow.IdAlternativaSelecionada, alternativa.Idalternativa, (Model.QuestaoToShow.Respostas.Count() > 0 && alternativa.Idalternativa == Model.QuestaoToShow.Respostas.FirstOrDefault().Idalternativa) ? new { @checked = "checked" } : null) @alternativa.Descricao
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    @foreach (var questao in Model.Questoes)
+                    {
+                        if (Model.QuestaoToShow.Idquestao == questao.Idquestao)
+                        {
+                            <div class="btn btn-info">@questao.Numero</div>
+                        }
+                        else
+                        {
+                            <input type="button" value="@questao.Numero" class="btn btn-default" onclick="Salvar(@questao.Idquestao)" />
+                        }
+                    }
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <input type="submit" value="Voltar" class="btn btn-default" />
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+
+    function Salvar(idProxima) {
+
+        var formData = new FormData($('#formQuestao')[0]);
+
+        $.ajax({
+            url: '/Atividades/SalvarResposta?idProxima=' + idProxima,
+            type: 'POST',
+            data: formData,
+            //async: false,
+            timeout: 0,
+            beforeSend: function () {
+                $('#divCarregando').fadeIn();;
+            },
+            complete: function () {
+                $('#divCarregando').fadeOut();;
+            },
+            error: function (data) {
+                debugger;
+                MostrarMensagem(data.responseText, 2);
+            },
+            success: function (data) {;
+                $('#divQuestao').html(data);
+            },
+            cache: false,
+            contentType: false,
+            processData: false
+        });
     }
 
-</div>
+</script>
