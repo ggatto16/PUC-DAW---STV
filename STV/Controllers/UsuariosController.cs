@@ -17,12 +17,20 @@ using System.Web.Mvc;
 
 namespace STV.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize]
     public class UsuariosController : Controller
     {
         private STVDbContext db = new STVDbContext();
         private string admin = ConfigurationManager.AppSettings["AdmUserId"].ToString();
+        private Usuario UsuarioLogado;
 
+        public UsuariosController()
+        {
+            SessionContext auth = new SessionContext();
+            UsuarioLogado = auth.GetUserData();
+        }
+
+        [Authorize(Roles = "Admin")]
         public ActionResult Relatorio(int id)
         {
             Usuario usuario = db.Usuario.Find(id);
@@ -42,6 +50,7 @@ namespace STV.Controllers
         }
 
         // GET: Usuarios
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Index(string cpf, string nome)
         {
             ViewBag.FiltroCPF = cpf;
@@ -63,6 +72,7 @@ namespace STV.Controllers
         }
 
         // GET: Usuarios/Details/5
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Details(int? id)
         {
             try
@@ -86,6 +96,7 @@ namespace STV.Controllers
         }
 
         // GET: Usuarios/Create
+        [Authorize(Roles = "Admin")]
         public ActionResult Create()
         {
             var usuario = new UsuarioVM();
@@ -101,6 +112,7 @@ namespace STV.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Create([Bind(Include = "Idusuario,Cpf,Nome,Email,SenhaDigitada,SenhaDigitadaConfirmacao,Iddepartamento")] UsuarioVM usuarioVM, string[] rolesSelecionadas)
         {
 
@@ -145,6 +157,7 @@ namespace STV.Controllers
         }
 
         // GET: Usuarios/Edit/5
+        [Authorize(Roles = "Admin")]
         public ActionResult Edit(int? id)
         {
             try
@@ -161,11 +174,10 @@ namespace STV.Controllers
                 if (usuario == null)
                     throw new ApplicationException("Usuário não encontrado.");
 
-                var usuarioVM = Mapper.Map<Usuario, UsuarioVM>(usuario);
+                var usuarioVM = Mapper.Map<Usuario, UsuarioEditVM>(usuario);
 
                 CarregarRolesDisponiveis(usuarioVM);
                 ViewBag.Iddepartamento = new SelectList(db.Departamento, "Iddepartamento", "Descricao", usuario.Iddepartamento);
-                usuarioVM.SenhaDigitada = Crypt.Decrypt(usuario.Senha);
 
                 return View(usuarioVM);
             }
@@ -181,44 +193,52 @@ namespace STV.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         //public async Task<ActionResult> Edit([Bind(Include = "Idusuario,Cpf,Nome,Email,Senha,Iddepartamento,Role")] Usuario usuario)
-        public async Task<ActionResult> Edit(int? id, string[] rolesSelecionadas, string SenhaDigitada)
+        public async Task<ActionResult> Edit([Bind(Include = "Idusuario,Cpf,Nome,Email,Iddepartamento")] UsuarioEditVM usuarioVM, string[] rolesSelecionadas)
         {
+            var usuarioToUpdate = Mapper.Map<UsuarioEditVM, Usuario>(usuarioVM);
 
-            if (id == null)
+            //Preenche o modelo com a senha
+            usuarioToUpdate.Senha = db.Usuario
+                    .Where(u => u.Idusuario == usuarioToUpdate.Idusuario)
+                    .Select(senha => new
+                    {
+                        Senha = senha.Senha
+                    }).FirstOrDefault().Senha;
+            usuarioVM.Senha = usuarioToUpdate.Senha;
+
+            if (usuarioToUpdate.Iddepartamento == null)
+                ModelState.AddModelError("", "Departamento é obrigatório.");
+
+            if (db.Usuario.Any(u => u.Cpf == usuarioToUpdate.Cpf))
+                ModelState.AddModelError("", "Já existe um usuário com este CPF cadastrado no sistema.");
+
+            if (rolesSelecionadas != null && rolesSelecionadas.Count() > 0)
             {
-                TempData["msgErr"] = "Ops! Requisição inválida.";
+                usuarioToUpdate.Roles = new List<Role>();
+                foreach (var role in rolesSelecionadas)
+                {
+                    var roleToAdd = db.Role.Find(int.Parse(role));
+                    usuarioToUpdate.Roles.Add(roleToAdd);
+                }
+            }
+            else
+                ModelState.AddModelError("", "Selecione uma role para atribuir ao usuário.");
+
+            if (ModelState.IsValid)
+            {
+                AtualizarRolesUsuario(rolesSelecionadas, usuarioToUpdate);
+                usuarioToUpdate.Cpf = usuarioVM.CpfSoNumeros;
+                usuarioToUpdate.Stamp = DateTime.Now;
+                db.Entry(usuarioToUpdate).State = EntityState.Modified;
+                await db.SaveChangesAsync();
+                TempData["msg"] = "Dados Salvos!";
                 return RedirectToAction("Index");
             }
 
-            var usuarioToUpdate = await db.Usuario
-                  .Include(u => u.Departamento)
-                  .Include(u => u.Roles)
-                  .Where(i => i.Idusuario == id)
-                  .SingleAsync();
-
-            //TODO: verificar se cpf já existe
-
-            if (TryUpdateModel(usuarioToUpdate, "",
-                   new string[] { "Cpf", "Nome", "Email", "Iddepartamento" }))
-            {
-                try
-                {
-                    AtualizarRolesUsuario(rolesSelecionadas, usuarioToUpdate);
-                    usuarioToUpdate.Stamp = DateTime.Now;
-                    usuarioToUpdate.Senha = Crypt.Encrypt(SenhaDigitada);
-                    db.SaveChanges();
-                    TempData["msg"] = "Dados Salvos!";
-                    return RedirectToAction("Index");
-                }
-                catch (RetryLimitExceededException /* dex */)
-                {
-                    //Log the error (uncomment dex variable name and add a line here to write a log.
-                    ModelState.AddModelError("", "Não foi possível salvar as alterações.");
-                }
-            }
-
-            var usuarioVM = Mapper.Map<Usuario, UsuarioVM>(usuarioToUpdate);
+            //var usuarioVM = Mapper.Map<Usuario, UsuarioVM>(usuarioToUpdate);
+            usuarioVM.Roles = usuarioToUpdate.Roles;
             CarregarRolesDisponiveis(usuarioVM);
             ViewBag.Iddepartamento = new SelectList(db.Departamento, "Iddepartamento", "Descricao", usuarioVM.Iddepartamento);
             return View(usuarioVM);
@@ -265,6 +285,7 @@ namespace STV.Controllers
         }
 
         // GET: Usuarios/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Delete(int? id)
         {
             try
@@ -288,6 +309,7 @@ namespace STV.Controllers
         // POST: Usuarios/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
             try
@@ -321,6 +343,91 @@ namespace STV.Controllers
                 });
             }
             ViewBag.Roles = viewModel;
+        }
+
+        private void CarregarRolesDisponiveis(UsuarioEditVM usuario)
+        {
+            var allRoles = db.Role;
+            var usuarioRoles = new HashSet<int>(usuario.Roles.Select(c => c.Idrole));
+            var viewModel = new List<RolesAtribuidas>();
+            foreach (var role in allRoles)
+            {
+                viewModel.Add(new RolesAtribuidas
+                {
+                    Idrole = role.Idrole,
+                    Nome = role.Nome,
+                    Atribuida = usuarioRoles.Contains(role.Idrole)
+                });
+            }
+            ViewBag.Roles = viewModel;
+        }
+
+        public async Task<ActionResult> ResetPassword(int id)
+        {
+            var usuario = db.Usuario.Find(id);
+
+            if (usuario == null)
+            {
+                TempData["msgErr"] = "Usuário não encontrado";
+                return RedirectToAction("Index");
+            }
+
+            usuario.Senha = Crypt.Encrypt(ConfigurationManager.AppSettings["DefaultPassword"]);
+            db.Entry(usuario).State = EntityState.Modified;
+            await db.SaveChangesAsync();
+            TempData["msg"] =string.Format("A senha de {0} foi redefinida para a senha padrão ({1})", usuario.Nome, ConfigurationManager.AppSettings["DefaultPassword"]);
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        public ActionResult AlterarSenha()
+        {
+            try
+            {            
+                Usuario usuario = db.Usuario
+                    .Where(u => u.Idusuario == UsuarioLogado.Idusuario)
+                    .Single();
+
+                if (usuario == null)
+                    throw new ApplicationException("Usuário não encontrado.");
+
+                var usuarioVM = Mapper.Map<Usuario, UsuarioVM>(usuario);
+                usuarioVM.Senha = string.Empty;
+                return View(usuarioVM);
+            }
+            catch (ApplicationException ex)
+            {
+                TempData["msgErr"] = ex.Message;
+                return RedirectToAction("Index", "Home");
+            }
+        }
+
+        [Authorize(Roles = "Default")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> AlterarSenha([Bind(Include = "Idusuario,Senha,SenhaDigitada,SenhaDigitadaConfirmacao")] UsuarioVM usuarioVM)
+        {
+
+            var usuario = db.Usuario.Find(usuarioVM.Idusuario);
+            if (!(Crypt.Decrypt(usuario.Senha) == usuarioVM.Senha))
+            {
+                ModelState.AddModelError("", "Senha atual inválida.");
+                return View(usuarioVM);
+            }
+
+            if (!usuarioVM.SenhaDigitada.Equals(usuarioVM.SenhaDigitadaConfirmacao))
+            {
+                ModelState.AddModelError("", "Senha e Confirmação de Senha não correspondem.");
+                return View(usuarioVM);
+            }
+
+            usuario.Senha = Crypt.Encrypt(usuarioVM.SenhaDigitada);
+            db.Usuario.Attach(usuario);
+            db.Entry(usuario).Property(u => u.Senha).IsModified = true;
+            await db.SaveChangesAsync();
+            TempData["msg"] = "Senha alterada!";
+            return RedirectToAction("Index", "Home");
+
         }
 
         protected override void Dispose(bool disposing)

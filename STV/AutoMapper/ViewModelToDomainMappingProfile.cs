@@ -9,6 +9,7 @@ namespace STV.AutoMapper
         public ViewModelToDomainMappingProfile()
         {
             CreateMap<UsuarioVM, Usuario>();
+            CreateMap<UsuarioEditVM, Usuario>();
             CreateMap<AlternativaVM, Alternativa>();
             CreateMap<UnidadeVM, Unidade>();
             CreateMap<AtividadeVM, Atividade>();

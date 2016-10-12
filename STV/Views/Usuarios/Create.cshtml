@@ -40,22 +40,6 @@
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.SenhaDigitada, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.SenhaDigitada, new { htmlAttributes = new { @class = "form-control", @type = "password" } })
-                @Html.ValidationMessageFor(model => model.SenhaDigitada, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.SenhaDigitadaConfirmacao, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.SenhaDigitadaConfirmacao, new { htmlAttributes = new { @class = "form-control", @type = "password" } })
-                @Html.ValidationMessageFor(model => model.SenhaDigitadaConfirmacao, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
             @Html.LabelFor(model => model.Iddepartamento, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.DropDownList("Iddepartamento", null, "Selecione", htmlAttributes: new { @class = "form-control" })
@@ -81,7 +65,7 @@
                                     <input type="radio"
                                            name="rolesSelecionadas"
                                            value="@role.Idrole"
-                                           @(Html.Raw((Model.Roles.Count == 0 && role.Nome == "Admin") || role.Atribuida ? "checked=\"checked\"" : "")) />
+                                           @(Html.Raw((Model.Roles.Count == 0 && role.Nome == "Default") || role.Atribuida ? "checked=\"checked\"" : "")) />
                                         @role.Nome
                                         @:</td>
                             }

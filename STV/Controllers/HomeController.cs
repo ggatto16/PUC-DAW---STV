@@ -28,6 +28,9 @@ namespace STV.Controllers
         {
             if (User.Identity.IsAuthenticated)
             {
+                ViewBag.MensagemSucesso = TempData["msg"];
+                ViewBag.MensagemErro = TempData["msgErr"];
+                TempData.Clear();
                 return View(UsuarioLogado);
             }
             else

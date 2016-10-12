@@ -34,8 +34,10 @@
                         }
                         else if (Request.IsAuthenticated && User.IsInRole("Default"))
                         {
-                            <li>@Html.ActionLink("Cursos Disponíveis", "CursosDisponiveis", "Cursos")</li>
+                            <li>@Html.ActionLink("Alterar Senha", "AlterarSenha", "Usuarios")</li>
+                            <li>@Html.ActionLink("Inscrições", "CursosDisponiveis", "Cursos")</li>
                             <li>@Html.ActionLink("Meus Cursos", "MeusCursos", "Cursos")</li>
+                            <li>@Html.ActionLink("Gerenciar Cursos", "MeusCursosGerenciaveis", "Cursos")</li>
                         }
                     }
 

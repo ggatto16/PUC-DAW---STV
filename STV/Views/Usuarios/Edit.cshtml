@@ -1,4 +1,4 @@
-﻿@model STV.ViewModels.UsuarioVM
+﻿@model STV.ViewModels.UsuarioEditVM
 
 @{
     ViewBag.Title = "Edit";
@@ -7,7 +7,7 @@
 <h2>Edit</h2>
 
 
-@using (Ajax.BeginForm("Edit", new AjaxOptions { HttpMethod = "Post", OnBegin = "onBeginAjax", OnComplete = "onCompleteAjax", OnFailure = "OnFailure", OnSuccess = "MostrarMensagem('Dados salvos com sucesso',1);" }))
+@using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
     
@@ -38,22 +38,6 @@
             <div class="col-md-10">
                 @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.Label("Senha Antiga", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.TextBox("SenhaAntiga", "", new { htmlAttributes = new { @class = "form-control", @type = "password" } })
-                @Html.ValidationMessageFor(model => model.SenhaDigitada, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.SenhaDigitada, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.SenhaDigitada, new { htmlAttributes = new { @class = "form-control", @type = "password" } })
-                @Html.ValidationMessageFor(model => model.SenhaDigitada, "", new { @class = "text-danger" })
             </div>
         </div>
 
@@ -95,7 +79,8 @@
 
             <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">
-                    <input type="submit" value="Save" class="btn btn-default" />
+                    <input type="submit" value="Savar Alterações" class="btn btn-default" />
+                    @Html.ActionLink("Redefinir Senha", "ResetPassword", new { id = Model.Idusuario }, new { @class = "btn btn-danger" })
                 </div>
             </div>
         </div>
