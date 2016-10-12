@@ -9,12 +9,12 @@
     @Html.HiddenFor(model => model.QuestaoToShow.Indice)
     @Html.HiddenFor(model => model.Idatividade)
 
-    <div class="row">
+    <div class="form-group">
         <div class="col-md-12">
             <h4> @Model.QuestaoToShow.Numero - @Model.QuestaoToShow.Descricao </h4>
         </div>
     </div>
-    <div class="row">
+    <div class="form-group">
         <div class="col-md-12">
             @foreach (var alternativa in Model.QuestaoToShow.Alternativas)
             {
@@ -24,7 +24,7 @@
             }
         </div>
     </div>
-    <div class="row">
+    <div class="form-group">
         <div class="col-md-12">
             @foreach (var questao in Model.Questoes)
             {
@@ -41,7 +41,7 @@
     </div>
     <div class="row">
         <div class="col-md-12">
-            <input type="submit" value="Voltar" class="btn btn-default" />
+            <input type="submit" value="Salvar & Voltar" class="btn btn-default" />
         </div>
     </div>
 </form>
