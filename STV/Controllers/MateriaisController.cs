@@ -163,7 +163,6 @@ namespace STV.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
         public async Task<JsonResult> UploadFile(int id)
         {
             using (DbContextTransaction transaction = db.Database.BeginTransaction())
@@ -218,7 +217,6 @@ namespace STV.Controllers
         }
 
         // GET: Materiais/Edit/5
-        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Edit(int? id)
         {
             Material material = null;
@@ -262,7 +260,6 @@ namespace STV.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Edit([Bind(Include = "Idmaterial,Idunidade,Descricao,Tipo,URL")] MaterialVM materialVM)
         {
             var material = Mapper.Map<MaterialVM, Material>(materialVM);
@@ -279,7 +276,6 @@ namespace STV.Controllers
 
 
         // GET: Materiais/Delete/5
-        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Delete(int? id)
         {
             Material material = null;
@@ -312,7 +308,6 @@ namespace STV.Controllers
         // POST: Materiais/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
             Material material = await db.Material.FindAsync(id);

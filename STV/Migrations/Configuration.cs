@@ -48,12 +48,18 @@ namespace STV.Migrations
                 new Medalha() { Idmedalha = 8, Descricao = "Prata" },
                 new Medalha() { Idmedalha = 9, Descricao = "Ouro" });
 
-            ICollection<Role> roleAdmin;
-            roleAdmin = context.Role.Where(r => r.Idrole == 1).ToList();
+            ICollection<Role> roleAdmin = new List<Role>();
+            roleAdmin.Add(context.Role.Where(r => r.Idrole == 1).FirstOrDefault());
 
-            context.Usuario.AddOrUpdate(u => u.Idusuario,
-                new Usuario() { Cpf = ConfigurationManager.AppSettings["AdmUserId"], Nome = "Administrador", Email = "", Senha = Crypt.Encrypt("admin"),
-                    Roles = roleAdmin, Stamp = DateTime.Now
+            context.Usuario.AddOrUpdate(u => u.Cpf,
+                new Usuario()
+                {
+                    Cpf = ConfigurationManager.AppSettings["AdmUserId"],
+                    Nome = "Administrador",
+                    Email = "",
+                    Senha = Crypt.Encrypt("admin"),
+                    Roles = roleAdmin,
+                    Stamp = DateTime.Now
                 });
         }
 

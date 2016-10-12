@@ -13,7 +13,7 @@ namespace STV.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "201610121527176_i650"; }
+            get { return "201610121812442_i650"; }
         }
         
         string IMigrationMetadata.Source

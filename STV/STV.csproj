@@ -259,9 +259,13 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201610121527176_i650.cs" />
-    <Compile Include="Migrations\201610121527176_i650.Designer.cs">
-      <DependentUpon>201610121527176_i650.cs</DependentUpon>
+    <Compile Include="Migrations\201610121812442_i650.cs" />
+    <Compile Include="Migrations\201610121812442_i650.Designer.cs">
+      <DependentUpon>201610121812442_i650.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201610121833091_departamentoObrigatorio.cs" />
+    <Compile Include="Migrations\201610121833091_departamentoObrigatorio.Designer.cs">
+      <DependentUpon>201610121833091_departamentoObrigatorio.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -494,8 +498,11 @@
     <Folder Include="Views\NotasCurso\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201610121527176_i650.resx">
-      <DependentUpon>201610121527176_i650.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201610121812442_i650.resx">
+      <DependentUpon>201610121812442_i650.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201610121833091_departamentoObrigatorio.resx">
+      <DependentUpon>201610121833091_departamentoObrigatorio.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

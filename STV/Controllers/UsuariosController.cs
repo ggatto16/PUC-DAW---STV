@@ -69,13 +69,13 @@ namespace STV.Controllers
             {
                 if (id == null)
                     throw new ApplicationException("Ops! Requisição inválida.");
-                
+
                 Usuario usuario = await db.Usuario.FindAsync(id);
                 if (usuario == null)
                     throw new ApplicationException("Usuário não encontrado.");
 
                 var usuarioVM = Mapper.Map<Usuario, UsuarioVM>(usuario);
-                
+
                 return View(usuarioVM);
             }
             catch (ApplicationException ex)
@@ -91,7 +91,7 @@ namespace STV.Controllers
             var usuario = new UsuarioVM();
             usuario.Roles = new List<Role>();
             CarregarRolesDisponiveis(usuario);
-            ViewBag.Iddepartamento = new SelectList(db.Departamento, "Iddepartamento", "Descricao", "Selecione");
+            ViewBag.Iddepartamento = new SelectList(db.Departamento, "Iddepartamento", "Descricao");
 
             return View(usuario);
         }
@@ -103,7 +103,14 @@ namespace STV.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create([Bind(Include = "Idusuario,Cpf,Nome,Email,SenhaDigitada,SenhaDigitadaConfirmacao,Iddepartamento")] UsuarioVM usuarioVM, string[] rolesSelecionadas)
         {
+
             var usuario = Mapper.Map<UsuarioVM, Usuario>(usuarioVM);
+
+            if (usuario.Iddepartamento == null)
+                ModelState.AddModelError("", "Departamento é obrigatório.");
+
+            if (db.Usuario.Any(u => u.Cpf == usuario.Cpf))
+                ModelState.AddModelError("", "Já existe um usuário com este CPF cadastrado no sistema.");
 
             if (rolesSelecionadas != null && rolesSelecionadas.Count() > 0)
             {
@@ -131,7 +138,7 @@ namespace STV.Controllers
                 return RedirectToAction("Index");
             }
 
-            usuarioVM.Roles = new List<Role>();
+            usuarioVM.Roles = usuario.Roles;
             CarregarRolesDisponiveis(usuarioVM);
             ViewBag.Iddepartamento = new SelectList(db.Departamento, "Iddepartamento", "Descricao");
             return View(usuarioVM);
@@ -189,6 +196,8 @@ namespace STV.Controllers
                   .Include(u => u.Roles)
                   .Where(i => i.Idusuario == id)
                   .SingleAsync();
+
+            //TODO: verificar se cpf já existe
 
             if (TryUpdateModel(usuarioToUpdate, "",
                    new string[] { "Cpf", "Nome", "Email", "Iddepartamento" }))
@@ -262,7 +271,7 @@ namespace STV.Controllers
             {
                 if (id == null)
                     throw new ApplicationException("Ops! Requisição inválida.");
-                
+
                 Usuario usuario = await db.Usuario.FindAsync(id);
                 if (usuario == null)
                     throw new ApplicationException("Usuário não encontrado.");

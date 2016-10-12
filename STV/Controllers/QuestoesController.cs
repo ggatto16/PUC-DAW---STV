@@ -58,7 +58,6 @@ namespace STV.Controllers
         }
 
         // GET: Questoes/Details/5
-        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Details(int? id)
         {
             try
@@ -81,7 +80,6 @@ namespace STV.Controllers
         }
 
         // GET: Questoes/Create
-        [Authorize(Roles = "Admin")]
         public ActionResult Create(int? Idatividade)
         {
             if (Idatividade == null)
@@ -111,7 +109,6 @@ namespace STV.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Create([Bind(Include = "Idquestao,Idatividade,IdalternativaCorreta,Descricao,Numero")] Questao questao)
         {
             if (ModelState.IsValid)
@@ -128,7 +125,6 @@ namespace STV.Controllers
         }
 
         // GET: Questoes/Edit/5
-        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Edit(int? id)
         {
             Questao questao = null;
@@ -165,7 +161,6 @@ namespace STV.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Edit([Bind(Include = "Idquestao,Idatividade,IdalternativaCorreta,Descricao,Numero")] Questao questao)
         {
             if (ModelState.IsValid)
@@ -181,7 +176,6 @@ namespace STV.Controllers
         }
 
         // GET: Questoes/Delete/5
-        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Delete(int? id)
         {
             Questao questao = null;
@@ -213,7 +207,6 @@ namespace STV.Controllers
         // POST: Questoes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
             Questao questao = await db.Questao.FindAsync(id);

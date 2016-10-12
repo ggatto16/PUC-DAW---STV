@@ -21,6 +21,7 @@ namespace STV.Models
         [StringLength(15)]
         [Required]
         [Display(Name = "CPF")]
+        [Index(IsUnique = true)]
         public string Cpf { get; set; }
 
         [StringLength(60)]

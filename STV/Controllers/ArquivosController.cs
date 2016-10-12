@@ -7,7 +7,7 @@ using System.Web.Mvc;
 
 namespace STV.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize]
     public class ArquivosController : Controller
     {
         private STVDbContext db = new STVDbContext();

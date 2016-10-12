@@ -93,29 +93,29 @@
                 }
                 </td>
                 <td>
-                    @if (User.IsInRole("Default") && item.DataAbertura <= DateTime.Now)
-                {
+                    @if (User.IsInRole("Default") && item.DataAbertura <= DateTime.Now && !Model.IsInstutor)
+                    {
                         @Html.DisplayFor(modelItem => item.Realizado) @Html.Raw("%")
                     }
                 </td>
 
-                @if (User.IsInRole("Default"))
+                @if (User.IsInRole("Default") && !Model.IsInstutor)
                 {
                     if (item.IsFinalizada)
                     {
-                        <td class="success">
-                            @Html.Raw("Atividade Finalizada")
-                        </td>
+                    <td class="success">
+                        @Html.Raw("Atividade Finalizada")
+                    </td>
                     }
                     else
                     {
                         if (!encerrada && aberta)
                         {
-                            <td>
-                                @Html.ActionLink("Responder", "Responder", "Atividades", new { id = item.Idatividade }, null)
-                                @Html.Raw(" | ")
-                                @Html.ActionLink("Finalizar", "Finalizar", "Atividades", new { id = item.Idatividade }, null)
-                            </td>
+                        <td>
+                            @Html.ActionLink("Responder", "Responder", "Atividades", new { id = item.Idatividade }, null)
+                            @Html.Raw(" | ")
+                            @Html.ActionLink("Finalizar", "Finalizar", "Atividades", new { id = item.Idatividade }, null)
+                        </td>
                         }
                         else
                         {
@@ -123,32 +123,32 @@
                             {
                                 if (item.Realizado < 100)
                                 {
-                                    <td class="danger">
-                                        @Html.ActionLink("Revisão", "Revisao", "Atividades", new { id = item.Idatividade }, null)
-                                    </td>
+                                <td class="danger">
+                                    @Html.ActionLink("Revisão", "Revisao", "Atividades", new { id = item.Idatividade }, null)
+                                </td>
                                 }
                                 else
                                 {
-                                    <td class="success">
-                                        @Html.ActionLink("Revisão", "Revisao", "Atividades", new { id = item.Idatividade }, null)
-                                    </td>
+                                <td class="success">
+                                    @Html.ActionLink("Revisão", "Revisao", "Atividades", new { id = item.Idatividade }, null)
+                                </td>
                                 }
                             }
                         }
                     }
                 }
-                else if (User.IsInRole("Admin") || Model.IsInstutor)
+                @if (User.IsInRole("Admin") || Model.IsInstutor)
                 {
-                    <td>
-                        @if (!encerrada)
-                        {
-                            @Html.ActionLink("Edit", "Edit", "Atividades", new { id = item.Idatividade }, null)
-                            @Html.Raw(" | ")
-                        }
-                        @Html.ActionLink("Details", "Details", "Atividades", new { id = item.Idatividade }, null)
+                <td>
+                    @if (!encerrada)
+                    {
+                        @Html.ActionLink("Edit", "Edit", "Atividades", new { id = item.Idatividade }, null)
                         @Html.Raw(" | ")
-                        @Html.ActionLink("Delete", "Delete", "Atividades", new { id = item.Idatividade }, null)
-                    </td>
+                    }
+                    @Html.ActionLink("Details", "Details", "Atividades", new { id = item.Idatividade }, null)
+                    @Html.Raw(" | ")
+                    @Html.ActionLink("Delete", "Delete", "Atividades", new { id = item.Idatividade }, null)
+                </td>
                 }
             </tr>
         }

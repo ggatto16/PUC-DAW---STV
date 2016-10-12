@@ -19,11 +19,11 @@
         {
             if (Model.IsInstutor)
             {
-                <span class="bg-info" style="padding: 5px; border-radius: 5px;">Você é Instrutor deste curso.</span>
+                <span class="bg-info text-info" style="padding: 5px; border-radius: 5px;">Você é Instrutor deste curso.</span>
             }
             else if (User.IsInRole("Default"))
             {
-                <span class="bg-success" style="padding: 5px; border-radius: 5px;">Você é Aluno deste curso.</span>
+                <span class="bg-success text-success" style="padding: 5px; border-radius: 5px;">Você é Aluno deste curso.</span>
             }
         }
         <hr />
@@ -114,7 +114,7 @@
                         <label for="rating6">3</label>
                         @Html.RadioButton("rating", "4", Model.MediaNota > 2 ? true : false, new { id = "rating4", disabled = "disabled" })
                         <label for="rating4">2</label>
-                        @Html.RadioButton("rating", "2", Model.MediaNota >= 0 ? true : false, new { id = "rating2", disabled = "disabled" })
+                        @Html.RadioButton("rating", "2", Model.MediaNota > 0 ? true : false, new { id = "rating2", disabled = "disabled" })
                         <label for="rating2">1</label>
                     </span>
 

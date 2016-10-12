@@ -9,6 +9,7 @@ using STV.Utils;
 using STV.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
@@ -26,6 +27,7 @@ namespace STV.Controllers
     {
         private STVDbContext db = new STVDbContext();
         private Usuario UsuarioLogado;
+        private string admin = ConfigurationManager.AppSettings["AdmUserId"].ToString();
 
         public CursosController()
         {
@@ -367,7 +369,7 @@ namespace STV.Controllers
             var curso = new Curso();
             curso.Departamentos = new List<Departamento>();
             CarregarDepartamentos(curso);
-            ViewBag.IdusuarioInstrutor = new SelectList(db.Usuario, "Idusuario", "Nome");
+            ViewBag.IdusuarioInstrutor = new SelectList(db.Usuario.Where(u => u.Cpf != admin), "Idusuario", "Nome");
             return View();
         }
 
