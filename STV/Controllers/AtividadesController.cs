@@ -47,8 +47,6 @@ namespace STV.Controllers
                 if (idProxima != null)
                 {
                     AtividadeModel.QuestaoToShow = AtividadeModel.Questoes.Where(q => q.Idquestao == idProxima).FirstOrDefault();
-                    //var indexaux = AtividadeModel.Questoes.ToList().IndexOf(AtividadeModel.QuestaoToShow);
-                    //AtividadeModel.QuestaoToShow.Indice = indexaux;
                     Response.StatusCode = (int)HttpStatusCode.OK;
                     return PartialView("Questao", AtividadeModel);
                 }
@@ -60,30 +58,12 @@ namespace STV.Controllers
                         return RedirectToAction("Details", "Cursos", new { id = atividade.Unidade.Idcurso, Idunidade = atividade.Idunidade });
                     }
                     AtividadeModel.QuestaoToShow = AtividadeModel.Questoes.FirstOrDefault();
-                    //if (index == null)
-                    //{
-                    //    AtividadeModel.QuestaoToShow = atividade.Questoes.FirstOrDefault();
-                    //    AtividadeModel.QuestaoToShow.Indice = 0;
-                    //}
-                    //else
-                    //{
-                    //    AtividadeModel.QuestaoToShow = atividade.Questoes.ElementAtOrDefault((int)index + 1);
-                    //    if (AtividadeModel.QuestaoToShow != null)
-                    //        AtividadeModel.QuestaoToShow.Indice = (int)index + 1;
-                    //    else
-                    //    {
-                    //        TempData["msg"] = "Respostas salvas!";
-                    //        return RedirectToAction("Details", "Cursos", new { id = atividade.Unidade.Idcurso, Idunidade = atividade.Idunidade });
-                    //    }
-                    //}
                 }
 
                 return View("Atividade", AtividadeModel);
             }
             catch (ApplicationException ex)
             {
-                //TempData["msgErr"] = ex.Message;
-                //return RedirectToAction("Index", "Home");
                 Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                 return Json(ex.Message);
             }
@@ -130,22 +110,28 @@ namespace STV.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> SalvarResposta(AtividadeVM atividade, int? idProxima, bool finalizar = false)
         {
-            //if (ModelState.IsValid)
-            //{
-                Resposta resposta = null;
-                resposta = await db.Resposta.FindAsync(UsuarioLogado.Idusuario, atividade.QuestaoToShow.Idquestao);
 
-                if (resposta != null)
-                {
-                    resposta.Idalternativa = atividade.QuestaoToShow.IdAlternativaSelecionada;
-                    db.Resposta.Attach(resposta);
-                    db.Entry(resposta).Property(r => r.Idalternativa).IsModified = true;
-                }
+            Resposta resposta = null;
+            resposta = await db.Resposta.FindAsync(UsuarioLogado.Idusuario, atividade.QuestaoToShow.Idquestao);
+
+            //Ainda não respondeu
+            if (resposta != null)
+            {
+                resposta.Idalternativa = atividade.QuestaoToShow.IdAlternativaSelecionada;
+                db.Resposta.Attach(resposta);
+                db.Entry(resposta).Property(r => r.Idalternativa).IsModified = true;
+            }
+            else
+            {
+                //Não respondeu mas quer voltar
+                if (atividade.QuestaoToShow.IdAlternativaSelecionada == 0 && !finalizar)
+                    return RedirectToAction("Responder", new { Id = atividade.Idatividade, idProxima = idProxima });
+                //Não respondeu mas quer mudar de questão
+                else if (atividade.QuestaoToShow.IdAlternativaSelecionada == 0)
+                    return RedirectToAction("Responder", new { Id = atividade.Idatividade, idProxima = idProxima, finalizar = finalizar });
+                //Respondeu
                 else
                 {
-                    if (atividade.QuestaoToShow.IdAlternativaSelecionada == 0)
-                        return RedirectToAction("Responder", new { Id = atividade.Idatividade, idProxima = idProxima });
-
                     resposta = new Resposta
                     {
                         Idusuario = UsuarioLogado.Idusuario,
@@ -154,8 +140,8 @@ namespace STV.Controllers
                     };
                     db.Resposta.Add(resposta);
                 }
-                await db.SaveChangesAsync();
-            //}
+            }
+            await db.SaveChangesAsync();
 
             return RedirectToAction("Responder", new { Id = atividade.Idatividade, idProxima = idProxima, finalizar = finalizar });
         }
@@ -361,7 +347,7 @@ namespace STV.Controllers
             }
 
             ViewBag.Idunidade = new SelectList(db.Unidade, "Idunidade", "Titulo", atividade.Idunidade);
-            return View(atividade);
+            return View(atividadeVM);
         }
 
         // GET: Atividades/Delete/5

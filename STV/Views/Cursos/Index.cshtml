@@ -1,45 +1,58 @@
 ﻿@model IEnumerable<STV.Models.Curso>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Cursos";
 }
 
-<h2>Index</h2>
+<h2>Cursos</h2>
 
 <p>
-    @Html.ActionLink("Create New", "Create")
+    @Html.ActionLink("Adicionar", "Create", null, new { @class = "btn btn-success" })
 </p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Titulo)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Categoria)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Encerrado)
-        </th>
-        <th></th>
-    </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Titulo)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Categoria)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Encerrado)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Idcurso }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Idcurso }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Idcurso })
-        </td>
-    </tr>
-}
+<table class="table table-striped">
+    @if (Model.Count() == 0)
+    {
+        <tr>
+            <td align="center">Nenhum Registro</td>
+        </tr>
+    }
+    else
+    {
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Titulo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Categoria)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Encerrado)
+            </th>
+            <th></th>
+        </tr>
 
+        foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.ActionLink(item.Titulo, "Details", new { id = item.Idcurso })
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Categoria)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Encerrado)
+                </td>
+                <td>
+                    <a href="@Url.Action("Edit", new { id = item.Idcurso })" class="btn-sm btn-primary grid-control" data-toggle="tooltip" title="Alterar">
+                        <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                    </a>
+                    <a href="@Url.Action("Delete", new { id = item.Idcurso })" class="btn-sm btn-danger grid-control" data-toggle="tooltip" title="Excluir">
+                        <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                    </a>
+                </td>
+            </tr>
+        }
+    }
 </table>

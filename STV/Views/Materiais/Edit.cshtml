@@ -1,7 +1,7 @@
 ﻿@model STV.ViewModels.MaterialVM
 
 @{
-    ViewBag.Title = "Edit";
+    ViewBag.Title = "Alterar";
 }
 
 <ol class="breadcrumb">
@@ -10,7 +10,7 @@
     <li class="active">Editar Material</li>
 </ol>
 
-<h2>Edit</h2>
+<h2>Alterar</h2>
 
 <div class="text-danger" id="divErroArquivo"></div>
 
@@ -60,14 +60,14 @@
 
             <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">
-                    <input type="submit" value="Save" class="btn btn-default" />
+                    <input type="submit" value="Salvar" class="btn btn-primary" />
                 </div>
             </div>
         </div>
 
 
         <div>
-            @Html.ActionLink("Back to List", "Index")
+            <a href="@Url.Action("Index")" class="btn btn-default grid-control" data-toggle="tooltip" title="Voltar para Listagem">Voltar</a>
         </div>
 
     </div>

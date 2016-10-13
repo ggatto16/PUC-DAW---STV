@@ -53,6 +53,7 @@ namespace STV.ViewModels
             }
         }
 
+        [DisplayFormat(DataFormatString = "{0:##0}")]
         public decimal Realizado { get; set; } = 0;
 
         public bool IsFinalizada { get; set; }

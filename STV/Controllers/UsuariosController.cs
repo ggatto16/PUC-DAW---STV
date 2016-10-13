@@ -200,44 +200,64 @@ namespace STV.Controllers
             var usuarioToUpdate = Mapper.Map<UsuarioEditVM, Usuario>(usuarioVM);
 
             //Preenche o modelo com a senha
-            usuarioToUpdate.Senha = db.Usuario
+            var usu = db.Usuario
                     .Where(u => u.Idusuario == usuarioToUpdate.Idusuario)
-                    .Select(senha => new
-                    {
-                        Senha = senha.Senha
-                    }).FirstOrDefault().Senha;
-            usuarioVM.Senha = usuarioToUpdate.Senha;
+                    .Select(u => new { Senha = u.Senha }).ToList();
+            usuarioToUpdate.Senha = usu.FirstOrDefault().Senha;
 
+            //Faz as validações necessárias
             if (usuarioToUpdate.Iddepartamento == null)
                 ModelState.AddModelError("", "Departamento é obrigatório.");
 
-            if (db.Usuario.Any(u => u.Cpf == usuarioToUpdate.Cpf))
+            if (db.Usuario.Any(u => u.Cpf == usuarioVM.CpfSoNumeros && u.Idusuario != usuarioVM.Idusuario))
                 ModelState.AddModelError("", "Já existe um usuário com este CPF cadastrado no sistema.");
 
-            if (rolesSelecionadas != null && rolesSelecionadas.Count() > 0)
-            {
-                usuarioToUpdate.Roles = new List<Role>();
-                foreach (var role in rolesSelecionadas)
-                {
-                    var roleToAdd = db.Role.Find(int.Parse(role));
-                    usuarioToUpdate.Roles.Add(roleToAdd);
-                }
-            }
-            else
+            if (rolesSelecionadas == null)
                 ModelState.AddModelError("", "Selecione uma role para atribuir ao usuário.");
 
             if (ModelState.IsValid)
             {
-                AtualizarRolesUsuario(rolesSelecionadas, usuarioToUpdate);
-                usuarioToUpdate.Cpf = usuarioVM.CpfSoNumeros;
-                usuarioToUpdate.Stamp = DateTime.Now;
-                db.Entry(usuarioToUpdate).State = EntityState.Modified;
-                await db.SaveChangesAsync();
-                TempData["msg"] = "Dados Salvos!";
-                return RedirectToAction("Index");
+                using (DbContextTransaction transaction = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        //Atualiza os dados
+                        usuarioToUpdate.Cpf = usuarioVM.CpfSoNumeros;
+                        usuarioToUpdate.Stamp = DateTime.Now;
+                        db.Entry(usuarioToUpdate).State = EntityState.Modified;
+                        await db.SaveChangesAsync();
+
+                        //Atualiza as roles
+                        var user = db.Usuario.Include("Roles")
+                                    .Single(u => u.Idusuario == usuarioToUpdate.Idusuario);
+                        foreach (var role in user.Roles.ToList())
+                        {
+                            if (!rolesSelecionadas.Contains(role.Idrole.ToString()))
+                                user.Roles.Remove(role);
+                        }
+                        foreach (var newRoleId in rolesSelecionadas)
+                        {
+                            if (!user.Roles.Any(r => r.Idrole.ToString() == newRoleId))
+                            {
+                                var newRole = new Role { Idrole = Convert.ToInt32(newRoleId) };
+                                db.Role.Attach(newRole);
+                                user.Roles.Add(newRole);
+                            }
+                        }
+                        await db.SaveChangesAsync();
+
+                        transaction.Commit();
+                        TempData["msg"] = "Dados Salvos!";
+                        return RedirectToAction("Index");
+                    }
+                    catch (Exception)
+                    {
+                        transaction.Rollback();
+                        throw;
+                    }
+                }
             }
 
-            //var usuarioVM = Mapper.Map<Usuario, UsuarioVM>(usuarioToUpdate);
             usuarioVM.Roles = usuarioToUpdate.Roles;
             CarregarRolesDisponiveis(usuarioVM);
             ViewBag.Iddepartamento = new SelectList(db.Departamento, "Iddepartamento", "Descricao", usuarioVM.Iddepartamento);

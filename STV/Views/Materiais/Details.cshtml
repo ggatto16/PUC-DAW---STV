@@ -84,8 +84,8 @@
         </dl>
     </div>
     <p>
-        @Html.ActionLink("Edit", "Edit", new { id = Model.Idmaterial }) |
-        @Html.ActionLink("Back to List", "Index")
+        @Html.ActionLink("Alterar", "Edit", new { id = Model.Idmaterial }) |
+        <a href="@Url.Action("Index")" class="btn btn-default grid-control" data-toggle="tooltip" title="Voltar para Listagem">Voltar</a>
     </p>
 </div>
 

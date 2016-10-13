@@ -93,7 +93,7 @@
                     <span id="Avaliado" style="display: none">
                         Avaliado!
                     </span>
-                    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal">
+                    <button type="button" class="btn-sm btn-warning" data-toggle="modal" data-target="#myModal">
                         Comentar
                     </button>
                 </dd>
@@ -101,7 +101,7 @@
             else if (Model.IsInstutor || User.IsInRole("Admin"))
             {
                 <dt>
-                    @Html.DisplayName("Média de Avaliação dos Alunos")
+                    @Html.DisplayName("Média de Avaliação")
                 </dt>
 
                 <dd>
@@ -126,12 +126,12 @@
     </div>
 
     <p>
-        @Html.ActionLink("Edit", "Edit", new { id = Model.Idcurso }) |
-        @Html.ActionLink("Back to List", "Index") |
+        @Html.ActionLink("Alterar", "Edit", new { id = Model.Idcurso }, new { @class = "btn btn-primary" }) 
+        <a href="@Url.Action("Index")" class="btn btn-default grid-control" data-toggle="tooltip" title="Voltar para Listagem">Voltar</a>
 
         @if (Model.DisponibilizarCertificado)
         {
-            @Html.ActionLink("Cert", "Certificado", new { id = Model.Idcurso }, new { target = "_blank" })
+            @Html.ActionLink("Gerar Certificado", "Certificado", new { id = Model.Idcurso }, new { @class = "btn btn-sccess" })
         }
     </p>
     <hr />
@@ -140,14 +140,16 @@
 
     @if (User.IsInRole("Admin") || Model.IsInstutor)
     {
-        if (Model.Encerrado)
-        {
-            <input type="button" class="btn btn-default" value="Adicionar" disabled="disabled" data-toggle="tooltip" title="O curso está encerrado. Não é possível alterar." />
-        }
-        else
-        {
-            @Html.ActionLink("Adicionar", "Create", "Unidades", new { Idcurso = Model.Idcurso }, null)
-        }
+        <p>
+            @if (Model.Encerrado)
+            {
+                <input type="button" class="btn btn-success" value="Adicionar" disabled="disabled" data-toggle="tooltip" title="O curso está encerrado. Não é possível alterar." />
+            }
+            else
+            {
+                @Html.ActionLink("Adicionar", "Create", "Unidades", new { Idcurso = Model.Idcurso }, new { @class = "btn btn-success" })
+            }
+        </p>
     }
     <table class="table table-striped">
         @{
@@ -176,9 +178,12 @@
                     <td>
                         @if (User.IsInRole("Admin") || Model.IsInstutor)
                         {
-                            @Html.ActionLink("Edit", "Edit", "Unidades", new { id = unidade.Idunidade }, null)
-                            @Html.Raw(" | ")
-                            @Html.ActionLink("Delete", "Delete", "Unidades", new { id = unidade.Idunidade }, null)
+                            <a href="@Url.Action("Edit", new { id = unidade.Idunidade })" class="btn-sm btn-primary grid-control" data-toggle="tooltip" title="Alterar">
+                                <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                            </a>
+                            <a href="@Url.Action("Delete", new { id = unidade.Idunidade })" class="btn-sm btn-danger grid-control" data-toggle="tooltip" title="Excluir">
+                                <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                            </a>
                         }
                     </td>
                 </tr>

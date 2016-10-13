@@ -391,10 +391,12 @@ namespace STV.Controllers
                 }
             }
 
+            curso.Instrutor = db.Usuario.Find(curso.IdusuarioInstrutor);
+            curso.Encerrado = false;
+            curso.Stamp = DateTime.Now;
+
             if (ModelState.IsValid)
             {
-                curso.Instrutor = db.Usuario.Find(curso.IdusuarioInstrutor);
-                curso.Stamp = DateTime.Now;
                 db.Curso.Add(curso);
                 await db.SaveChangesAsync();
                 TempData["msg"] = "Dados Salvos!";

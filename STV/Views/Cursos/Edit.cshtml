@@ -1,10 +1,10 @@
 ﻿@model STV.ViewModels.CursoVM
 
 @{
-    ViewBag.Title = "Edit";
+    ViewBag.Title = "Alterar";
 }
 
-<h2>Edit</h2>
+<h2>Alterar</h2>
 
 
 @using (Html.BeginForm())
@@ -36,7 +36,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.Encerrado, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                <div class="checkbox">
+                <div style="margin-top: 7px;">
                     @Html.EditorFor(model => model.Encerrado)
                     @Html.ValidationMessageFor(model => model.Encerrado, "", new { @class = "text-danger" })
                 </div>
@@ -69,7 +69,7 @@
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <table>
+                <table style="margin-top: 6px;">
                     <tr>
                         @{
                             int cnt = 0;
@@ -81,7 +81,7 @@
                                 {
                                     @:</tr><tr>
                                 }
-                                @:<td>
+                                @:<td style="padding-right: 10px;">
                                     <input type="checkbox"
                                            name="departamentosSelecionados"
                                            value="@departamento.Iddepartamento"
@@ -97,14 +97,14 @@
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
+                <input type="submit" value="Salvar" class="btn btn-primary" />
             </div>
         </div>
     </div>
 }
 
 <div>
-    @Html.ActionLink("Back to List", "Index")
+    <a href="@Url.Action("Index")" class="btn btn-default grid-control" data-toggle="tooltip" title="Voltar para Listagem">Voltar</a>
 </div>
 
 @section Scripts {

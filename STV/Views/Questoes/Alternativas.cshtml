@@ -7,7 +7,7 @@
 </div>
 
 <p>
-    @Html.ActionLink("Adicionar", "Create", "Alternativas", new { Idquestao = Model.Idquestao }, null)
+    @Html.ActionLink("Adicionar", "Create", "Alternativas", new { Idquestao = Model.Idquestao }, new { @class = "btn btn-success" })
 </p>
 
 <table class="table table-striped">
@@ -34,7 +34,7 @@
                 @Html.DisplayFor(modelItem => item.Descricao)
             </td>
             <td>
-                @Html.ActionLink("Edit", "Edit", "Alternativas", new { id = item.Idalternativa }, null) |
+                @Html.ActionLink("Alterar", "Edit", "Alternativas", new { id = item.Idalternativa }, null) |
                 @Html.ActionLink("Details", "Details", "Alternativas", new { id = item.Idalternativa }, null) |
                 @Html.ActionLink("Excluir", "Delete", "Alternativas", new { id = item.Idalternativa }, null)
             </td>
