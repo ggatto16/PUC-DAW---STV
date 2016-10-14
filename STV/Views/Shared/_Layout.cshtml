@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - KD - Knowledge Database</title>
 
+    <script>var mostrarCarregando = true;</script>
+
     @Styles.Render("~/Content/css")
     @RenderSection("MeusEstilos", required: false)
     @Scripts.Render("~/bundles/modernizr")
@@ -74,7 +76,7 @@
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
-    @Scripts.Render("~/bundles/ErrorHandler")
+    @Scripts.Render("~/bundles/Common")
     @RenderSection("scripts", required: false)
 
     <script>

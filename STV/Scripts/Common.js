@@ -1,6 +1,4 @@
-﻿var mostrarCarregando = true;
-
-function onBeginAjax(msg) {
+﻿function onBeginAjax(msg) {
 
     mostrarCarregando = true;
 
@@ -10,18 +8,19 @@ function onBeginAjax(msg) {
         $('#pLoadMessage').html('Carregando...');
 
     setTimeout(showLoading, 1000);
-}
+};
 
 function showLoading() {
     if (mostrarCarregando) {
         $('#divCarregando').fadeIn();
     }
-}
+};
 
 function onCompleteAjax() {
     mostrarCarregando = false;
+    debugger;
     $('#divCarregando').fadeOut();
-}
+};
 
 function MostrarMensagem(msg, tipo) {
 
@@ -47,19 +46,23 @@ function MostrarMensagem(msg, tipo) {
     }
     div.fadeIn();
     setTimeout(HideMessage, 5000);
-}
+};
 
 function OnFailure(xhr, status) {
     //var error = xhr.responseText.split("<title>")[1].split("</title>")[0];
     var error = xhr.statusText;
     MostrarMensagem(error, 2);
-}
+};
 
 function OnSuccess(xhr, status) {
     var msg = xhr.statusText;
     MostrarMensagem(msg, 1);
-}
+};
 
 function HideMessage() {
     $('#divMensagem').fadeOut();
-}
+};
+
+$(document).ready(function () {
+    $('[data-toggle="tooltip"]').tooltip();
+});

@@ -1,7 +1,6 @@
 ﻿.grid-control
 {
-    margin-left: 5px;
-    margin-right: 5px;
+    width: 16%;
 }
 @media only screen and (min-device-width: 480px) {
     /* define mobile specific styles come here */
@@ -17,6 +16,24 @@
         content: " Relatório";
         font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     }
+    .realizado {
+        display: block;
+    }
+}
+
+@media only screen and (max-device-width: 480px) {
+    .realizado {
+        display: none;
+    }
+}
+
+.td-link{
+    width: 100%;
+    height: 100%;
+}
+
+body.modal-open {
+    overflow: visible;
 }
 
 .Mensagem {

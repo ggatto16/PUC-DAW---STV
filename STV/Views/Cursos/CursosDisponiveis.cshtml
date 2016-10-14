@@ -4,11 +4,28 @@
     ViewBag.Title = "Cursos Disponíveis";
 }
 
-<h2>Cursos Disponíveis</h2>
+<h2>
+    @if (ViewBag.Gerenciar != null)
+    {
+        @Html.Raw("Cursos Gerenciáveis")
+    }
+    else
+    {
+        @Html.Raw("Cursos Disponíveis")
+    }
+</h2>
 
 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-<table class="table">
+<table class="table table-striped">
+@if (Model.Count() == 0)
+{
+    <tr>
+        <td align="center">Nenhum Registro</td>
+    </tr>
+}
+else
+{
     <tr>
         <th>
             @Html.DisplayNameFor(model => model.Titulo)
@@ -16,18 +33,12 @@
         <th>
             @Html.DisplayNameFor(model => model.DataInicial)
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Categoria)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Palavraschave)
-        </th>
         <th></th>
     </tr>
 
-    @{var cssLinha = string.Empty; }
+    var cssLinha = string.Empty; 
 
-    @foreach (var item in Model)
+    foreach (var item in Model)
     {
 
         if (item.Usuarios.Where(u => u.Idusuario == ViewBag.Idusuario).FirstOrDefault() != null)
@@ -47,31 +58,26 @@
                 @Html.DisplayFor(modelItem => item.DataInicial)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Categoria)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Palavraschave)
-            </td>
-            <td>
                 @if (ViewBag.Gerenciar == true)
                 {
                     @Html.ActionLink("Gerenciar", "Details", "Cursos", new { id = item.Idcurso }, null);
                 }
                 else
                 {
-
                     if (cssLinha != "success")
                     {
-                        @Html.ActionLink("Inscrever-se", "Inscrever", new { Idcurso = item.Idcurso });
+                        <a href="@Url.Action("Inscrever-se", "Inscrever", new { Idcurso = item.Idcurso })" onclick="Confirmar" class="btn-sm btn-primary">
+                            <span class="glyphicon glyphicon-pencil"></span> Inscrever
+                        </a>
                     }
                     else
                     {
-                        <p>Já está inscrito!</p>
+                        <p class="text-success"><b>Já inscrito!</b></p>
                     }
                 }
             </td>
 
         </tr>
     }
-
+}
 </table>

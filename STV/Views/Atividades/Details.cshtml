@@ -51,26 +51,24 @@
     </div>
     <p>
         @Html.ActionLink("Alterar", "Edit", new { id = Model.Idatividade }, new { @class = "btn btn-primary" })
-        <a href="@Url.Action("Details", "Cursos", new { id = Model.Unidade.Idcurso, Idunidade = Model.Idunidade })" class="btn btn-default grid-control" data-toggle="tooltip" title="Voltar para Listagem">Voltar</a>
+        <a href="@Url.Action("Details", "Cursos", new { id = Model.Unidade.Idcurso, Idunidade = Model.Idunidade })" class="btn btn-default grid-control" data-toggle="tooltip" data-placement="auto" title="Voltar para Listagem">Voltar</a>
     </p>
 
     <hr />
 
-
-    <h4>Questões</h4>
-
     <p>
-        @if (Model.DataAbertura < DateTime.Now)
-        {
-            <input type="button" class="btn-sm btn-success" value="Adicionar" disabled="disabled" data-toggle="tooltip" title="A atividade está aberta. Não é possível alterar." />
-        }
-        else
-        {
-            Html.ActionLink("Adicionar", "Create", "Questoes", new { Idatividade = Model.Idatividade }, new { @class = "btn-sm btn-success" });
-
-        }
+        <h4>
+            Questões &nbsp;
+            @if (Model.DataAbertura < DateTime.Now)
+            {
+                <input type="button" class="btn-sm btn-success" value="Adicionar" disabled="disabled" data-toggle="tooltip" data-placement="auto" title="A atividade está aberta. Não é possível alterar." />
+            }
+            else
+            {
+                @Html.ActionLink("Adicionar", "Create", "Questoes", new { Idatividade = Model.Idatividade }, new { @class = "btn-sm btn-success" });
+            }
+        </h4>
     </p>
-
     <table class="table table-striped">
         @foreach (var questao in Model.Questoes.OrderBy(x => x.Numero))
         {
@@ -89,25 +87,27 @@
                 tooltip = "Atenção! Questão sem alternativas não será publicada.";
                 questaoSelecionada = "danger";
             }
-            <tr class="@questaoSelecionada" id="tr_@questao.Idquestao" data-toggle="tooltip" title="@tooltip">
+            <tr class="@questaoSelecionada" id="tr_@questao.Idquestao" data-toggle="tooltip" data-placement="auto" title="@tooltip">
                 <td>
                     @Html.DisplayFor(modelItem => questao.Numero)
                 </td>
                 <td>
-                    @Ajax.ActionLink((questao.Descricao.Length > 50) ? questao.Descricao.Substring(0, 50) + "..." : questao.Descricao, "CarregarAlternativas", "Questoes", new { Idquestao = questao.Idquestao }, new AjaxOptions { UpdateTargetId = "Alternativas", InsertionMode = InsertionMode.Replace, HttpMethod = "Get", OnBegin = "onBeginAjax", OnComplete = "debugger; SetInfoClass(tr_" + questao.Idquestao + ")" })
+                    @Ajax.ActionLink((questao.Descricao.Length > 50) ? questao.Descricao.Substring(0, 50) + "..." : questao.Descricao, "CarregarAlternativas", "Questoes", new { Idquestao = questao.Idquestao }, new AjaxOptions { UpdateTargetId = "Alternativas", InsertionMode = InsertionMode.Replace, HttpMethod = "Get", OnBegin = "onBeginAjax", OnComplete = "SetInfoClass(tr_" + questao.Idquestao + ")" })
                 </td>
                 <td>
                 </td>
-                    <a href="#" class="btn-sm btn-danger btn-excluir" data-toggle="tooltip" title="Ver questão completa">
-                        <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                <td>
+                    <a  href="#" class="btn-sm btn-primary" onclick="AbrirModal('@questao.Descricao','Questão número @questao.Numero')" data-toggle="tooltip" data-placement="auto" title="Ver enunciado completo"> 
+                        <span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span>
                     </a>
+                </td>
                 <td>
-                    <a href="@Url.Action("Edit", "Questoes", new { id = questao.Idquestao })" class="btn-sm btn-primary btn-alterar" data-toggle="tooltip" title="Alterar">
+                    <a href="@Url.Action("Edit", "Questoes", new { id = questao.Idquestao })" class="btn-sm btn-primary" data-toggle="tooltip" data-placement="auto" title="Alterar">
                         <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                     </a>
                 </td>
                 <td>
-                    <a href="@Url.Action("Delete", "Questoes", new { id = questao.Idquestao })" class="btn-sm btn-danger btn-excluir" data-toggle="tooltip" title="Excluir">
+                    <a href="@Url.Action("Delete", "Questoes", new { id = questao.Idquestao })" class="btn-sm btn-danger" data-toggle="tooltip" data-placement="auto" title="Excluir">
                         <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                     </a>
                 </td>
@@ -123,6 +123,62 @@
 
 <div class="col-md-6">
     <div id="Alternativas"></div>
+</div>
+
+<!-- Modal Questao -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel"></h4>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-12" id="divQuestao">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Alternativa -->
+<div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel2">Alternativa</h4>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <b>Descrição:</b>
+                        </div>
+                        <div class="col-md-10" id="divAlternativa">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2">
+                            <b>Justificativa:</b>
+                        </div>
+                        <div class="col-md-10" id="divJustificativa">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section scripts {
@@ -152,5 +208,11 @@
                 onCompleteAjax();
             }
         };
+
+        function AbrirModal(texto, titulo) {
+            $('#divQuestao').text(texto);
+            $('#myModalLabel').text(titulo)
+            $('#myModal').modal('show');
+        }
     </script>
 }

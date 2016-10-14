@@ -297,7 +297,7 @@ th {
 .glyphicon-envelope:before {
   content: "\2709";
 }
-.glyphicon-edit:before {
+.glyphicon-pencil:before {
   content: "\270f";
 }
 .glyphicon-glass:before {

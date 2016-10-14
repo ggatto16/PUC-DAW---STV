@@ -81,14 +81,11 @@
                 <div class="col-md-offset-2 col-md-10">
                     <input type="submit" value="Savar Alterações" class="btn btn-default" />
                     @Html.ActionLink("Redefinir Senha", "ResetPassword", new { id = Model.Idusuario }, new { @class = "btn btn-danger" })
+                    <a href="@Url.Action("Index")" class="btn btn-default grid-control" data-toggle="tooltip" data-placement="auto" title="Voltar para Listagem">Voltar</a>
                 </div>
             </div>
         </div>
 }
-
-<div>
-    <a href="@Url.Action("Index")" class="btn btn-default grid-control" data-toggle="tooltip" title="Voltar para Listagem">Voltar</a>
-</div>
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")

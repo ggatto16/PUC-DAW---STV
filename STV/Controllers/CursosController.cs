@@ -35,11 +35,26 @@ namespace STV.Controllers
             UsuarioLogado = auth.GetUserData();
         }
 
-        public ActionResult Certificado(DetalhesCurso cursoVM)
+        public ActionResult Certificado(int? id)
         {
-            if (!VerificarCertificado(cursoVM)) return View("NaoAutorizado");
+            if (id == null)
+            {
+                TempData["msgErr"] = "Ops! Requisição inválida.";
+                RedirectToAction("MeusCursos");
+            }
 
-            Curso curso = db.Curso.Find(cursoVM.Idcurso);
+            Curso curso = db.Curso.Find(id);
+
+            if (curso == null)
+            {
+                TempData["msgErr"] = "Curso não encontrado.";
+                RedirectToAction("MeusCursos");
+            }
+
+            var cursoVM = Mapper.Map<Curso, DetalhesCurso>(curso);
+
+            if (!VerificarCertificado(cursoVM)) return View("NaoAutorizado");
+            
             //return new PdfActionResult("Certificado", curso);
             //return View("Certificado", curso);
 
@@ -66,7 +81,7 @@ namespace STV.Controllers
             HTMLString.Append("</div>");
 
             string html = string.Format(HTMLString.ToString(), UsuarioLogado.Nome, curso.Titulo, curso.Instrutor.Nome, UsuarioLogado.Nome, DateTime.Today.ToString("dd/MM/yyyy"));
-            string css = @".Nome{padding:320px 0 50px;font-family:'Kunstler Script';font-size:400%;color:#036;text-align:center;position:absolute;width:500px;height:535px;overflow-y:hidden;}.Curso{padding:0px 0 0 20px;font-family:'Arial';color:#036;font-size:100%;text-align:center;position:absolute;width:580px;height:60px;overflow-y:hidden;}.Instrutor{padding:127px 0 0;font-family:'Arial';color:#036;font-size:100%;text-align:center;position:absolute;width:410px}.Aluno{padding:100px 0 0;font-family:'Arial';color:#036;font-size:100%;text-align:center;position:absolute;width:410px}.Data{padding:57px 0 0;font-family:'Freestyle Script';color:#036;font-size:200%;text-align:center;position:absolute;width:320px}.LabelData{padding:0;font-family:'Arial';color:#036;font-size:100%;text-align:center;position:absolute;width:320px}";
+            string css = @".Nome{padding:320px 0 50px;font-family:'Kunstler Script';font-size:350%;color:#036;text-align:center;position:absolute;width:500px;height:535px;overflow-y:hidden;}.Curso{padding:0px 0 0 20px;font-family:'Arial';color:#036;font-size:100%;text-align:center;position:absolute;width:580px;height:60px;overflow-y:hidden;}.Instrutor{padding:127px 0 0;font-family:'Arial';color:#036;font-size:100%;text-align:center;position:absolute;width:410px}.Aluno{padding:100px 0 0;font-family:'Arial';color:#036;font-size:100%;text-align:center;position:absolute;width:410px}.Data{padding:67px 0 0;font-family:'Freestyle Script';color:#036;font-size:150%;text-align:center;position:absolute;width:320px}.LabelData{padding:0;font-family:'Arial';color:#036;font-size:100%;text-align:center;position:absolute;width:320px}";
 
             if (RequestExtensions.IsMobileBrowser(Request.UserAgent))
             {
@@ -108,7 +123,7 @@ namespace STV.Controllers
 
                     using (var msCss = new MemoryStream(Encoding.UTF8.GetBytes(css)))
                     {
-                        using (var msHtml = new MemoryStream(Encoding.UTF8.GetBytes(HTMLString.ToString())))
+                        using (var msHtml = new MemoryStream(Encoding.UTF8.GetBytes(html)))
                         {
                             iTextSharp.tool.xml.XMLWorkerHelper.GetInstance().ParseXHtml(writer, document, msHtml, msCss);
                         }

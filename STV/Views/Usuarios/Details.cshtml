@@ -94,6 +94,6 @@
 </div>
 <p>
     @Html.ActionLink("Alterar", "Edit", new { id = Model.Idusuario }) |
-    <a href="@Url.Action("Index")" class="btn btn-default grid-control" data-toggle="tooltip" title="Voltar para Listagem">Voltar</a>|
+    <a href="@Url.Action("Index")" class="btn btn-default grid-control" data-toggle="tooltip" data-placement="auto" title="Voltar para Listagem">Voltar</a>|
     @Html.ActionLink("Print", "PDF",new { id = Model.Idusuario }, new { target = "_blank" })
 </p>

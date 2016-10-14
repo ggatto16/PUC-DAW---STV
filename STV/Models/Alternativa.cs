@@ -11,6 +11,7 @@
 
         [Required(AllowEmptyStrings = false, ErrorMessage = "Este campo é obrigatório")]
         [StringLength(1000)]
+        [Display(Name = "Descrição")]
         public string Descricao { get; set; }
 
         [StringLength(1000)]

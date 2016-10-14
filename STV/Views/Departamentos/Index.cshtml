@@ -52,12 +52,12 @@
                     @Html.ActionLink(item.Descricao, "Details", new { id = item.Iddepartamento })
                 </td>
                 <td>
-                    <a href="@Url.Action("Edit", new { id = item.Iddepartamento })" class="btn-sm btn-primary btn-alterar" data-toggle="tooltip" title="Alterar">
+                    <a href="@Url.Action("Edit", new { id = item.Iddepartamento })" class="btn-sm btn-primary btn-alterar" data-toggle="tooltip" data-placement="auto" title="Alterar">
                         <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                     </a>
                 </td>
                 <td>
-                    <a href="@Url.Action("Delete", new { id = item.Iddepartamento })" class="btn-sm btn-danger btn-excluir" data-toggle="tooltip" title="Excluir">
+                    <a href="@Url.Action("Delete", new { id = item.Iddepartamento })" class="btn-sm btn-danger btn-excluir" data-toggle="tooltip" data-placement="auto" title="Excluir">
                         <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                     </a>
                 </td>

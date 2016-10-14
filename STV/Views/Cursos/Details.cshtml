@@ -13,7 +13,7 @@
     <div>
         <h2>Curso - @Model.Titulo</h2>
 
-        <input type="hidden" value="@Model.Idcurso" id="Idcurso" />
+        @Html.HiddenFor(model => model.Idcurso)
 
         @if (!User.IsInRole("Admin"))
         {
@@ -72,12 +72,12 @@
 
             @if (User.IsInRole("Default") && !Model.IsInstutor)
             {
-                <dt>
+                <dt style="margin-top: 7px;">
                     @Html.DisplayName("Minha Avaliação")
                 </dt>
 
                 <dd>
-                    <span class="starRating">
+                    <span class="starRating" style="margin-bottom: 5px;">
                         @Html.RadioButton("rating", "10", Model.NotaCursoAtual.Pontos == 10 ? true : false, new { id = "rating10" })
                         <label for="rating10">5</label>
                         @Html.RadioButton("rating", "8", Model.NotaCursoAtual.Pontos == 8 ? true : false, new { id = "rating8" })
@@ -93,7 +93,7 @@
                     <span id="Avaliado" style="display: none">
                         Avaliado!
                     </span>
-                    <button type="button" class="btn-sm btn-warning" data-toggle="modal" data-target="#myModal">
+                    <button type="button" class="btn-sm btn-default" data-toggle="modal" data-target="#myModal">
                         Comentar
                     </button>
                 </dd>
@@ -126,31 +126,50 @@
     </div>
 
     <p>
-        @Html.ActionLink("Alterar", "Edit", new { id = Model.Idcurso }, new { @class = "btn btn-primary" }) 
-        <a href="@Url.Action("Index")" class="btn btn-default grid-control" data-toggle="tooltip" title="Voltar para Listagem">Voltar</a>
-
         @if (Model.DisponibilizarCertificado)
         {
-            @Html.ActionLink("Gerar Certificado", "Certificado", new { id = Model.Idcurso }, new { @class = "btn btn-sccess" })
+            <a href="@Url.Action("Certificado", "Cursos", new { id = Model.Idcurso })" class="btn btn-success" target="_blank">
+                <span class="glyphicon glyphicon-education"></span> Certificado
+            </a>
         }
-    </p>
-    <hr />
 
-    <h3>Unidades</h3>
-
-    @if (User.IsInRole("Admin") || Model.IsInstutor)
-    {
-        <p>
-            @if (Model.Encerrado)
+        @if (User.IsInRole("Admin"))
+        {
+            @Html.ActionLink("Alterar", "Edit", new { id = Model.Idcurso }, new { @class = "btn btn-primary" }) 
+            <a href="@Url.Action("Index")" class="btn btn-default grid-control" data-toggle="tooltip" data-placement="auto" title="Voltar para Listagem">Voltar</a>
+        }
+        else
+        {
+            if (Model.IsInstutor)
             {
-                <input type="button" class="btn-sm btn-success" value="Adicionar" disabled="disabled" data-toggle="tooltip" title="O curso está encerrado. Não é possível alterar." />
+                <a href="@Url.Action("MeusCursosGerenciaveis")" class="btn btn-default grid-control" data-toggle="tooltip" data-placement="auto" title="Voltar para Listagem">Voltar</a>
             }
             else
             {
-                @Html.ActionLink("Adicionar", "Create", "Unidades", new { Idcurso = Model.Idcurso }, new { @class = "btn-sm btn-success" })
+                <a href="@Url.Action("MeusCursos")" class="btn btn-default grid-control" data-toggle="tooltip" data-placement="auto" title="Voltar para Listagem">Voltar</a>
             }
-        </p>
-    }
+        }
+
+        
+    </p>
+    <hr />
+    <p>
+        <h3>
+            Unidades &nbsp;
+            @if (User.IsInRole("Admin") || Model.IsInstutor)
+            {
+                if (Model.Encerrado)
+                {
+                    <input type="button" class="btn-sm btn-success" value="Adicionar" disabled="disabled" data-toggle="tooltip" data-placement="auto" title="O curso está encerrado. Não é possível alterar." />
+                }
+                else
+                {
+                    @Html.ActionLink("Adicionar", "Create", "Unidades", new { Idcurso = Model.Idcurso }, new { @class = "btn-sm btn-success" })
+                }
+
+            }
+        </h3>
+    </p>
     <table class="table table-striped">
         @{
             foreach (var unidade in Model.Unidades)
@@ -178,12 +197,12 @@
                     @if (User.IsInRole("Admin") || Model.IsInstutor)
                     {
                         <td>
-                            <a href="@Url.Action("Edit", new { id = unidade.Idunidade })" class="btn-sm btn-primary btn-alterar" data-toggle="tooltip" title="Alterar">
+                            <a href="@Url.Action("Edit", new { id = unidade.Idunidade })" class="btn-sm btn-primary" data-toggle="tooltip" data-placement="auto" title="Alterar">
                                 <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                             </a>
                         </td>
                         <td>
-                            <a href="@Url.Action("Delete", new { id = unidade.Idunidade })" class="btn-sm btn-danger btn-excluir" data-toggle="tooltip" title="Excluir">
+                            <a href="@Url.Action("Delete", new { id = unidade.Idunidade })" class="btn-sm btn-danger" data-toggle="tooltip" data-placement="auto" title="Excluir">
                                 <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                             </a>
                         </td>
