@@ -1,7 +1,7 @@
 ﻿@model STV.Models.Atividade
 
 @{
-    ViewBag.Title = "Details";
+    ViewBag.Title = "Atividade";
 }
 
 <script>var trSelecionada = 'tr_@ViewBag.QuestaoSelecionada';</script>
@@ -12,11 +12,10 @@
     <li class="active">Detalhes da Atividade</li>
 </ol>
 
-<h2>Details</h2>
+<h2>Atividade</h2>
 
 <div class="col-md-6">
     <div>
-        <h4>Atividade</h4>
         <hr />
         <dl class="dl-horizontal">
             <dt>
@@ -51,73 +50,76 @@
         </dl>
     </div>
     <p>
-        @Html.ActionLink("Alterar", "Edit", new { id = Model.Idatividade }, new { @class = "btn btn-primary" }) 
+        @Html.ActionLink("Alterar", "Edit", new { id = Model.Idatividade }, new { @class = "btn btn-primary" })
         <a href="@Url.Action("Details", "Cursos", new { id = Model.Unidade.Idcurso, Idunidade = Model.Idunidade })" class="btn btn-default grid-control" data-toggle="tooltip" title="Voltar para Listagem">Voltar</a>
     </p>
 
     <hr />
 
-    <div class="form-group">
 
-        <h4>Questões</h4>
+    <h4>Questões</h4>
 
-        <div class="col-md-10">
-            @if (Model.DataAbertura < DateTime.Now)
+    <p>
+        @if (Model.DataAbertura < DateTime.Now)
+        {
+            <input type="button" class="btn-sm btn-success" value="Adicionar" disabled="disabled" data-toggle="tooltip" title="A atividade está aberta. Não é possível alterar." />
+        }
+        else
+        {
+            Html.ActionLink("Adicionar", "Create", "Questoes", new { Idatividade = Model.Idatividade }, new { @class = "btn-sm btn-success" });
+
+        }
+    </p>
+
+    <table class="table table-striped">
+        @foreach (var questao in Model.Questoes.OrderBy(x => x.Numero))
+        {
+            var questaoSelecionada = string.Empty;
+            var tooltip = string.Empty;
+            if (ViewBag.QuestaoSelecionada == questao.Idquestao)
             {
-                <input type="button" class="btn btn-success" value="Adicionar" disabled="disabled" data-toggle="tooltip" title="A atividade está aberta. Não é possível alterar." />
+                questaoSelecionada = "info";
             }
             else
             {
-                <p>@Html.ActionLink("Adicionar", "Create", "Questoes", new { Idatividade = Model.Idatividade }, new { @class = "btn btn-success" })</p>
+                questaoSelecionada = string.Empty;
             }
-
-            <table class="table table-striped">
-                @foreach (var questao in Model.Questoes.OrderBy(x => x.Numero))
+            if (questao.IdalternativaCorreta == null)
+            {
+                tooltip = "Atenção! Questão sem alternativas não será publicada.";
+                questaoSelecionada = "danger";
+            }
+            <tr class="@questaoSelecionada" id="tr_@questao.Idquestao" data-toggle="tooltip" title="@tooltip">
+                <td>
+                    @Html.DisplayFor(modelItem => questao.Numero)
+                </td>
+                <td>
+                    @Ajax.ActionLink((questao.Descricao.Length > 50) ? questao.Descricao.Substring(0, 50) + "..." : questao.Descricao, "CarregarAlternativas", "Questoes", new { Idquestao = questao.Idquestao }, new AjaxOptions { UpdateTargetId = "Alternativas", InsertionMode = InsertionMode.Replace, HttpMethod = "Get", OnBegin = "onBeginAjax", OnComplete = "debugger; SetInfoClass(tr_" + questao.Idquestao + ")" })
+                </td>
+                <td>
+                </td>
+                    <a href="#" class="btn-sm btn-danger btn-excluir" data-toggle="tooltip" title="Ver questão completa">
+                        <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                    </a>
+                <td>
+                    <a href="@Url.Action("Edit", "Questoes", new { id = questao.Idquestao })" class="btn-sm btn-primary btn-alterar" data-toggle="tooltip" title="Alterar">
+                        <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                    </a>
+                </td>
+                <td>
+                    <a href="@Url.Action("Delete", "Questoes", new { id = questao.Idquestao })" class="btn-sm btn-danger btn-excluir" data-toggle="tooltip" title="Excluir">
+                        <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                    </a>
+                </td>
+                @if (questaoSelecionada == "danger")
                 {
-                    var questaoSelecionada = string.Empty;
-                    var tooltip = string.Empty;
-                    if (ViewBag.QuestaoSelecionada == questao.Idquestao)
-                    {
-                        questaoSelecionada = "info";
-                    }
-                    else
-                    {
-                        questaoSelecionada = string.Empty;
-                    }
-                    if (questao.IdalternativaCorreta == null)
-                    {
-                        tooltip = "Atenção! Questão sem alternativas não será publicada.";
-                        questaoSelecionada = "danger";
-                    }
-                    <tr class="@questaoSelecionada" id="tr_@questao.Idquestao" data-toggle="tooltip" title="@tooltip">
-                        <td>
-                            @Html.DisplayFor(modelItem => questao.Numero)
-                        </td>
-                        <td>
-                            @{ var enunciado = (questao.Descricao.Length > 50)? questao.Descricao.Substring(0, 50) + "..." : questao.Descricao; }
-                            @Html.Raw(enunciado)
-                        </td>
-                        <td>
-                            <a href="@Url.Action("Edit", "Questoes", new { id = questao.Idquestao })" class="btn-sm btn-primary grid-control" data-toggle="tooltip" title="Alterar">
-                                <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-                            </a>
-                            <a href="@Url.Action("Delete", "Questoes", new { id = questao.Idquestao })" class="btn-sm btn-danger grid-control" data-toggle="tooltip" title="Excluir">
-                                <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-                            </a>
-
-                            @Ajax.ActionLink("Alternativas", "CarregarAlternativas", "Questoes", new { Idquestao = questao.Idquestao }, new AjaxOptions { UpdateTargetId = "Alternativas", InsertionMode = InsertionMode.Replace, HttpMethod = "Get", OnBegin = "onBeginAjax", OnComplete = "debugger; SetInfoClass(tr_" + questao.Idquestao + ")" }) 
-                        </td>
-                        @if (questaoSelecionada == "danger")
-                        {
-                            <td><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span></td>
-                        }
-                    </tr>
+                    <td><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span></td>
                 }
-            </table>
-        </div>
-    </div>
-
+            </tr>
+        }
+    </table>
 </div>
+
 
 <div class="col-md-6">
     <div id="Alternativas"></div>
@@ -133,9 +135,9 @@
             @if (ViewBag.QuestaoSelecionada != null)
             {
                 <text>
-                    var url = '@Url.Action("CarregarAlternativas", "Questoes", new { Idquestao = ViewBag.QuestaoSelecionada })';
-                    $.post(url, null, function (data) { $('#Alternativas').html(data); });
-                </text>
+            var url = '@Url.Action("CarregarAlternativas", "Questoes", new { Idquestao = ViewBag.QuestaoSelecionada })';
+            $.post(url, null, function (data) { $('#Alternativas').html(data); });
+            </text>
             }
         });
 

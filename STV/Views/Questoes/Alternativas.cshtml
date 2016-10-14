@@ -3,11 +3,13 @@
 <h4> Alternativas </h4>
 
 <div class="pull-right">
-    <a href="javascript:void(0);" onclick='$("#Alternativas").empty(); $("#" + trSelecionada).removeClass("info");'>Fechar</a>
+    <p>
+        <a href="javascript:void(0);" onclick='$("#Alternativas").empty(); $("#" + trSelecionada).removeClass("info");' class="btn btn-default">Fechar</a>
+    </p>
 </div>
 
 <p>
-    @Html.ActionLink("Adicionar", "Create", "Alternativas", new { Idquestao = Model.Idquestao }, new { @class = "btn btn-success" })
+    @Html.ActionLink("Adicionar", "Create", "Alternativas", new { Idquestao = Model.Idquestao }, new { @class = "btn-sm btn-success" })
 </p>
 
 <table class="table table-striped">
@@ -16,27 +18,42 @@
             @Html.DisplayNameFor(model => model.Alternativas.FirstOrDefault().Descricao)
         </th>
         <th></th>
+        <th></th>
+        <th></th>
     </tr>
 
     @foreach (var item in Model.Alternativas)
     {
-        var correta = string.Empty;
+        var trcorreta = string.Empty;
+        var txtcorreta = string.Empty;
         var tooltip = "Alternativa Incorreta";
 
         if (item.Idalternativa == Model.IdalternativaCorreta)
         {
-            correta = "success";
+            trcorreta = "success";
+            txtcorreta = "text-success";
             tooltip = "Alternativa Correta";
         }
 
-        <tr class="@correta" data-toggle="tooltip" data-placement="bottom" title="@tooltip">
+        <tr class="@trcorreta @txtcorreta" data-toggle="tooltip" data-placement="bottom" title="@tooltip">
             <td>
-                @Html.DisplayFor(modelItem => item.Descricao)
+                @Html.ActionLink(item.Descricao, "Details", "Alternativas", new { id = item.Idalternativa }, null)
             </td>
             <td>
-                @Html.ActionLink("Alterar", "Edit", "Alternativas", new { id = item.Idalternativa }, null) |
-                @Html.ActionLink("Details", "Details", "Alternativas", new { id = item.Idalternativa }, null) |
-                @Html.ActionLink("Excluir", "Delete", "Alternativas", new { id = item.Idalternativa }, null)
+                @if (item.Idalternativa == Model.IdalternativaCorreta)
+                {
+                    <span class="glyphicon glyphicon-check" aria-hidden="true"></span>
+                }
+            </td>
+            <td>
+                <a href="@Url.Action("Edit", "Alternativas", new { id = item.Idalternativa })" class="btn-sm btn-primary btn-alterar" data-toggle="tooltip" title="Alterar">
+                    <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                </a>
+            </td>
+            <td>
+                <a href="@Url.Action("Delete", "Alternativas", new { id = item.Idalternativa })" class="btn-sm btn-danger btn-excluir" data-toggle="tooltip" title="Excluir">
+                    <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                </a>
             </td>
         </tr>
     }

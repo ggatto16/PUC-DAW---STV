@@ -38,7 +38,7 @@ namespace STV.Controllers
             var RelatorioUsuario = Mapper.Map<Usuario, RelatorioUsuario>(usuario);
 
             // return new PdfActionResult("PDF", RelatorioUsuario);
-            //return View("PDF", RelatorioUsuario);
+            //return View("Relatorio", RelatorioUsuario);
 
             return new PdfActionResult("Relatorio", RelatorioUsuario, (writer, document) =>
             {

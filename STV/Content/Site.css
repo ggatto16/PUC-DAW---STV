@@ -3,6 +3,21 @@
     margin-left: 5px;
     margin-right: 5px;
 }
+@media only screen and (min-device-width: 480px) {
+    /* define mobile specific styles come here */
+    .btn-excluir span:after {
+        content: " Excluir";
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    }
+    .btn-alterar span:after {
+        content: " Alterar";
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    }
+    .btn-relatorio span:after {
+        content: " Relatório";
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    }
+}
 
 .Mensagem {
     display: none; 

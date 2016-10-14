@@ -42,6 +42,7 @@
                 @Html.DisplayNameFor(model => model.Descricao)
             </th>
             <th></th>
+            <th></th>
         </tr>
 
         foreach (var item in Model)
@@ -51,10 +52,12 @@
                     @Html.ActionLink(item.Descricao, "Details", new { id = item.Iddepartamento })
                 </td>
                 <td>
-                    <a href="@Url.Action("Edit", new { id = item.Iddepartamento })" class="btn-sm btn-primary grid-control" data-toggle="tooltip" title="Alterar">
+                    <a href="@Url.Action("Edit", new { id = item.Iddepartamento })" class="btn-sm btn-primary btn-alterar" data-toggle="tooltip" title="Alterar">
                         <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                     </a>
-                    <a href="@Url.Action("Delete", new { id = item.Iddepartamento })" class="btn-sm btn-danger grid-control" data-toggle="tooltip" title="Excluir">
+                </td>
+                <td>
+                    <a href="@Url.Action("Delete", new { id = item.Iddepartamento })" class="btn-sm btn-danger btn-excluir" data-toggle="tooltip" title="Excluir">
                         <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                     </a>
                 </td>

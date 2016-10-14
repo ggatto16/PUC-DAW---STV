@@ -143,11 +143,11 @@
         <p>
             @if (Model.Encerrado)
             {
-                <input type="button" class="btn btn-success" value="Adicionar" disabled="disabled" data-toggle="tooltip" title="O curso está encerrado. Não é possível alterar." />
+                <input type="button" class="btn-sm btn-success" value="Adicionar" disabled="disabled" data-toggle="tooltip" title="O curso está encerrado. Não é possível alterar." />
             }
             else
             {
-                @Html.ActionLink("Adicionar", "Create", "Unidades", new { Idcurso = Model.Idcurso }, new { @class = "btn btn-success" })
+                @Html.ActionLink("Adicionar", "Create", "Unidades", new { Idcurso = Model.Idcurso }, new { @class = "btn-sm btn-success" })
             }
         </p>
     }
@@ -175,17 +175,19 @@
                             @Html.Raw("<td>" + unidade.Titulo + "</td><td>Abrirá em " + unidade.DataAbertura + "</td>");
                         }
                     </td>
-                    <td>
-                        @if (User.IsInRole("Admin") || Model.IsInstutor)
-                        {
-                            <a href="@Url.Action("Edit", new { id = unidade.Idunidade })" class="btn-sm btn-primary grid-control" data-toggle="tooltip" title="Alterar">
+                    @if (User.IsInRole("Admin") || Model.IsInstutor)
+                    {
+                        <td>
+                            <a href="@Url.Action("Edit", new { id = unidade.Idunidade })" class="btn-sm btn-primary btn-alterar" data-toggle="tooltip" title="Alterar">
                                 <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                             </a>
-                            <a href="@Url.Action("Delete", new { id = unidade.Idunidade })" class="btn-sm btn-danger grid-control" data-toggle="tooltip" title="Excluir">
+                        </td>
+                        <td>
+                            <a href="@Url.Action("Delete", new { id = unidade.Idunidade })" class="btn-sm btn-danger btn-excluir" data-toggle="tooltip" title="Excluir">
                                 <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                             </a>
-                        }
-                    </td>
+                        </td>
+                    }
                 </tr>
             }
         }

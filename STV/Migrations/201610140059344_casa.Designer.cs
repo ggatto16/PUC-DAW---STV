@@ -7,13 +7,13 @@ namespace STV.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class sdl : IMigrationMetadata
+    public sealed partial class casa : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(sdl));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(casa));
         
         string IMigrationMetadata.Id
         {
-            get { return "201610131150053_sdl"; }
+            get { return "201610140059344_casa"; }
         }
         
         string IMigrationMetadata.Source

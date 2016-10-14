@@ -40,7 +40,16 @@
         }
     </div>
 
-    @foreach (var curso in Model.Cursos)
+@if (Model.Cursos.Count() == 0)
+{
+    <div style="text-align: center; width: 100%; margin-top: 30px;">
+        <h2>Nada para ver aqui</h2>
+        Este usuário não participou de nenhum curso até agora
+    </div>
+}
+else
+{
+    foreach (var curso in Model.Cursos)
     {
         var notaMaximaCurso = 0;
         var notaAlunoCurso = 0;
@@ -157,7 +166,7 @@
             </div>
         }
         var aprovado = false;
-        if (curso.Dtfinal < DateTime.Now)
+        if (curso.Encerrado)
         {
             var qtdMateriaisColsultadosCurso = Model.MateriaisConsultados.Where(m => m.Unidade.Idcurso == curso.Idcurso).Count();
             var porcentagemNotaCurso = 0;
@@ -182,4 +191,5 @@
         }
         <div style="page-break-after: always"></div>
     }
+}
 </div>

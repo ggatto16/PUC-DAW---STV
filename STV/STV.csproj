@@ -259,9 +259,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201610131150053_sdl.cs" />
-    <Compile Include="Migrations\201610131150053_sdl.Designer.cs">
-      <DependentUpon>201610131150053_sdl.cs</DependentUpon>
+    <Compile Include="Migrations\201610140059344_casa.cs" />
+    <Compile Include="Migrations\201610140059344_casa.Designer.cs">
+      <DependentUpon>201610140059344_casa.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -353,7 +353,7 @@
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
-    <None Include="Properties\PublishProfiles\stvkd - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\stvkd.pubxml" />
     <None Include="Scripts\jquery-2.2.4.intellisense.js" />
     <Content Include="Scripts\fileinput\fileinputSetup.js" />
     <Content Include="Scripts\jquery-2.2.4.js" />
@@ -496,8 +496,8 @@
     <Folder Include="Views\NotasCurso\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201610131150053_sdl.resx">
-      <DependentUpon>201610131150053_sdl.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201610140059344_casa.resx">
+      <DependentUpon>201610140059344_casa.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
