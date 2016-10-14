@@ -93,7 +93,7 @@
                     <span id="Avaliado" style="display: none">
                         Avaliado!
                     </span>
-                    <button type="button" class="btn-sm btn-default" data-toggle="modal" data-target="#myModal">
+                    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#myModal">
                         Comentar
                     </button>
                 </dd>
@@ -160,7 +160,7 @@
             {
                 if (Model.Encerrado)
                 {
-                    <input type="button" class="btn-sm btn-success" value="Adicionar" disabled="disabled" data-toggle="tooltip" data-placement="auto" title="O curso está encerrado. Não é possível alterar." />
+                    <input type="button" class="btn btn-success" value="Adicionar" disabled="disabled" data-toggle="tooltip" data-placement="auto" title="O curso está encerrado. Não é possível alterar." />
                 }
                 else
                 {
@@ -197,12 +197,12 @@
                     @if (User.IsInRole("Admin") || Model.IsInstutor)
                     {
                         <td>
-                            <a href="@Url.Action("Edit", new { id = unidade.Idunidade })" class="btn-sm btn-primary" data-toggle="tooltip" data-placement="auto" title="Alterar">
+                            <a href="@Url.Action("Edit", new { id = unidade.Idunidade })" class="btn btn-primary" data-toggle="tooltip" data-placement="auto" title="Alterar">
                                 <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                             </a>
                         </td>
                         <td>
-                            <a href="@Url.Action("Delete", new { id = unidade.Idunidade })" class="btn-sm btn-danger" data-toggle="tooltip" data-placement="auto" title="Excluir">
+                            <a href="@Url.Action("Delete", new { id = unidade.Idunidade })" class="btn btn-danger" data-toggle="tooltip" data-placement="auto" title="Excluir">
                                 <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                             </a>
                         </td>

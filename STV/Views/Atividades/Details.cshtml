@@ -61,7 +61,7 @@
             Questões &nbsp;
             @if (Model.DataAbertura < DateTime.Now)
             {
-                <input type="button" class="btn-sm btn-success" value="Adicionar" disabled="disabled" data-toggle="tooltip" data-placement="auto" title="A atividade está aberta. Não é possível alterar." />
+                <input type="button" class="btn btn-success" value="Adicionar" disabled="disabled" data-toggle="tooltip" data-placement="auto" title="A atividade está aberta. Não é possível alterar." />
             }
             else
             {
@@ -97,17 +97,17 @@
                 <td>
                 </td>
                 <td>
-                    <a  href="#" class="btn-sm btn-primary" onclick="AbrirModal('@questao.Descricao','Questão número @questao.Numero')" data-toggle="tooltip" data-placement="auto" title="Ver enunciado completo"> 
+                    <a  href="#" class="btn btn-primary" onclick="AbrirModal('@questao.Descricao','Questão número @questao.Numero')" data-toggle="tooltip" data-placement="auto" title="Ver enunciado completo"> 
                         <span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span>
                     </a>
                 </td>
                 <td>
-                    <a href="@Url.Action("Edit", "Questoes", new { id = questao.Idquestao })" class="btn-sm btn-primary" data-toggle="tooltip" data-placement="auto" title="Alterar">
+                    <a href="@Url.Action("Edit", "Questoes", new { id = questao.Idquestao })" class="btn btn-primary" data-toggle="tooltip" data-placement="auto" title="Alterar">
                         <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                     </a>
                 </td>
                 <td>
-                    <a href="@Url.Action("Delete", "Questoes", new { id = questao.Idquestao })" class="btn-sm btn-danger" data-toggle="tooltip" data-placement="auto" title="Excluir">
+                    <a href="@Url.Action("Delete", "Questoes", new { id = questao.Idquestao })" class="btn btn-danger" data-toggle="tooltip" data-placement="auto" title="Excluir">
                         <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                     </a>
                 </td>

@@ -65,17 +65,17 @@
                     @Html.ActionLink(item.Nome, "Details", new { id = item.Idusuario })
                 </td>
                 <td>
-                    <a href="@Url.Action("Edit", new { id = item.Idusuario })" class="btn-sm btn-primary btn-alterar" data-toggle="tooltip" data-placement="auto" title="Alterar">
+                    <a href="@Url.Action("Edit", new { id = item.Idusuario })" class="btn btn-primary btn-alterar" data-toggle="tooltip" data-placement="auto" title="Alterar">
                         <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                     </a>
                 </td>
                 <td>
-                    <a href="@Url.Action("Delete", new { id = item.Idusuario })" class="btn-sm btn-danger btn-excluir" data-toggle="tooltip" data-placement="auto" title="Excluir">
+                    <a href="@Url.Action("Delete", new { id = item.Idusuario })" class="btn btn-danger btn-excluir" data-toggle="tooltip" data-placement="auto" title="Excluir">
                         <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                     </a>
                 </td>
                 <td>
-                    <a href="@Url.Action("Relatorio", new { id = item.Idusuario })" class="btn-sm btn-info btn-relatorio" data-toggle="tooltip" data-placement="auto" title="Emitir Relatório" target="_blank">
+                    <a href="@Url.Action("Relatorio", new { id = item.Idusuario })" class="btn btn-info btn-relatorio" data-toggle="tooltip" data-placement="auto" title="Emitir Relatório" target="_blank">
                         <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>
                     </a>
                 </td>

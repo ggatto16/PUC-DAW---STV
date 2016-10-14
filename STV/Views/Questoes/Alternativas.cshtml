@@ -55,17 +55,17 @@ else
                 }
             </td>
             <td>
-                <a href="#" class="btn-sm btn-primary" onclick="AbrirModalAlternativa('@item.Descricao','@item.Justificativa')" data-toggle="tooltip" data-placement="auto" title="Ver alternativa completa">
+                <a href="#" class="btn btn-primary" onclick="AbrirModalAlternativa('@item.Descricao','@item.Justificativa')" data-toggle="tooltip" data-placement="auto" title="Ver alternativa completa">
                     <span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span>
                 </a>
             </td>
             <td>
-                <a href="@Url.Action("Edit", "Alternativas", new { id = item.Idalternativa })" class="btn-sm btn-primary" data-toggle="tooltip" data-placement="auto" title="Alterar">
+                <a href="@Url.Action("Edit", "Alternativas", new { id = item.Idalternativa })" class="btn btn-primary" data-toggle="tooltip" data-placement="auto" title="Alterar">
                     <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                 </a>
             </td>
             <td>
-                <a href="@Url.Action("Delete", "Alternativas", new { id = item.Idalternativa })" class="btn-sm btn-danger" data-toggle="tooltip" data-placement="auto" title="Excluir">
+                <a href="@Url.Action("Delete", "Alternativas", new { id = item.Idalternativa })" class="btn btn-danger" data-toggle="tooltip" data-placement="auto" title="Excluir">
                     <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                 </a>
             </td>
