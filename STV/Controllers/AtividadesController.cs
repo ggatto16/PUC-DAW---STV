@@ -71,17 +71,18 @@ namespace STV.Controllers
 
         public async Task<ActionResult> Revisao(int? id, int? index)
         {
+            Atividade atividade = null;
             try
             {
                 if (id == null)
-                    throw new ApplicationException("Ops! Requisição inválida.");
+                    throw new Exception("Ops! Requisição inválida.");
 
-                Atividade atividade = await db.Atividade
+                atividade = await db.Atividade
                     .Where(a => a.Idatividade == id)
                     .SingleOrDefaultAsync();
 
                 if (atividade == null)
-                    throw new ApplicationException("Ops! Atividade não encontrada.");
+                    throw new Exception("Atividade não encontrada.");
 
                 if (!CommonValidation.CanSee(atividade.Unidade.Curso, UsuarioLogado.Idusuario, User))
                     return View("NaoAutorizado");
@@ -93,13 +94,17 @@ namespace STV.Controllers
                 foreach(var questao in AtividadeModel.Questoes)
                 {
                     resp = db.Resposta.Find(UsuarioLogado.Idusuario, questao.Idquestao);
-                    if (resp == null) throw new ApplicationException("Questão não respondida");
-                    questao.IdAlternativaSelecionada = resp.Idalternativa;
+                    if (resp != null) questao.IdAlternativaSelecionada = resp.Idalternativa;
                 }
 
                 return View("Revisao", AtividadeModel);
             }
             catch (ApplicationException ex)
+            {
+                TempData["msgErr"] = ex.Message;
+                return RedirectToAction("Details", "Cursos", new { id = atividade.Unidade.Idcurso, Idunidade = atividade.Idunidade });
+            }
+            catch (Exception ex)
             {
                 TempData["msgErr"] = ex.Message;
                 return RedirectToAction("Index", "Home");

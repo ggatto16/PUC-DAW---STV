@@ -30,37 +30,45 @@
     <h4> @questao.Numero - @questao.Descricao </h4>
 
 
-        <table class="table">
-            @foreach (var alternativa in questao.Alternativas)
+    <table class="table">
+        @foreach (var alternativa in questao.Alternativas)
+        {
+            if (questao.IdalternativaCorreta == alternativa.Idalternativa)
             {
-                if (questao.IdalternativaCorreta == alternativa.Idalternativa)
-                {
-                    classe = "bg-success text-success";
-                }
-                else
-                {
-                    classe = "bg-danger text-danger";
-                }
-                <tr class="@classe">
-                    <td>
-                        @Html.RadioButtonFor(modelItem => questao.IdAlternativaSelecionada, alternativa.Idalternativa, (questao.Respostas.Count() > 0 && alternativa.Idalternativa == questao.Respostas.FirstOrDefault().Idalternativa) ? new { @checked = "checked" } : null) @alternativa.Descricao
-                        <br />
-                        <small>
-                            @if (questao.IdalternativaCorreta == alternativa.Idalternativa)
-                            {
-                                <span>Justificativa: &nbsp;</span><span class="text-success">@Html.Raw(alternativa.Justificativa)</span>
-                            }
-                            else
-                            {
-                                <span>Justificativa: &nbsp;</span><span class="text-danger">@Html.Raw(alternativa.Justificativa)</span>
-                            }
-                        </small>
-                    </td>
-                </tr>
+                classe = "bg-success text-success";
             }
-        </table>
+            else
+            {
+                classe = "bg-danger text-danger";
+            }
+            <tr class="@classe">
+                <td>
+                    @Html.RadioButtonFor(modelItem => questao.IdAlternativaSelecionada, alternativa.Idalternativa, (questao.Respostas.Count() > 0 && alternativa.Idalternativa == questao.Respostas.FirstOrDefault().Idalternativa) ? new { @checked = "checked" } : null) @alternativa.Descricao
+                    <br />
+                    <small>
+                        @if (questao.IdalternativaCorreta == alternativa.Idalternativa)
+                        {
+                            <span>Justificativa: &nbsp;</span><span class="text-success">@Html.Raw(alternativa.Justificativa)</span>
+                        }
+                        else
+                        {
+                            <span>Justificativa: &nbsp;</span><span class="text-danger">@Html.Raw(alternativa.Justificativa)</span>
+                        }
+                    </small>
+                </td>
+            </tr>
+        }
+    </table>
         <hr />
 }
+
+<div class="form-horizontal">
+    <div class="form-group">
+        <div class="col-md-10">
+            <a href="@Url.Action("Details", "Cursos", new { id = Model.Unidade.Idcurso, Idunidade = Model.Idunidade })" class="btn btn-default grid-control" data-toggle="tooltip" data-placement="auto" title="Voltar para Listagem">Voltar</a>
+        </div>
+    </div>
+</div>
 
 
 

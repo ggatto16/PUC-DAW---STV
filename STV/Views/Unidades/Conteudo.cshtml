@@ -24,46 +24,55 @@
 </p>
 
 <table class="table table-striped">
-    <thead>
-    <th>
-        @Html.DisplayNameFor(model => model.Materiais.FirstOrDefault().Descricao)
-    </th>
-    <th>
-        @Html.DisplayNameFor(model => model.Materiais.FirstOrDefault().Tipo)
-    </th>
-    @if (adminOrInstrutor)
+    @if (Model.Materiais.Count() == 0)
     {
-        <th></th>
-            <th></th>
+        <tr>
+            <td align="center">Nenhum Registro</td>
+        </tr>
     }
-    </thead>
-
-    <tbody>
-        @foreach (var item in Model.Materiais)
+    else
+    {
+        <thead>
+        <th>
+            @Html.DisplayNameFor(model => model.Materiais.FirstOrDefault().Descricao)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Materiais.FirstOrDefault().Tipo)
+        </th>
+        @if (adminOrInstrutor)
         {
-            <tr>
-                <td>
-                    @Html.ActionLink(item.Descricao, "Details", "Materiais", new { id = item.Idmaterial }, null)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Tipo)
-                </td>
-                @if (adminOrInstrutor)
-                {
-                    <td class="grid-control">
-                        <a href="@Url.Action("Edit", "Materiais", new { id = item.Idmaterial })" class="btn btn-primary" data-toggle="tooltip" data-placement="auto" title="Alterar">
-                            <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-                        </a>
-                    </td>
-                    <td class="grid-control">
-                        <a href="@Url.Action("Delete", "Materiais", new { id = item.Idmaterial })" class="btn btn-danger" data-toggle="tooltip" data-placement="auto" title="Excluir">
-                            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-                        </a>
-                    </td>
-                }
-            </tr>
+            <th></th>
+            <th></th>
         }
-    </tbody>
+        </thead>
+
+        <tbody>
+            @foreach (var item in Model.Materiais)
+            {
+                <tr>
+                    <td>
+                        @Html.ActionLink(item.Descricao, "Details", "Materiais", new { id = item.Idmaterial }, null)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Tipo)
+                    </td>
+                    @if (adminOrInstrutor)
+                    {
+                        <td class="grid-control">
+                            <a href="@Url.Action("Edit", "Materiais", new { id = item.Idmaterial })" class="btn btn-primary" data-toggle="tooltip" data-placement="auto" title="Alterar">
+                                <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                            </a>
+                        </td>
+                        <td class="grid-control">
+                            <a href="@Url.Action("Delete", "Materiais", new { id = item.Idmaterial })" class="btn btn-danger" data-toggle="tooltip" data-placement="auto" title="Excluir">
+                                <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                            </a>
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    }
 </table>
 
 <hr />
@@ -82,138 +91,147 @@
     <div class="col-sm-3" style="color: #3c763d;"><span class="glyphicon glyphicon-time"></span> Aberta</div>
     <div class="col-sm-3" style="color: #a94442;"><span class="glyphicon glyphicon-download"></span> Encerrada</div>
 </div>
+
 <table class="table table-striped">
+    @if (Model.AtividadesVM.Count() == 0)
+    {
+        <tr>
+            <td align="center">Nenhum Registro</td>
+        </tr>
+    }
+    else
+    {
+        <thead>
+        <th>Descrição</th>
+        <th style="text-align: center;">Situação</th>
+        <th align="center">
+            @if (!adminOrInstrutor)
+            {
+                @Html.Raw("Realizado")
+            }
+        </th>
+        <th></th>
+        </thead>
 
-    <thead>
-    <th>Descrição</th>
-    <th>Situação</th>
-    <th align="center">
-        @if (!adminOrInstrutor)
-        {
-            @Html.Raw("Realizado")
-        }
-    </th>
-    <th></th>
-    </thead>
-
-    <tbody>
-        @foreach (var item in Model.AtividadesVM)
+        <tbody>
+            @foreach (var item in Model.AtividadesVM)
             {
                 bool encerrada = item.DataEncerramento < DateTime.Now;
                 bool aberta = item.DataAbertura < DateTime.Now;
-            <tr>
-                <td>
-                    @Html.ActionLink(item.Descricao, "Details", "Atividades", new { id = item.Idatividade }, null)
-                </td>
+                <tr>
+                    <td>
+                        @Html.ActionLink(item.Descricao, "Details", "Atividades", new { id = item.Idatividade }, null)
+                    </td>
 
-                <td align="center" valign="middle" style="cursor: pointer;">
-                    @if (!encerrada && aberta)
-                    {
-                        <a onclick="MostrarSituacao('Iniciada e com encerramento em @item.DataEncerramento', '@item.Descricao')" data-toggle="tooltip" data-placement="auto" title="Aberta">
-                            <div class="td-link" style="color: #3c763d;">
-                                <span class="glyphicon glyphicon-time"></span>
-                            </div>
-                        </a>
-                    }
-                    else
-                    {
-                        if (!aberta)
+                    <td align="center" valign="middle" style="cursor: pointer;">
+                        @if (!encerrada && aberta)
                         {
-                            <a onclick="MostrarSituacao('Inicia em @item.DataAbertura', '@item.Descricao')" data-toggle="tooltip" data-placement="auto" title="Não iniciada">
-                                <div class="td-link">
-                                    <span class="glyphicon glyphicon-upload"></span>
+                            <a onclick="MostrarSituacao('Iniciada e com encerramento em @item.DataEncerramento.ToShortDateString()', '@item.Descricao')" data-toggle="tooltip" data-placement="auto" title="Aberta">
+                                <div class="td-link" style="color: #3c763d;">
+                                    <span class="glyphicon glyphicon-time"></span>
                                 </div>
                             </a>
                         }
                         else
                         {
-                            <a onclick="MostrarSituacao('Encerrada em @item.DataEncerramento', '@item.Descricao')" data-toggle="tooltip" data-placement="auto" title="Encerrada">
-                                <div class="td-link" style="color: #a94442;">
-                                    <span class="glyphicon glyphicon-download"></span>
-                                </div>
-                            </a>
-                        }
-                    }
-                </td>
-
-                @if (User.IsInRole("Default") && item.DataAbertura <= DateTime.Now && !Model.IsInstutor)
-                {
-                    if (item.Realizado < 100)
-                    {
-                        <td class="text-danger" align="center" valign="middle">
-                            <b>@Html.DisplayFor(modelItem => item.Realizado)@Html.Raw("%")</b>
-                        </td>
-                    }
-                    else
-                    {
-                        <td class="text-success" align="center" valign="middle">
-                            <b>@Html.DisplayFor(modelItem => item.Realizado)@Html.Raw("%")</b>
-                        </td>
-                    }
-
-                }
-
-                @if (!adminOrInstrutor)
-                {
-                    if (item.IsFinalizada)
-                    {
-                        <td class="success">
-                            @Html.Raw("Atividade Finalizada")
-                        </td>
-                    }
-                    else
-                    {
-                        if (!encerrada && aberta)
-                        {
-                            <td class="grid-control">
-                                <a href="@Url.Action("Responder", "Atividades", new { id = item.Idatividade })" class="btn btn-info" data-toggle="tooltip" data-placement="auto" title="Responder">
-                                    <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                            if (!aberta)
+                            {
+                                <a onclick="MostrarSituacao('Inicia em @item.DataAbertura.ToShortDateString()', '@item.Descricao')" data-toggle="tooltip" data-placement="auto" title="Não iniciada">
+                                    <div class="td-link">
+                                        <span class="glyphicon glyphicon-upload"></span>
+                                    </div>
                                 </a>
+                            }
+                            else
+                            {
+                                <a onclick="MostrarSituacao('Encerrada em @item.DataEncerramento.ToShortDateString()', '@item.Descricao')" data-toggle="tooltip" data-placement="auto" title="Encerrada">
+                                    <div class="td-link" style="color: #a94442;">
+                                        <span class="glyphicon glyphicon-download"></span>
+                                    </div>
+                                </a>
+                            }
+                        }
+                    </td>
+
+                    @if (User.IsInRole("Default") && item.DataAbertura <= DateTime.Now && !Model.IsInstutor)
+                    {
+                        if (item.Realizado < 100)
+                        {
+                            <td class="text-danger" align="center" valign="middle">
+                                <b>@Html.DisplayFor(modelItem => item.Realizado)@Html.Raw("%")</b>
                             </td>
-                                        <td class="grid-control">
-                                            <a href="@Url.Action("Finalizar", "Atividades", new { id = item.Idatividade })" class="btn btn-success" data-toggle="tooltip" data-placement="auto" title="Finalizar">
-                                                <span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>
-                                            </a>
-                                        </td>
                         }
                         else
                         {
-                            if (aberta)
+                            <td class="text-success" align="center" valign="middle">
+                                <b>@Html.DisplayFor(modelItem => item.Realizado)@Html.Raw("%")</b>
+                            </td>
+                        }
+
+                    }
+
+                    @if (!adminOrInstrutor)
+                    {
+                        if (item.IsFinalizada)
+                        {
+                            <td class="success">
+                                @Html.Raw("Atividade Finalizada")
+                            </td>
+                        }
+                        else
+                        {
+                            if (!encerrada && aberta)
                             {
                                 <td class="grid-control">
-                                    <a href="@Url.Action("Revisao", "Atividades", new { id = item.Idatividade })" class="btn btn-primary" data-toggle="tooltip" data-placement="auto" title="Revisão">
-                                        <span class="glyphicon glyphicon-tasks" aria-hidden="true"></span>
+                                    <a href="@Url.Action("Responder", "Atividades", new { id = item.Idatividade })" class="btn btn-info" data-toggle="tooltip" data-placement="auto" title="Responder">
+                                        <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
                                     </a>
                                 </td>
-                                            <td></td>
+                                            <td class="grid-control">
+                                                <a href="@Url.Action("Finalizar", "Atividades", new { id = item.Idatividade })" class="btn btn-success" data-toggle="tooltip" data-placement="auto" title="Finalizar">
+                                                    <span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>
+                                                </a>
+                                            </td>
+                            }
+                            else
+                            {
+                                if (aberta)
+                                {
+                                    <td class="grid-control">
+                                        <a href="@Url.Action("Revisao", "Atividades", new { id = item.Idatividade })" class="btn btn-primary" data-toggle="tooltip" data-placement="auto" title="Revisão">
+                                            <span class="glyphicon glyphicon-tasks" aria-hidden="true"></span>
+                                        </a>
+                                    </td>
+                                                <td></td>
+                                }
                             }
                         }
                     }
-                }
-                @if (adminOrInstrutor)
-                {
-                    if (!encerrada)
+                    @if (adminOrInstrutor)
                     {
-                        <td class="grid-control">
-                            <a href="@Url.Action("Edit", "Atividades", new { id = item.Idatividade })" class="btn btn-primary" data-toggle="tooltip" data-placement="auto" title="Alterar">
-                                <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-                            </a>
-                        </td>
-                        <td class="grid-control">
-                            <a href="@Url.Action("Delete", "Atividades", new { id = item.Idatividade })" class="btn btn-danger" data-toggle="tooltip" data-placement="auto" title="Excluir">
-                                <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-                            </a>
-                        </td>
+                        if (!encerrada)
+                        {
+                            <td class="grid-control">
+                                <a href="@Url.Action("Edit", "Atividades", new { id = item.Idatividade })" class="btn btn-primary" data-toggle="tooltip" data-placement="auto" title="Alterar">
+                                    <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                                </a>
+                            </td>
+                            <td class="grid-control">
+                                <a href="@Url.Action("Delete", "Atividades", new { id = item.Idatividade })" class="btn btn-danger" data-toggle="tooltip" data-placement="auto" title="Excluir">
+                                    <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                                </a>
+                            </td>
+                        }
+                        else
+                        {
+                            <td></td>
+                                        <td></td>
+                        }
                     }
-                    else
-                    {
-                        <td></td>
-                                    <td></td>
-                    }
-                }
-            </tr>
-        }
-    </tbody>
+                </tr>
+            }
+        </tbody>
+    }
 </table>
 
 @if (!adminOrInstrutor)

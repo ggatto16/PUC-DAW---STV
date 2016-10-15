@@ -165,54 +165,123 @@ namespace STV.Controllers
         [ValidateAntiForgeryToken]
         public async Task<JsonResult> UploadFile(int id)
         {
-            using (DbContextTransaction transaction = db.Database.BeginTransaction())
+            try
             {
-                try
+                var form = Request.Form;
+
+                if (string.IsNullOrEmpty(form["Idunidade"]))
+                    throw new ApplicationException("Ops! Requisição inválida.");
+
+                if (string.IsNullOrEmpty(form["Descricao"]))
+                    throw new ApplicationException("Descrição não informada.");
+
+                int tipoID = 0;
+                if (string.IsNullOrEmpty(form["Tipo"]) || form["Tipo"] == "0")
+                    throw new ApplicationException("Tipo não informado.");
+                else if (Convert.ToInt16(form["Tipo"]) < 1)
+                    throw new ApplicationException("Tipo inválido.");
+                else
+                    tipoID = Convert.ToInt16(form["Tipo"]);
+
+                bool isArquivo = tipoID == 1 || tipoID == 2 || tipoID == 4;
+
+                if (isArquivo)
                 {
-                    var form = Request.Form;
-                    var material = new Material
-                    {
-                        Idmaterial = Convert.ToInt32(form["Idmaterial"]),
-                        Descricao = form["Descricao"],
-                        Idunidade = Convert.ToInt32(form["Idunidade"]),
-                        Tipo = (TipoMaterial)Convert.ToInt32(form["Tipo"]),
-                        Unidade = db.Unidade.Find(Convert.ToInt32(form["Idunidade"])),
-                        URL = form["URL"]
-                    };
+                    if (Request.Files.Count == 0)
+                        throw new ApplicationException("Arquivo não selecionado.");
+                }
+                else if (string.IsNullOrEmpty(form["URL"]))
+                    throw new ApplicationException("URL não informada.");
 
-                    foreach (string file in Request.Files)
-                    {
-                        var fileContent = Request.Files[file];
-                        if (fileContent != null && fileContent.ContentLength > 0)
-                        {
-                            GetUploadInfo(ref material, fileContent);
-                            db.Material.Add(material);
-                            await db.SaveChangesAsync();
+                var material = new Material
+                {
+                    Idmaterial = Convert.ToInt32(form["Idmaterial"]),
+                    Descricao = form["Descricao"],
+                    Idunidade = Convert.ToInt32(form["Idunidade"]),
+                    Tipo = (TipoMaterial)Convert.ToInt16(form["Tipo"]),
+                    Unidade = db.Unidade.Find(Convert.ToInt32(form["Idunidade"])),
+                    URL = form["URL"]
+                };
 
-                            //Grava o conteúdo do arquivo no banco de dados
-                            using (VarbinaryStream blob = new VarbinaryStream(
-                                db.Database.Connection.ConnectionString,
-                                "Arquivo",
-                                "Blob",
-                                "Idmaterial",
-                                material.Idmaterial, db, fileContent.ContentLength))
-                            {
-                                await fileContent.InputStream.CopyToAsync(blob, 65536);
-                            }
-                        }
+                if (isArquivo)
+                {
+                    string extensao = Path.GetExtension(Request.Files[0].FileName);
+                    string[] valids;
+                    switch (material.Tipo)
+                    {
+                        case TipoMaterial.Video:
+                            valids = new string[2] { ".mp4", ".webm" };
+                            if (!valids.Contains(extensao))
+                                throw new ApplicationException("Extensão do arquivo inválida.");
+                            break;
+                        case TipoMaterial.Arquivo:
+                            valids = new string[11] { ".doc", ".docx", ".xls", ".xlsx", ".pdf", ".rar", ".zip", ".txt", ".ppt", ".pptx", ".exe" };
+                            if (!valids.Contains(extensao))
+                                throw new ApplicationException("Extensão do arquivo inválida.");
+                            break;
+                        case TipoMaterial.Imagem:
+                            valids = new string[3] { ".jpg", ".png", ".gif" };
+                            if (!valids.Contains(extensao))
+                                throw new ApplicationException("Extensão do arquivo inválida.");
+                            break;
+                        default:
+                            break;
                     }
 
-                    transaction.Commit();
-                    TempData["msg"] = "Material criado!";
-                    Response.StatusCode = (int)HttpStatusCode.OK;
-                    return Json("File uploaded successfully");
+                    using (DbContextTransaction transaction = db.Database.BeginTransaction())
+                    {
+                        try
+                        {
+                            foreach (string file in Request.Files)
+                            {
+                                var fileContent = Request.Files[file];
+                                if (fileContent != null && fileContent.ContentLength > 0)
+                                {
+                                    GetUploadInfo(ref material, fileContent);
+                                    db.Material.Add(material);
+                                    await db.SaveChangesAsync();
+
+                                    //Grava o conteúdo do arquivo no banco de dados
+                                    using (VarbinaryStream blob = new VarbinaryStream(
+                                        db.Database.Connection.ConnectionString,
+                                        "Arquivo",
+                                        "Blob",
+                                        "Idmaterial",
+                                        material.Idmaterial, db, fileContent.ContentLength))
+                                    {
+                                        await fileContent.InputStream.CopyToAsync(blob, 65536);
+                                    }
+                                }
+                            }
+                            transaction.Commit();
+                        }
+                        catch (Exception)
+                        {
+                            transaction.Rollback();
+                            throw;
+                        }
+
+                    }
                 }
-                catch (Exception ex)
+                else
                 {
-                    transaction.Rollback();
-                    Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                    return Json(ex.Message);
+                    ModelState.Clear();
+                    TryValidateModel(material);
+                    if (!ModelState.IsValidField("URL"))
+                        throw new ApplicationException(ModelState["URL"].Errors.First().ErrorMessage);
+
+                    db.Material.Add(material);
+                    await db.SaveChangesAsync();
                 }
+
+                TempData["msg"] = "Material criado!";
+                Response.StatusCode = (int)HttpStatusCode.OK;
+                return Json("Material criado!");
+            }
+            catch (Exception ex)
+            {
+                Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                return Json(ex.Message);
             }
         }
 

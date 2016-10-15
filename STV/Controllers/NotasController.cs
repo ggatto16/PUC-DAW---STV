@@ -32,9 +32,23 @@ namespace STV.Controllers
             var notas = db.Nota.Include(n => n.Atividade)
                 .Where(n => n.Idusuario == UsuarioLogado.Idusuario && n.Atividade.Idunidade == Idunidade && n.Atividade.DataEncerramento < DateTime.Now);
 
-            ViewBag.Unidade = await db.Unidade.Where(u => u.Idunidade == Idunidade)
-                .Select(u => u.Titulo).SingleAsync();
-                
+            //ViewBag.Unidade = await db.Unidade.Where(u => u.Idunidade == Idunidade)
+            //    .Select(u => u.Titulo).SingleAsync();
+
+           var objUnidade = await db.Unidade.Where(u => u.Idunidade == Idunidade)
+                .Select(u => new
+                {
+                    Idunidade = u.Idunidade,
+                    Titulo = u.Titulo,
+                    Idcurso = u.Idcurso,
+                    Curso = u.Curso.Titulo
+                }).SingleAsync();
+
+            ViewBag.Idunidade = objUnidade.Idunidade;
+            ViewBag.Titulo = objUnidade.Titulo;
+            ViewBag.Idcurso = objUnidade.Idcurso;
+            ViewBag.Curso = objUnidade.Curso;
+
             return View(notas);
         }
     }

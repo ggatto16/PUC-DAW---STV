@@ -4,12 +4,33 @@
     ViewBag.Title = "Minhas Notas";
 }
 
+<ol class="breadcrumb">
+    <li><a href="~/Cursos/Details/@ViewBag.Idcurso">@ViewBag.Curso</a></li>
+    <li><a href="~/Cursos/Details/@ViewBag.Idcurso?Idunidade=@ViewBag.Idunidade">@ViewBag.Titulo</a></li>
+    <li class="active">Minhas Notas</li>
+</ol>
+
 <h2>Minhas Notas - @ViewBag.Unidade</h2>
 
-<table class="table">
+<h4>Atividades</h4>
+<table class="table table-striped">
+@if (Model.Count() == 0)
+{
+    <tr>
+        <td align="center">Nenhum Registro</td>
+    </tr>
+}
+else
+{
     <tr>
         <th>
             @Html.DisplayNameFor(model => model.Atividade.Descricao)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Atividade.DataEncerramento)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Atividade.Valor)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Pontos)
@@ -24,10 +45,23 @@
                 @Html.DisplayFor(modelItem => item.Atividade.Descricao)
             </td>
             <td>
+                @Html.DisplayFor(modelItem => item.Atividade.DataEncerramento)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Atividade.Valor)
+            </td>
+            <td>
                 @Html.DisplayFor(modelItem => item.Pontos)
             </td>
         </tr>
     }
-
+}
 </table>
 
+<div class="form-horizontal">
+    <div class="form-group">
+        <div class="col-md-10">
+            <a href="@Url.Action("Details", "Cursos", new { id = ViewBag.Idcurso, Idunidade = ViewBag.Idunidade })" class="btn btn-default grid-control" data-toggle="tooltip" data-placement="auto" title="Voltar para Listagem">Voltar</a>
+        </div>
+    </div>
+</div>

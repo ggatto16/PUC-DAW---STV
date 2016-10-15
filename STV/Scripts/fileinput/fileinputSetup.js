@@ -1,7 +1,7 @@
 ﻿function PrepararFileUpload(tipoID) {
-
+    debugger;
     switch (tipoID) {
-        case "1":
+        case 1:
             $("#Arquivo").fileinput({
                 language: 'pt-BR',
                 maxFileCount: 1,
@@ -15,7 +15,7 @@
             });
             break;
 
-        case "2":
+        case 2:
             $("#Arquivo").fileinput({
                 language: 'pt-BR',
                 maxFileCount: 1,
@@ -28,7 +28,7 @@
             });
             break;            
 
-        case "4":
+        case 4:
             $("#Arquivo").fileinput({
                 language: 'pt-BR',
                 maxFileCount: 1,
