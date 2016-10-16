@@ -17,7 +17,8 @@
 
         [Display(Name = "Enunciado")]
         [Required(AllowEmptyStrings = false, ErrorMessage = "Este campo é obrigatório")]
-        [StringLength(1000, ErrorMessage = "Este campo suporta um mínimo 10 e um máximo de 1000 caracteres", MinimumLength = 10)]
+        [StringLength(1000, ErrorMessage = "Este campo suporta no máximo 1000 caracteres")]
+        [DataType(DataType.MultilineText)]
         public string Descricao { get; set; }
 
         public int? Numero { get; set; }

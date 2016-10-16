@@ -22,23 +22,17 @@
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         @Html.HiddenFor(model => model.Idatividade)
+        @Html.HiddenFor(model => model.Idunidade)
 
         @{ 
             bool encerrada = Model.DataEncerramento < DateTime.Now;
             bool aberta = Model.DataAbertura < DateTime.Now;
         }
-        <div class="form-group">
-            @Html.LabelFor(model => model.Idunidade, "Idunidade", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownList("Idunidade", null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.Idunidade, "", new { @class = "text-danger" })
-            </div>
-        </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.Descricao, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.Descricao, htmlAttributes: new { @class = "control-label col-md-2 nome" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.Descricao, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.Descricao, new { htmlAttributes = new { @class = "form-control nome" } })
                 @Html.ValidationMessageFor(model => model.Descricao, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -46,7 +40,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.Valor, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.Valor, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.Valor, new { htmlAttributes = new { @class = "form-control numero" } })
                 @Html.ValidationMessageFor(model => model.Valor, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -54,7 +48,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.DataAbertura, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.DataAbertura, aberta? (object)new { htmlAttributes = new { @readonly = "readonly", @class = "form-control" } } : new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.DataAbertura, aberta? (object)new { htmlAttributes = new { @readonly = "readonly", @class = "form-control" } } : new { htmlAttributes = new { @class = "form-control data" } })
                 @Html.ValidationMessageFor(model => model.DataAbertura, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -62,7 +56,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.DataEncerramento, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.DataEncerramento, encerrada ? (object)new { htmlAttributes = new { @readonly = "readonly", @class = "form-control" } } : new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.DataEncerramento, encerrada ? (object)new { htmlAttributes = new { @readonly = "readonly", @class = "form-control" } } : new { htmlAttributes = new { @class = "form-control data" } })
                 @Html.ValidationMessageFor(model => model.DataEncerramento, "", new { @class = "text-danger" })
             </div>
         </div>

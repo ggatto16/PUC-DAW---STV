@@ -16,13 +16,13 @@
         <div class="form-group">
             @Html.Label("Informe o CPF: ", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.TextBox("Cpf", ViewBag.FiltroCPF as string, new { @class = "form-control", @placeholder = "CPF" })
+                @Html.TextBox("Cpf", ViewBag.FiltroCPF as string, new { @class = "form-control cpf", @placeholder = "CPF" })
             </div>
         </div>
         <div class="form-group">
             @Html.Label("Ou o nome: ", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.TextBox("Nome", ViewBag.FiltroNome as string, new { @class = "form-control", @placeholder = "Nome" })
+                @Html.TextBox("Nome", ViewBag.FiltroNome as string, new { @class = "form-control nome", @placeholder = "Nome" })
             </div>
         </div>
         <div class="form-group">

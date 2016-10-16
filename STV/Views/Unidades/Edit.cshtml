@@ -24,25 +24,20 @@
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         @Html.HiddenFor(model => model.Idunidade)
+        @Html.HiddenFor(model => model.Idcurso)
 
         <div class="form-group">
             @Html.LabelFor(model => model.Titulo, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.Titulo, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.Titulo, new { htmlAttributes = new { @class = "form-control nome" } })
                 @Html.ValidationMessageFor(model => model.Titulo, "", new { @class = "text-danger" })
             </div>
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.Idcurso, "Idcurso", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownList("Idcurso", null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.Idcurso, "", new { @class = "text-danger" })
-            </div>
-        </div><div class="form-group">
             @Html.LabelFor(model => model.DataAbertura, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.DataAbertura, aberta ? (object)new { htmlAttributes = new { @readonly = "readonly", @class = "form-control" } } : new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.DataAbertura, aberta ? (object)new { htmlAttributes = new { @readonly = "readonly", @class = "form-control data" } } : new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.DataAbertura, "", new { @class = "text-danger" })
             </div>
         </div>

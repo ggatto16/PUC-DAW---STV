@@ -80,7 +80,8 @@ namespace STV.Controllers
             if (MimeNames.TryGetValue(ext.ToLowerInvariant(), out value))
                 return new MediaTypeHeaderValue(value);
             else
-                return new MediaTypeHeaderValue(MediaTypeNames.Application.Octet);
+                return new MediaTypeHeaderValue("video/mp4");
+                //return new MediaTypeHeaderValue(MediaTypeNames.Application.Octet);
         }
 
         private static bool TryReadRangeItem(RangeItemHeaderValue range, long contentLength,
@@ -228,7 +229,7 @@ namespace STV.Controllers
                 using (Stream inputStream = filestream)
                     CreatePartialContent(inputStream, outputStream, start, end);
 
-            }, GetMimeNameFromExt("mp4"));
+            }, new MediaTypeHeaderValue(arquivoInfo.ContentType));
 
             response.Content.Headers.ContentLength = end - start + 1;
             response.Content.Headers.ContentRange = contentRange;

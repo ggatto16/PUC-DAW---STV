@@ -65,7 +65,7 @@
             }
             else
             {
-                @Html.ActionLink("Adicionar", "Create", "Questoes", new { Idatividade = Model.Idatividade }, new { @class = "btn-sm btn-success" });
+                @Html.ActionLink("Adicionar", "Create", "Questoes", new { Idatividade = Model.Idatividade }, new { @class = "btn btn-success" });
             }
         </h4>
     </p>
@@ -92,12 +92,12 @@
                     @Html.DisplayFor(modelItem => questao.Numero)
                 </td>
                 <td>
-                    @Ajax.ActionLink((questao.Descricao.Length > 50) ? questao.Descricao.Substring(0, 50) + "..." : questao.Descricao, "CarregarAlternativas", "Questoes", new { Idquestao = questao.Idquestao }, new AjaxOptions { UpdateTargetId = "Alternativas", InsertionMode = InsertionMode.Replace, HttpMethod = "Get", OnBegin = "onBeginAjax", OnComplete = "SetInfoClass(tr_" + questao.Idquestao + ")" })
+                    @Ajax.ActionLink((questao.Descricao.Length > 70) ? questao.Descricao.Substring(0, 70) + "[...]" : questao.Descricao, "CarregarAlternativas", "Questoes", new { Idquestao = questao.Idquestao }, new AjaxOptions { UpdateTargetId = "Alternativas", InsertionMode = InsertionMode.Replace, HttpMethod = "Get", OnBegin = "onBeginAjax", OnComplete = "SetInfoClass(tr_" + questao.Idquestao + ")" })
                 </td>
                 <td>
                 </td>
                 <td>
-                    <a  href="#" class="btn btn-primary" onclick="AbrirModal('@questao.Descricao','Questão número @questao.Numero')" data-toggle="tooltip" data-placement="auto" title="Ver enunciado completo"> 
+                    <a   class="btn btn-info" onclick="AbrirModal('@questao.Descricao','Questão número @questao.Numero')" data-toggle="tooltip" data-placement="auto" title="Ver enunciado completo"> 
                         <span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span>
                     </a>
                 </td>

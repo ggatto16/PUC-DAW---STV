@@ -55,6 +55,9 @@
         </div>
         <div id="divMensagem" class="col-md-12 Mensagem">
             <label id="lblMensagem" style="padding: 1em;"></label>
+            <a class="pull-right text-danger" style="padding: 1em; cursor: pointer;" onclick="$('#divMensagem').hide()">
+                <span class="glyphicon glyphicon-remove-sign"></span>
+            </a>
         </div>
 
         @RenderBody()

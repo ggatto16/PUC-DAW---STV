@@ -187,7 +187,7 @@ namespace STV.Controllers
 
                 if (isArquivo)
                 {
-                    if (Request.Files.Count == 0)
+                    if (Request.Files.Count == 0 || Request.Files[0].ContentLength == 0)
                         throw new ApplicationException("Arquivo não selecionado.");
                 }
                 else if (string.IsNullOrEmpty(form["URL"]))

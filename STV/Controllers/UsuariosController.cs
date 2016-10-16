@@ -116,34 +116,31 @@ namespace STV.Controllers
         public async Task<ActionResult> Create([Bind(Include = "Idusuario,Cpf,Nome,Email,SenhaDigitada,SenhaDigitadaConfirmacao,Iddepartamento")] UsuarioVM usuarioVM, string[] rolesSelecionadas)
         {
 
-            var usuario = Mapper.Map<UsuarioVM, Usuario>(usuarioVM);
-
-            if (usuario.Iddepartamento == null)
+            if (usuarioVM.Iddepartamento == 0)
                 ModelState.AddModelError("", "Departamento é obrigatório.");
 
-            if (db.Usuario.Any(u => u.Cpf == usuario.Cpf))
+            if (db.Usuario.Any(u => u.Cpf == usuarioVM.CpfSoNumeros))
                 ModelState.AddModelError("", "Já existe um usuário com este CPF cadastrado no sistema.");
 
             if (rolesSelecionadas != null && rolesSelecionadas.Count() > 0)
             {
-                usuario.Roles = new List<Role>();
+                usuarioVM.Roles = new List<Role>();
                 foreach (var role in rolesSelecionadas)
                 {
                     var roleToAdd = db.Role.Find(int.Parse(role));
-                    usuario.Roles.Add(roleToAdd);
+                    usuarioVM.Roles.Add(roleToAdd);
                 }
             }
             else
                 ModelState.AddModelError("", "Selecione uma role para atribuir ao usuário.");
 
-            if (!usuarioVM.SenhaDigitada.Equals(usuarioVM.SenhaDigitadaConfirmacao))
-                ModelState.AddModelError("", "Senha e Confirmação de Senha não correspondem.");
+            var usuario = Mapper.Map<UsuarioVM, Usuario>(usuarioVM);
+            usuario.Stamp = DateTime.Now;
+            usuario.Senha = Crypt.Encrypt(ConfigurationManager.AppSettings["DefaultPassword"]);
+            usuario.Cpf = usuarioVM.CpfSoNumeros;
 
             if (ModelState.IsValid)
             {
-                usuario.Stamp = DateTime.Now;
-                usuario.Senha = Crypt.Encrypt(usuarioVM.SenhaDigitada);
-                usuario.Cpf = usuarioVM.CpfSoNumeros;
                 db.Usuario.Add(usuario);
                 await db.SaveChangesAsync();
                 TempData["msg"] = "Usuário criado!";
@@ -403,17 +400,19 @@ namespace STV.Controllers
         public ActionResult AlterarSenha()
         {
             try
-            {            
-                Usuario usuario = db.Usuario
+            {
+
+                string usuario = db.Usuario
                     .Where(u => u.Idusuario == UsuarioLogado.Idusuario)
-                    .Single();
+                    .Select(u => u.Nome).Single();
 
                 if (usuario == null)
                     throw new ApplicationException("Usuário não encontrado.");
 
-                var usuarioVM = Mapper.Map<Usuario, UsuarioVM>(usuario);
-                usuarioVM.Senha = string.Empty;
-                return View(usuarioVM);
+                AlterarSenhaVM vm = new AlterarSenhaVM();
+                vm.Nome = usuario;
+                vm.Idusuario = UsuarioLogado.Idusuario;
+                return View(vm);
             }
             catch (ApplicationException ex)
             {
@@ -425,29 +424,28 @@ namespace STV.Controllers
         [Authorize(Roles = "Default")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> AlterarSenha([Bind(Include = "Idusuario,Senha,SenhaDigitada,SenhaDigitadaConfirmacao")] UsuarioVM usuarioVM)
+        public async Task<ActionResult> AlterarSenha([Bind(Include = "Idusuario,Senha,SenhaDigitada,SenhaDigitadaConfirmacao")] AlterarSenhaVM usuarioVM)
         {
 
             var usuario = db.Usuario.Find(usuarioVM.Idusuario);
+
             if (!(Crypt.Decrypt(usuario.Senha) == usuarioVM.Senha))
-            {
                 ModelState.AddModelError("", "Senha atual inválida.");
-                return View(usuarioVM);
-            }
 
             if (!usuarioVM.SenhaDigitada.Equals(usuarioVM.SenhaDigitadaConfirmacao))
-            {
                 ModelState.AddModelError("", "Senha e Confirmação de Senha não correspondem.");
-                return View(usuarioVM);
+
+            if (ModelState.IsValid)
+            {
+                usuario.Senha = Crypt.Encrypt(usuarioVM.SenhaDigitada);
+                db.Usuario.Attach(usuario);
+                db.Entry(usuario).Property(u => u.Senha).IsModified = true;
+                await db.SaveChangesAsync();
+                TempData["msg"] = "Senha alterada!";
+                return RedirectToAction("Index", "Home");
             }
 
-            usuario.Senha = Crypt.Encrypt(usuarioVM.SenhaDigitada);
-            db.Usuario.Attach(usuario);
-            db.Entry(usuario).Property(u => u.Senha).IsModified = true;
-            await db.SaveChangesAsync();
-            TempData["msg"] = "Senha alterada!";
-            return RedirectToAction("Index", "Home");
-
+            return View(usuarioVM);
         }
 
         protected override void Dispose(bool disposing)

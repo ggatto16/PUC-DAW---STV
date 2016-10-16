@@ -60,13 +60,15 @@ else
             <td>
                 @if (ViewBag.Gerenciar == true)
                 {
-                    @Html.ActionLink("Gerenciar", "Details", "Cursos", new { id = item.Idcurso }, null);
+                    <a href="@Url.Action("Details", "Cursos", new { id = item.Idcurso })" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-cog"></span> Gerenciar
+                    </a>
                 }
                 else
                 {
                     if (cssLinha != "success")
                     {
-                        <a href="@Url.Action("Inscrever-se", "Inscrever", new { Idcurso = item.Idcurso })" onclick="Confirmar" class="btn btn-primary">
+                        <a href="@Url.Action("Inscrever", new { Idcurso = item.Idcurso })" class="btn btn-primary">
                             <span class="glyphicon glyphicon-pencil"></span> Inscrever
                         </a>
                     }

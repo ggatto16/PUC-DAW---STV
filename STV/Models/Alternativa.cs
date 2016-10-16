@@ -12,9 +12,11 @@
         [Required(AllowEmptyStrings = false, ErrorMessage = "Este campo é obrigatório")]
         [StringLength(1000)]
         [Display(Name = "Descrição")]
+        [DataType(DataType.MultilineText)]
         public string Descricao { get; set; }
 
         [StringLength(1000)]
+        [DataType(DataType.MultilineText)]
         public string Justificativa { get; set; }
 
         public virtual Questao Questao { get; set; }

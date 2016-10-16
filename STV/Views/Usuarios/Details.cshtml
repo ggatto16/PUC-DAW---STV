@@ -1,13 +1,12 @@
 ﻿@model STV.ViewModels.UsuarioVM
 
 @{
-    ViewBag.Title = "Details";
+    ViewBag.Title = "Usuário";
 }
 
-<h2>Details</h2>
+<h2>Usuário</h2>
 
 <div>
-    <h4>Usuario</h4>
     <hr />
     <dl class="dl-horizontal">
         <dt>
@@ -35,14 +34,6 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.Senha)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Senha)
-        </dd>
-
-        <dt>
             @Html.DisplayNameFor(model => model.Roles)
         </dt>
 
@@ -52,7 +43,20 @@
 
                 for (var i = 0; i < tamanho; i++)
                 {
-                @Model.Roles.ElementAtOrDefault(i).Nome 
+                    var role = Model.Roles.ElementAtOrDefault(i); 
+                    if (role.Nome == "Admin")
+                    {
+                        @Html.Raw("Administrador")
+                    }
+                    else if (role.Nome == "Default")
+                    {
+                        @Html.Raw("Padrão")
+                    }
+                    else
+                    {
+                        @Html.Raw(role.Nome)
+                    }
+
                     if (i < tamanho - 1)
                     {
                         @Html.Raw(",");
@@ -69,6 +73,11 @@
         <dd>
             @{
                 tamanho = Model.Medalhas.Count();
+
+                if (tamanho == 0)
+                {
+                    <span class="glyphicon glyphicon-thumbs-down"></span> @Html.Raw("Nenhuma")
+                }
 
                 for (var i = 0; i < tamanho; i++)
                 {
@@ -92,8 +101,10 @@
 
     </dl>
 </div>
-<p>
-    @Html.ActionLink("Alterar", "Edit", new { id = Model.Idusuario }) |
-    <a href="@Url.Action("Index")" class="btn btn-default grid-control" data-toggle="tooltip" data-placement="auto" title="Voltar para Listagem">Voltar</a>|
-    @Html.ActionLink("Print", "PDF",new { id = Model.Idusuario }, new { target = "_blank" })
-</p>
+<div class="form-group">
+    <div class="col-md-12">
+        <a href="@Url.Action("Edit", new { id = Model.Idusuario })" class="btn btn-primary">Alterar</a>
+        <a href="@Url.Action("Relatorio", new { id = Model.Idusuario })" class="btn btn-info" data-toggle="tooltip" data-placement="auto" title="Emitir Relatório" target="_blank">Relatório</a>
+        <a href="@Url.Action("Index")" class="btn btn-default" data-toggle="tooltip" data-placement="auto" title="Voltar para Listagem">Voltar</a>
+    </div>
+</div>

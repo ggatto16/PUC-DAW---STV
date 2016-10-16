@@ -235,14 +235,12 @@
     <Compile Include="AutoMapper\AutoMapperBootStrapper.cs" />
     <Compile Include="AutoMapper\ViewModelToDomainMappingProfile.cs" />
     <Compile Include="AutoMapper\DomainToViewModelMappingProfile.cs" />
-    <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AlternativasController.cs" />
     <Compile Include="Controllers\ArquivosController.cs" />
     <Compile Include="Controllers\AtividadesController.cs" />
     <Compile Include="Controllers\CursosController.cs" />
     <Compile Include="Controllers\DepartamentosController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\MateriaisController.cs" />
     <Compile Include="Controllers\MediaController.cs" />
     <Compile Include="Controllers\MediaStreamController.cs" />
@@ -255,12 +253,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201610140059344_casa.cs" />
-    <Compile Include="Migrations\201610140059344_casa.Designer.cs">
-      <DependentUpon>201610140059344_casa.cs</DependentUpon>
-    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
-    <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Alternativa.cs" />
     <Compile Include="Models\Arquivo.cs" />
     <Compile Include="Models\Atividade.cs" />
@@ -268,7 +261,6 @@
     <Compile Include="Models\CustomValidationCPFAttribute.cs" />
     <Compile Include="Models\Departamento.cs" />
     <Compile Include="Models\IdentityModels.cs" />
-    <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\Material.cs" />
     <Compile Include="DAL\STVDbContext.cs" />
     <Compile Include="Models\CursoNota.cs" />
@@ -297,6 +289,7 @@
     <Compile Include="ViewModels\AtividadeVM.cs" />
     <Compile Include="ViewModels\AlternativaVM.cs" />
     <Compile Include="ViewModels\UsuarioEditVM.cs" />
+    <Compile Include="ViewModels\AlterarSenhaVM.cs" />
     <Compile Include="ViewModels\UsuarioVM.cs" />
     <Compile Include="ViewModels\DetalhesCurso.cs" />
     <Compile Include="ViewModels\DadosUsuario.cs" />
@@ -304,8 +297,6 @@
     <Compile Include="ViewModels\RolesAtribuidas.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Data\stvdb_diagram.png" />
-    <Content Include="App_Data\useFileStream.sql" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
@@ -399,27 +390,7 @@
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\About.cshtml" />
-    <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
-    <Content Include="Views\Account\_ExternalLoginsListPartial.cshtml" />
-    <Content Include="Views\Account\ConfirmEmail.cshtml" />
-    <Content Include="Views\Account\ExternalLoginConfirmation.cshtml" />
-    <Content Include="Views\Account\ExternalLoginFailure.cshtml" />
-    <Content Include="Views\Account\ForgotPassword.cshtml" />
-    <Content Include="Views\Account\ForgotPasswordConfirmation.cshtml" />
-    <Content Include="Views\Account\Login.cshtml" />
-    <Content Include="Views\Account\Register.cshtml" />
-    <Content Include="Views\Account\ResetPassword.cshtml" />
-    <Content Include="Views\Account\ResetPasswordConfirmation.cshtml" />
-    <Content Include="Views\Account\SendCode.cshtml" />
-    <Content Include="Views\Account\VerifyCode.cshtml" />
-    <Content Include="Views\Manage\AddPhoneNumber.cshtml" />
-    <Content Include="Views\Manage\ChangePassword.cshtml" />
-    <Content Include="Views\Manage\Index.cshtml" />
-    <Content Include="Views\Manage\ManageLogins.cshtml" />
-    <Content Include="Views\Manage\SetPassword.cshtml" />
-    <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
-    <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Home\Login.cshtml" />
     <Content Include="Views\Usuarios\Create.cshtml" />
@@ -441,12 +412,10 @@
     <Content Include="Views\Unidades\Delete.cshtml" />
     <Content Include="Views\Unidades\Details.cshtml" />
     <Content Include="Views\Unidades\Edit.cshtml" />
-    <Content Include="Views\Unidades\Index.cshtml" />
     <Content Include="Views\Materiais\Create.cshtml" />
     <Content Include="Views\Materiais\Delete.cshtml" />
     <Content Include="Views\Materiais\Details.cshtml" />
     <Content Include="Views\Materiais\Edit.cshtml" />
-    <Content Include="Views\Materiais\Index.cshtml" />
     <Content Include="Views\Atividades\Create.cshtml" />
     <Content Include="Views\Atividades\Delete.cshtml" />
     <Content Include="Views\Atividades\Details.cshtml" />
@@ -456,18 +425,15 @@
     <Content Include="Views\Questoes\Delete.cshtml" />
     <Content Include="Views\Questoes\Details.cshtml" />
     <Content Include="Views\Questoes\Edit.cshtml" />
-    <Content Include="Views\Questoes\Index.cshtml" />
     <Content Include="Views\Alternativas\Create.cshtml" />
     <Content Include="Views\Alternativas\Delete.cshtml" />
     <Content Include="Views\Alternativas\Details.cshtml" />
     <Content Include="Views\Alternativas\Edit.cshtml" />
-    <Content Include="Views\Alternativas\Index.cshtml" />
     <Content Include="Views\Questoes\Alternativas.cshtml" />
     <Content Include="Views\Materiais\Upload.cshtml" />
     <Content Include="Views\Materiais\ConteudoArquivo.cshtml" />
     <Content Include="Views\Cursos\CursosDisponiveis.cshtml" />
     <Content Include="Views\Cursos\MeusCursos.cshtml" />
-    <Content Include="Views\Cursos\MeusCursosGerenciaveis.cshtml" />
     <Content Include="Views\Atividades\Atividade.cshtml" />
     <Content Include="Views\Notas\MinhasNotas.cshtml" />
     <Content Include="Views\Shared\_PdfLayout.cshtml" />
@@ -480,21 +446,12 @@
     <Content Include="Views\Usuarios\AlterarSenha.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <WCFMetadata Include="Service References\" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="packages.config" />
     <None Include="Project_Readme.html" />
     <Content Include="Scripts\jquery-2.2.4.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Views\Arquivos\" />
-    <Folder Include="Views\NotasCurso\" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\201610140059344_casa.resx">
-      <DependentUpon>201610140059344_casa.cs</DependentUpon>
-    </EmbeddedResource>
+    <Folder Include="App_Data\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

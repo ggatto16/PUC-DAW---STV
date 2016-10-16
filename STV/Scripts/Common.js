@@ -45,7 +45,8 @@ function MostrarMensagem(msg, tipo) {
             break;
     }
     div.fadeIn();
-    setTimeout(HideMessage, 5000);
+    if (tipo != 2)
+        setTimeout(HideMessage, 5000);
 };
 
 function OnFailure(xhr, status) {

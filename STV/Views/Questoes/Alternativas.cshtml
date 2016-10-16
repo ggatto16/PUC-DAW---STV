@@ -6,7 +6,7 @@
         <div class="pull-right">
             <a href="javascript:void(0);" onclick='$("#Alternativas").empty(); $("#" + trSelecionada).removeClass("info");' class="btn btn-default">Fechar</a>
         </div>
-        @Html.ActionLink("Adicionar", "Create", "Alternativas", new { Idquestao = Model.Idquestao }, new { @class = "btn-sm btn-success" })
+        @Html.ActionLink("Adicionar", "Create", "Alternativas", new { Idquestao = Model.Idquestao }, new { @class = "btn btn-success" })
     </h4>
 </p>
 
@@ -46,7 +46,7 @@ else
 
         <tr class="@trcorreta @txtcorreta" data-toggle="tooltip" data-placement="auto" title="@tooltip">
             <td>
-                @Html.ActionLink(item.Descricao, "Details", "Alternativas", new { id = item.Idalternativa }, null)
+                @Html.ActionLink((item.Descricao.Length > 70) ? item.Descricao.Substring(0, 70) + "[...]" : item.Descricao, "Details", "Alternativas", new { id = item.Idalternativa }, null)
             </td>
             <td>
                 @if (item.Idalternativa == Model.IdalternativaCorreta)
@@ -55,7 +55,7 @@ else
                 }
             </td>
             <td>
-                <a href="#" class="btn btn-primary" onclick="AbrirModalAlternativa('@item.Descricao','@item.Justificativa')" data-toggle="tooltip" data-placement="auto" title="Ver alternativa completa">
+                <a  class="btn btn-info" onclick="AbrirModalAlternativa('@item.Descricao','@item.Justificativa')" data-toggle="tooltip" data-placement="auto" title="Ver alternativa completa">
                     <span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span>
                 </a>
             </td>
