@@ -1,4 +1,12 @@
-﻿.grid-control
+﻿.box-home {
+    border: solid 7px;
+    border-radius: 1em;
+    padding: 10px 30px 15px 30px;
+    background-color: transparent;
+    height: 250px;
+    border-color: #337ab7;
+}
+.grid-control
 {
 }
 
@@ -29,6 +37,11 @@
     .realizado {
         display: none;
     }
+}
+
+.meio {
+    width: 100%;
+    text-align: center;
 }
 
 .td-link{

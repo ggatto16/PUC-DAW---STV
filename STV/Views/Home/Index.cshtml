@@ -5,53 +5,84 @@
 }
 
 <div class="jumbotron">
-    <h1>KD</h1>
-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-    <p><a href="http://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
+    <i>
+        <h2>Knowledge Database</h2>
+        <h4>Your Online Training System</h4>
+    </i>
 </div>
 
 <div class="row">
     <div class="col-md-4">
-        <h2>Getting started</h2>
-        <div>
-            @foreach(var medalha in Model.Medalhas)
-            {
-                switch ((STV.Models.Medalhas)medalha.Idmedalha)
+        <div class="box-home meio">
+            <h3>Quadro de Medalhas</h3>
+            <p><small>Aqui são exibidas suas medalhas conquistadas durante os treinamentos.</small></p>
+            <div>
+                @if (Model.Medalhas.Count() == 0)
                 {
-                    case STV.Models.Medalhas.Sortudo:
-                        Html.Raw("<a href=\"#\" onclick=\"MostrarMedalha('Sortudo')\"><img src = \"~/Images/ico-Sortudo.jpg\" width=\"50\" /></a>");
-                        break;
-                    case STV.Models.Medalhas.Nerd:
-                        Html.Raw("<a href=\"#\" onclick=\"MostrarMedalha('Nerd')\"><img src = \"~/Images/ico-Nerd.jpg\" width=\"50\" /></a>");
-                        break;
-                    case STV.Models.Medalhas.Genio:
-                        Html.Raw("<a href=\"#\" onclick=\"MostrarMedalha('Genio')\"><img src = \"~/Images/ico-Genio.jpg\" width=\"50\" /></a>");
-                        break;
-                    default:
-                        break;
+                    <p>Nenhuma medalha</p>
                 }
-            }
+                else
+                {
+                    foreach (var medalha in Model.Medalhas)
+                    {
+                        switch ((STV.Models.Medalhas)medalha.Idmedalha)
+                        {
+                            case STV.Models.Medalhas.Sortudo:
+                                Html.Raw("<a style=\"cursor: pointer;\" onclick=\"MostrarMedalha('Sortudo')\"><img src = \"~/Images/ico-Sortudo.jpg\" width=\"50\" /></a>");
+                                break;
+                            case STV.Models.Medalhas.Nerd:
+                                Html.Raw("<a style=\"cursor: pointer;\" onclick=\"MostrarMedalha('Nerd')\"><img src = \"~/Images/ico-Nerd.jpg\" width=\"50\" /></a>");
+                                break;
+                            case STV.Models.Medalhas.Genio:
+                                Html.Raw("<a style=\"cursor: pointer;\" onclick=\"MostrarMedalha('Genio')\"><img src = \"~/Images/ico-Genio.jpg\" width=\"50\" /></a>");
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                }
 
-            <a  onclick="MostrarMedalha('Sortudo')"><img src="~/Images/ico-Sortudo.jpg" width="50" /></a>
-            <a  onclick="MostrarMedalha('Nerd')"><img src="~/Images/ico-Nerd.jpg" width="50" /></a>
-            <a  onclick="MostrarMedalha('Genio')"><img src="~/Images/ico-Genio.jpg" width="50" /></a>
+                <a  style="cursor: pointer;" onclick="MostrarMedalha('Sortudo')"><img src="~/Images/ico-Sortudo.jpg" width="50" /></a>
+                <a onclick="MostrarMedalha('Nerd')"><img src="~/Images/ico-Nerd.jpg" width="50" /></a>
+                <a onclick="MostrarMedalha('Genio')"><img src="~/Images/ico-Genio.jpg" width="50" /></a>
+            </div>
         </div>
-        <p>
-            ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-            enables a clean separation of concerns and gives you full control over markup
-            for enjoyable, agile development.
-        </p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
     </div>
     <div class="col-md-4">
-        <h2>Get more libraries</h2>
-        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
+        <div class="box-home">
+            <h3 class="meio">Cursos</h3>
+            @if (Model.Cursos == null || Model.Cursos.Count() == 0)
+            {
+                <p class="meio">Nenhum curso</p>
+            }
+            else
+            {
+                <ul>
+                    @foreach (var curso in Model.Cursos.OrderByDescending(c => c.DataInicial).Take(5))
+                    {
+                        <li>@Html.ActionLink(curso.Titulo, "Details", "Cursos", new { id = curso.Idcurso })</li>
+                    }
+                </ul>
+            }
+        </div>
     </div>
     <div class="col-md-4">
-        <h2>Web Hosting</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
+        <div class="box-home">
+            <h3 class="meio">Notas</h3>
+            @if (Model.Notas == null || Model.Notas.Count() == 0)
+            {
+                <p class="meio">Nenhuma nota</p>
+            }
+            else
+            {
+                <ul>
+                    @foreach (var nota in Model.Notas.OrderByDescending(n => n.Atividade.DataAbertura).Take(5))
+                    {
+                        @Html.Raw(nota.Atividade.Descricao + ": " + nota.Pontos);
+                    }
+                </ul>
+            }
+        </div>
     </div>
 </div>
 
@@ -67,7 +98,7 @@
                 <div class="container-fluid">
                     <div class="col-md-12 text-center">
                         <figure>
-                            <img src="" id="imgMedalha" alt="Medalha" width="200"/>
+                            <img src="" id="imgMedalha" alt="Medalha" width="200" />
                             <br />
                             <figcaption id="capMedalha"></figcaption>
                         </figure>
@@ -100,7 +131,7 @@
                     $('#capMedalha').html('Acertou todas as questões de todas as atividade de um curso inteiro')
                     break;
             }
-            
+
             $('#myModal').modal('show');
         }
 
