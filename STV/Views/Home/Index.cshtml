@@ -86,6 +86,9 @@
     </div>
 </div>
 
+@Html.ActionLink("DARK","TrocarTema", new { tema = "Dark" })
+@Html.ActionLink("LIGHT", "TrocarTema", new { tema = "Light" })
+
 <!-- Modal -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
@@ -140,6 +143,11 @@
             $('#imgMedalha').attr('src', '');
             $('#capMedalha').empty();
         }
+
+        function LoadCSS() {
+            $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', '~/Content/Dark.css'));
+        }
+
     </script>
 
 }

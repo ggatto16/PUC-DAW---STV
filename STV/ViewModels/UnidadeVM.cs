@@ -18,10 +18,12 @@ namespace STV.ViewModels
         public string Titulo { get; set; }
 
         [Display(Name = "Data Abertura")]
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd/MM/yyyy}")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-dd}")]
         [Column(TypeName = "date")]
         [DataType(DataType.Date, ErrorMessage = "Data em formato inválido")]
         public DateTime? DataAbertura { get; set; }
+
+        public bool Encerrada { get; set; }
 
         [Display(Name = "Data de Criação")]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd/MM/yyyy}")]

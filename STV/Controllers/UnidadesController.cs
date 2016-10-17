@@ -234,7 +234,7 @@ namespace STV.Controllers
                     return View("NaoAutorizado");
 
                 ViewBag.Idcurso = new SelectList(db.Curso, "Idcurso", "Titulo");
-                return View(unidade);
+                return View(Mapper.Map<Unidade, UnidadeVM>(unidade));
             }
             catch (ApplicationException ex)
             {
@@ -248,8 +248,9 @@ namespace STV.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "Idunidade,Idcurso,Titulo,DataAbertura,Encerrada")] Unidade unidade)
+        public async Task<ActionResult> Edit([Bind(Include = "Idunidade,Idcurso,Titulo,DataAbertura,Encerrada")] UnidadeVM unidadeVM)
         {
+            var unidade = Mapper.Map<UnidadeVM, Unidade>(unidadeVM);
             ValidarDatas(ref unidade);
 
             if (ModelState.IsValid)

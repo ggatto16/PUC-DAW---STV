@@ -10,7 +10,7 @@
     <li class="active">Minhas Notas</li>
 </ol>
 
-<h2>Minhas Notas - @ViewBag.Unidade</h2>
+<h2>Minhas Notas - @ViewBag.Titulo</h2>
 
 <h4>Atividades</h4>
 <table class="table table-striped">
@@ -38,7 +38,7 @@ else
         <th></th>
     </tr>
 
-    @foreach (var item in Model)
+    foreach (var item in Model)
     {
         <tr>
             <td>

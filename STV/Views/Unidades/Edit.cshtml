@@ -1,4 +1,4 @@
-﻿@model STV.Models.Unidade
+﻿@model STV.ViewModels.UnidadeVM
 
 @{
     ViewBag.Title = "Alterar";
@@ -55,7 +55,7 @@
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="Salvar" class="btn btn-primary" />
-                <a href="@Url.Action("Index")" class="btn btn-default grid-control" data-toggle="tooltip" data-placement="auto" title="Voltar para Listagem">Voltar</a>
+                <a href="@Url.Action("Details", "Cursos", new { id = Model.Idcurso, Idunidade = Model.Idunidade })" class="btn btn-default grid-control" data-toggle="tooltip" data-placement="auto" title="Voltar para Listagem">Voltar</a>
             </div>
         </div>
     </div>

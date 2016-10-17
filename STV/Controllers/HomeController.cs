@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
 
@@ -24,6 +25,22 @@ namespace STV.Controllers
             UsuarioLogado = auth.GetUserData();
         }
 
+        public ActionResult TrocarTema(string tema)
+        {
+            //salva o tema
+            var usuario = db.Usuario.Find(UsuarioLogado.Idusuario);
+            usuario.Tema = tema;
+            db.Entry(usuario).State = EntityState.Modified;
+            db.SaveChanges();
+
+            //Devolve com os cookies
+            HttpCookie cookie = new HttpCookie("stvkd_userid", UsuarioLogado.Idusuario.ToString());
+            Response.SetCookie(cookie);
+            cookie = new HttpCookie("stvkd_tema_" + UsuarioLogado.Idusuario, tema);
+            Response.SetCookie(cookie);
+            return View("Index", usuario);
+        }
+
         public ActionResult Index()
         {
             if (User.Identity.IsAuthenticated)
@@ -31,6 +48,11 @@ namespace STV.Controllers
                 ViewBag.MensagemSucesso = TempData["msg"];
                 ViewBag.MensagemErro = TempData["msgErr"];
                 TempData.Clear();
+                string tema = db.Usuario.Where(u => u.Idusuario == UsuarioLogado.Idusuario).Select(u => u.Tema).Single();
+                HttpCookie cookie = new HttpCookie("stvkd_userid", UsuarioLogado.Idusuario.ToString());
+                Response.SetCookie(cookie);
+                cookie = new HttpCookie("stvkd_tema_" + UsuarioLogado.Idusuario, tema);
+                Response.SetCookie(cookie);
                 return View(UsuarioLogado);
             }
             else
@@ -77,7 +99,8 @@ namespace STV.Controllers
                             Cpf = a.Cpf,
                             Iddepartamento = a.Iddepartamento,
                             Senha = a.Senha,
-                            Roles = a.Roles
+                            Roles = a.Roles,
+                            Tema = a.Tema
                         }).FirstOrDefault();
 
                     if (usuarioAutenticado != null)
@@ -89,7 +112,8 @@ namespace STV.Controllers
                             Iddepartamento = usuarioAutenticado.Iddepartamento,
                             Senha = usuarioAutenticado.Senha,
                             Roles = usuarioAutenticado.Roles,
-                            Medalhas = AtribuirMedalhas(usuarioAutenticado.Idusuario)
+                            Medalhas = AtribuirMedalhas(usuarioAutenticado.Idusuario),
+                            Tema = usuarioAutenticado.Tema
                         };
 
                         auth.SetAuthenticationToken(UsuarioLogado.Nome.ToString(), false, UsuarioLogado);

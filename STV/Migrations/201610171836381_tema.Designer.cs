@@ -7,18 +7,18 @@ namespace STV.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class azure : IMigrationMetadata
+    public sealed partial class tema : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(azure));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(tema));
         
         string IMigrationMetadata.Id
         {
-            get { return "201610162155137_azure"; }
+            get { return "201610171836381_tema"; }
         }
         
         string IMigrationMetadata.Source
         {
-            get { return Resources.GetString("Source"); }
+            get { return null; }
         }
         
         string IMigrationMetadata.Target

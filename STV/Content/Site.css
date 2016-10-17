@@ -10,6 +10,16 @@
 {
 }
 
+my-text-success {
+    color: #3c763d;
+}
+my-text-danger {
+    color: #a94442;
+}
+my-text-warning {
+    color: #8a6d3b;
+}
+
 @media only screen and (min-device-width: 480px) {
     /* define mobile specific styles come here */
     .btn-excluir span:after {

@@ -125,33 +125,40 @@
         </dl>
     </div>
 
-    <p>
-        @if (Model.DisponibilizarCertificado)
-        {
-            <a href="@Url.Action("Certificado", "Cursos", new { id = Model.Idcurso })" class="btn btn-success" target="_blank">
-                <span class="glyphicon glyphicon-education"></span> Certificado
-            </a>
-        }
-
-        @if (User.IsInRole("Admin"))
-        {
-            @Html.ActionLink("Alterar", "Edit", new { id = Model.Idcurso }, new { @class = "btn btn-primary" }) 
-            <a href="@Url.Action("Index")" class="btn btn-default grid-control" data-toggle="tooltip" data-placement="auto" title="Voltar para Listagem">Voltar</a>
-        }
-        else
-        {
-            if (Model.IsInstutor)
+    <div class="row" style="margin: 15px 0 5px 0;">
+        <div class="col-sm-3"><b>Situações:</b></div>
+        <div class="col-sm-3" style="color: #337ab7;"><span class="glyphicon glyphicon-upload"></span> Vai abrir</div>
+        <div class="col-sm-3" style="color: #3c763d;"><span class="glyphicon glyphicon-time"></span> Aberta</div>
+        <div class="col-sm-3" style="color: #a94442;"><span class="glyphicon glyphicon-download"></span> Encerrada</div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-md-12">
+            @if (Model.DisponibilizarCertificado)
             {
-                <a href="@Url.Action("MeusCursosGerenciaveis")" class="btn btn-default grid-control" data-toggle="tooltip" data-placement="auto" title="Voltar para Listagem">Voltar</a>
+                <a href="@Url.Action("Certificado", "Cursos", new { id = Model.Idcurso })" class="btn btn-success" target="_blank">
+                    <span class="glyphicon glyphicon-education"></span> Certificado
+                </a>
+            }
+
+            @if (User.IsInRole("Admin"))
+            {
+                @Html.ActionLink("Alterar", "Edit", new { id = Model.Idcurso }, new { @class = "btn btn-primary" })
+                <a href="@Url.Action("Index")" class="btn btn-default grid-control" data-toggle="tooltip" data-placement="auto" title="Voltar para Listagem">Voltar</a>
             }
             else
             {
-                <a href="@Url.Action("MeusCursos")" class="btn btn-default grid-control" data-toggle="tooltip" data-placement="auto" title="Voltar para Listagem">Voltar</a>
+                if (Model.IsInstutor)
+                {
+                    <a href="@Url.Action("MeusCursosGerenciaveis")" class="btn btn-default grid-control" data-toggle="tooltip" data-placement="auto" title="Voltar para Listagem">Voltar</a>
+                }
+                else
+                {
+                    <a href="@Url.Action("MeusCursos")" class="btn btn-default grid-control" data-toggle="tooltip" data-placement="auto" title="Voltar para Listagem">Voltar</a>
+                }
             }
-        }
-
-        
-    </p>
+        </div>
+    </div>
     <hr />
     <p>
         <h3>
@@ -171,6 +178,17 @@
         </h3>
     </p>
     <table class="table table-striped">
+
+        <thead>
+            <th>Título</th>
+            <th style="text-align: center;">Situação</th>
+            @if (User.IsInRole("Admin") || Model.IsInstutor)
+            {
+                <th></th>
+                <th></th>
+            }
+        </thead>
+
         @{
             foreach (var unidade in Model.Unidades)
             {
@@ -184,16 +202,53 @@
                     unidSelecionada = string.Empty;
                 }
                 <tr class="@unidSelecionada" id="tr_@unidade.Idunidade">
-                    <td>
-                        @if (unidade.DataAbertura < DateTime.Now || User.IsInRole("Admin") || Model.IsInstutor)
+
+                        @if (unidade.Encerrada)
                         {
-                            @Ajax.ActionLink(unidade.Titulo, "CarregarConteudo", "Unidades", new { idunidade = unidade.Idunidade }, new AjaxOptions { UpdateTargetId = "ConteudoUnidade", InsertionMode = InsertionMode.Replace, HttpMethod = "Get", OnBegin = "onBeginAjax", OnComplete = "SetInfoClass(tr_" + unidade.Idunidade + ")" })
+                            <td>
+                                @Ajax.ActionLink(unidade.Titulo, "CarregarConteudo", "Unidades", new { idunidade = unidade.Idunidade }, new AjaxOptions { UpdateTargetId = "ConteudoUnidade", InsertionMode = InsertionMode.Replace, HttpMethod = "Get", OnBegin = "onBeginAjax", OnComplete = "SetInfoClass(tr_" + unidade.Idunidade + ")" })
+                            </td>
+                            <td align="center" valign="middle" style="cursor: pointer;">
+                                <a onclick="MostrarSituacao('Unidade encerrada.', '@unidade.Titulo')" data-toggle="tooltip" data-placement="auto" title="Encerrada">
+                                    <div class="td-link my-text-danger">
+                                        <span class="glyphicon glyphicon-upload"></span>
+                                    </div>
+                                </a>
+                            </td>
                         }
-                        else
+                        else if (!unidade.DataAbertura.HasValue || unidade.DataAbertura > DateTime.Now) //vai abrir
                         {
-                            @Html.Raw("<td>" + unidade.Titulo + "</td><td>Abrirá em " + unidade.DataAbertura + "</td>");
+                            <td>
+                                @if (User.IsInRole("Admin") || Model.IsInstutor)
+                                {
+                                    @Ajax.ActionLink(unidade.Titulo, "CarregarConteudo", "Unidades", new { idunidade = unidade.Idunidade }, new AjaxOptions { UpdateTargetId = "ConteudoUnidade", InsertionMode = InsertionMode.Replace, HttpMethod = "Get", OnBegin = "onBeginAjax", OnComplete = "SetInfoClass(tr_" + unidade.Idunidade + ")" })
+                                }
+                                else
+                                {
+                                    @Html.Raw(unidade.Titulo);
+                                }
+                            </td>
+                            <td align="center" valign="middle" style="cursor: pointer;">
+                                <a onclick="MostrarSituacao('@(unidade.DataAbertura.HasValue ? Html.Raw("Unidade iniciará em " + unidade.DataAbertura.Value.ToShortDateString()) : Html.Raw("Unidade ainda sem data de início."))', '@unidade.Titulo')" data-toggle="tooltip" data-placement="auto" title="Vai abrir">
+                                    <div class="td-link">
+                                        <span class="glyphicon glyphicon-upload"></span>
+                                    </div>
+                                </a>
+                            </td>
                         }
-                    </td>
+                        else //aberta
+                        {
+                            <td>
+                                @Ajax.ActionLink(unidade.Titulo, "CarregarConteudo", "Unidades", new { idunidade = unidade.Idunidade }, new AjaxOptions { UpdateTargetId = "ConteudoUnidade", InsertionMode = InsertionMode.Replace, HttpMethod = "Get", OnBegin = "onBeginAjax", OnComplete = "SetInfoClass(tr_" + unidade.Idunidade + ")" })
+                            </td>
+                            <td align="center" valign="middle" style="cursor: pointer;">
+                                <a onclick="MostrarSituacao('Unidade aberta em @unidade.DataAbertura.Value.ToShortDateString()', '@unidade.Titulo')" data-toggle="tooltip" data-placement="auto" title="Aberta">
+                                    <div class="td-link my-text-success">
+                                        <span class="glyphicon glyphicon-time"></span>
+                                    </div>
+                                </a>
+                            </td>
+                        }
                     @if (User.IsInRole("Admin") || Model.IsInstutor)
                     {
                         <td>
@@ -272,6 +327,29 @@ else
     </div>
 }
 
+<!-- Modal -->
+<div class="modal fade" id="myModalSituacao" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Situação Atual</h4>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-12"><h4 id="divTitulo"></h4></div>
+                        <div class="col-md-12" id="divSituacao"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section scripts {
 
     @Scripts.Render("~/bundles/jqueryval")
@@ -319,14 +397,20 @@ else
         
         function SetInfoClass(tr) {
             try {
-                $('#' + trSelecionada).removeClass('info');
-                tr.classList.add('info');
+                $('#' + trSelecionada).removeClass('my-selected');
+                tr.classList.add('my-selected');
                 trSelecionada = tr.id;
                 onCompleteAjax();
             }
             catch (err) {
                 onCompleteAjax();
             }
+        }
+
+        function MostrarSituacao(situacao, titulo) {
+            $('#divSituacao').html(situacao);
+            $('#divTitulo').html(titulo);
+            $('#myModalSituacao').modal('show');
         }
 
     </script>

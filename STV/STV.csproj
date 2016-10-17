@@ -253,9 +253,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201610162155137_azure.cs" />
-    <Compile Include="Migrations\201610162155137_azure.Designer.cs">
-      <DependentUpon>201610162155137_azure.cs</DependentUpon>
+    <Compile Include="Migrations\201610171836381_tema.cs" />
+    <Compile Include="Migrations\201610171836381_tema.Designer.cs">
+      <DependentUpon>201610171836381_tema.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Alternativa.cs" />
@@ -305,6 +305,7 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\Dark.css" />
     <Content Include="Content\fileinput.min.css" />
     <Content Include="Content\star-off.svg" />
     <Content Include="Content\star-on.svg" />
@@ -458,8 +459,8 @@
     <Folder Include="App_Data\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201610162155137_azure.resx">
-      <DependentUpon>201610162155137_azure.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201610171836381_tema.resx">
+      <DependentUpon>201610171836381_tema.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

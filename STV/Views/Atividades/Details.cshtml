@@ -73,7 +73,7 @@
         @foreach (var questao in Model.Questoes.OrderBy(x => x.Numero))
         {
             var questaoSelecionada = string.Empty;
-            var tooltip = string.Empty;
+            var tooltipAviso = string.Empty;
             if (ViewBag.QuestaoSelecionada == questao.Idquestao)
             {
                 questaoSelecionada = "info";
@@ -84,10 +84,9 @@
             }
             if (questao.IdalternativaCorreta == null)
             {
-                tooltip = "Atenção! Questão sem alternativas não será publicada.";
-                questaoSelecionada = "danger";
+                tooltipAviso = "Atenção! Questão sem alternativas não será publicada.";
             }
-            <tr class="@questaoSelecionada" id="tr_@questao.Idquestao" data-toggle="tooltip" data-placement="auto" title="@tooltip">
+            <tr class="@questaoSelecionada" id="tr_@questao.Idquestao">
                 <td>
                     @Html.DisplayFor(modelItem => questao.Numero)
                 </td>
@@ -111,9 +110,11 @@
                         <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                     </a>
                 </td>
-                @if (questaoSelecionada == "danger")
+                @if (tooltipAviso != string.Empty)
                 {
-                    <td><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span></td>
+                    <td align="center" class="text-warning" data-toggle="tooltip" data-placement="auto" title="@tooltipAviso">
+                        <span class="glyphicon glyphicon-alert" aria-hidden="true"></span>
+                    </td>
                 }
             </tr>
         }

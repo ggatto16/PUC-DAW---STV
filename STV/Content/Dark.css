@@ -1,0 +1,60 @@
+﻿td {
+    border: none!important;
+}
+
+body {
+    background-color: #2e2f30;
+	color: white;
+}
+a {
+	color: #87d7ff;
+}
+a:hover { 
+    color: #87d7ff;
+}
+a:focus { 
+    color: #87d7ff;
+}
+
+.table {
+    border: 0px;
+    border-top: 0px solid #ddd;
+}
+
+.table-striped > tbody > tr:nth-of-type(odd) {
+	background-color: #3e4041;
+}
+.info {
+		background-color: red;
+}
+.modal-content{
+    background-color: #666768;
+	color: white;
+}
+
+.my-text-success {
+	color: #3db239;
+}
+my-text-danger {
+    color: #c72623;
+}
+my-text-warning {
+    color: #a9761e;
+}
+
+.my-selected {
+    background-color: #3a2e44!important;
+}
+
+input[type="text"], textarea, select {
+  background-color : #97999b!important; 
+  color: white!important;
+}
+textarea:focus, input:focus {
+    background-color : #b1b3b4!important;
+}
+select option {
+    background-color: #97999b;
+    color:white;
+}
+

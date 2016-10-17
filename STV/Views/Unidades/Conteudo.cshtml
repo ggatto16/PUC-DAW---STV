@@ -86,11 +86,12 @@
         }
     </h4>
 </p>
-<div class="row" style="margin: 15px 0 5px 0;">
+
+@*<div class="row" style="margin: 15px 0 5px 0;">
     <div class="col-sm-3" style="color: #337ab7;"><span class="glyphicon glyphicon-upload"></span> Vai abrir</div>
     <div class="col-sm-3" style="color: #3c763d;"><span class="glyphicon glyphicon-time"></span> Aberta</div>
     <div class="col-sm-3" style="color: #a94442;"><span class="glyphicon glyphicon-download"></span> Encerrada</div>
-</div>
+</div>*@
 
 <table class="table table-striped">
     @if (Model.AtividadesVM.Count() == 0)
@@ -127,7 +128,7 @@
                         @if (!encerrada && aberta)
                         {
                             <a onclick="MostrarSituacao('Iniciada e com encerramento em @item.DataEncerramento.ToShortDateString()', '@item.Descricao')" data-toggle="tooltip" data-placement="auto" title="Aberta">
-                                <div class="td-link" style="color: #3c763d;">
+                                <div class="td-link my-text-success">
                                     <span class="glyphicon glyphicon-time"></span>
                                 </div>
                             </a>
@@ -145,7 +146,7 @@
                             else
                             {
                                 <a onclick="MostrarSituacao('Encerrada em @item.DataEncerramento.ToShortDateString()', '@item.Descricao')" data-toggle="tooltip" data-placement="auto" title="Encerrada">
-                                    <div class="td-link" style="color: #a94442;">
+                                    <div class="td-link my-text-danger">
                                         <span class="glyphicon glyphicon-download"></span>
                                     </div>
                                 </a>
@@ -157,13 +158,13 @@
                     {
                         if (item.Realizado < 100)
                         {
-                            <td class="text-danger" align="center" valign="middle">
+                            <td class="my-text-danger" align="center" valign="middle">
                                 <b>@Html.DisplayFor(modelItem => item.Realizado)@Html.Raw("%")</b>
                             </td>
                         }
                         else
                         {
-                            <td class="text-success" align="center" valign="middle">
+                            <td class="my-text-success" align="center" valign="middle">
                                 <b>@Html.DisplayFor(modelItem => item.Realizado)@Html.Raw("%")</b>
                             </td>
                         }
@@ -172,11 +173,16 @@
 
                     @if (!adminOrInstrutor)
                     {
-                        if (item.IsFinalizada)
+                        if (item.IsFinalizada && item.DataEncerramento > DateTime.Now)
                         {
-                            <td class="success">
-                                @Html.Raw("Atividade Finalizada")
+                            <td align="center">
+                                <a onclick="MostrarSituacao('Atividade finalizada. Aguarde o prazo final em @item.DataEncerramento.ToShortDateString() para conferir a revisão.', '@item.Descricao')" data-toggle="tooltip" data-placement="auto" title="Finalizada">
+                                    <div class="td-link" style="color: #3c763d; cursor: pointer;">
+                                        <span class="glyphicon glyphicon-check" aria-hidden="true"></span>
+                                    </div>
+                                </a>
                             </td>
+                            <td></td>
                         }
                         else
                         {
@@ -187,11 +193,11 @@
                                         <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
                                     </a>
                                 </td>
-                                            <td class="grid-control">
-                                                <a href="@Url.Action("Finalizar", "Atividades", new { id = item.Idatividade })" class="btn btn-success" data-toggle="tooltip" data-placement="auto" title="Finalizar">
-                                                    <span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>
-                                                </a>
-                                            </td>
+                                <td class="grid-control">
+                                    <a href="@Url.Action("Finalizar", "Atividades", new { id = item.Idatividade })" class="btn btn-success" data-toggle="tooltip" data-placement="auto" title="Finalizar">
+                                        <span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>
+                                    </a>
+                                </td>
                             }
                             else
                             {
@@ -202,7 +208,7 @@
                                             <span class="glyphicon glyphicon-tasks" aria-hidden="true"></span>
                                         </a>
                                     </td>
-                                                <td></td>
+                                    <td></td>
                                 }
                             }
                         }
@@ -242,43 +248,8 @@
                 </p>
 }
 
-<!-- Modal Situação -->
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="myModalLabel">Situação da Atividade</h4>
-            </div>
-            <div class="modal-body">
-                <div class="container-fluid">
-                    <div class="row">
-                        <b>
-                            <div class="col-md-12" id="divAtividade">
-                            </div>
-                        </b>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12" id="divSituacao">
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 <script>
     $(document).ready(function () {
         $('[data-toggle="tooltip"]').tooltip();
     });
-
-    function MostrarSituacao(situacao, atividade) {
-        $('#divSituacao').text(situacao);
-        $('#divAtividade').text(atividade);
-        $('#myModal').modal('show');
-    };
 </script>

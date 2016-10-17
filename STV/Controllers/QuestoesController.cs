@@ -47,6 +47,7 @@ namespace STV.Controllers
                 var alternativas = from a in db.Alternativa where a.Idquestao == Idquestao select a;
                 questao.Alternativas = await alternativas.ToListAsync();
 
+                ViewBag.QuestaoSelecionada = questao.Idquestao;
                 return PartialView("Alternativas", questao);
             }
             catch (ApplicationException ex)

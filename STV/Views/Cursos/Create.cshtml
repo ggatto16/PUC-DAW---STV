@@ -86,14 +86,11 @@
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="Salvar" class="btn btn-primary" />
+                <a href="@Url.Action("Index")" class="btn btn-default" data-toggle="tooltip" data-placement="auto" title="Voltar para Listagem">Voltar</a>
             </div>
         </div>
     </div>
 }
-
-<div>
-    <a href="@Url.Action("Index")" class="btn btn-default grid-control" data-toggle="tooltip" data-placement="auto" title="Voltar para Listagem">Voltar</a>
-</div>
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")

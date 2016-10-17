@@ -5,11 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - KD - Knowledge Database</title>
 
-    <script>var mostrarCarregando = true;</script>
-
     @Styles.Render("~/Content/css")
     @RenderSection("MeusEstilos", required: false)
     @Scripts.Render("~/bundles/modernizr")
+
+    <script>
+        var mostrarCarregando = true;
+
+        function getCookie(cname) {
+            var name = cname + "=";
+            var ca = document.cookie.split(';');
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return "";
+        }
+        debugger;
+        var userid = getCookie("stvkd_userid");
+        var tema = getCookie("stvkd_tema_" + userid);
+        if (tema == 'Dark')
+            document.write('<link href="../Content/' + tema + '.css" rel="stylesheet" />');
+
+    </script>
 
 </head>
 <body>
