@@ -25,8 +25,11 @@ namespace STV.Controllers
             UsuarioLogado = auth.GetUserData();
         }
 
-        public ActionResult TrocarTema(string tema)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult TrocarTema(bool dark = false)
         {
+            string tema = dark ? "Dark" : "Light";
             //salva o tema
             var usuario = db.Usuario.Find(UsuarioLogado.Idusuario);
             usuario.Tema = tema;

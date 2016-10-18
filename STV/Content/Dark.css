@@ -24,9 +24,6 @@ a:focus {
 .table-striped > tbody > tr:nth-of-type(odd) {
 	background-color: #3e4041;
 }
-.info {
-		background-color: red;
-}
 .modal-content{
     background-color: #666768;
 	color: white;
@@ -35,10 +32,10 @@ a:focus {
 .my-text-success {
 	color: #3db239;
 }
-my-text-danger {
+.my-text-danger {
     color: #c72623;
 }
-my-text-warning {
+.my-text-warning {
     color: #a9761e;
 }
 
@@ -46,7 +43,7 @@ my-text-warning {
     background-color: #3a2e44!important;
 }
 
-input[type="text"], textarea, select {
+input[type="text"], input[type="number"], input[type="date"], textarea, select {
   background-color : #97999b!important; 
   color: white!important;
 }
@@ -57,4 +54,14 @@ select option {
     background-color: #97999b;
     color:white;
 }
+.breadcrumb {
+    background-color: #3e4041;
+}
 
+.breadcrumb .active {
+    color:white;
+}
+
+.jumbotron {
+    background-color: #7d8082;
+}

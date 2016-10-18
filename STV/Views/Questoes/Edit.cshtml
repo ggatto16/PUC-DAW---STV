@@ -19,7 +19,7 @@
     @Html.AntiForgeryToken()
     
     <div class="form-horizontal">
-        <h4>Questao</h4>
+        <h4>Questão</h4>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         @Html.HiddenFor(model => model.Idquestao)
@@ -52,7 +52,7 @@
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="Salvar" class="btn btn-primary" />
-                <a href="@Url.Action("Details","Atividades",new { id = Model.Idatividade, Idquestao = Model.Idquestao })" class="btn btn-default grid-control" data-toggle="tooltip" data-placement="auto" title="Voltar para Listagem">Voltar</a>
+                <a href="@Url.Action("Details","Atividades",new { id = Model.Idatividade, Idquestao = Model.Idquestao })" class="btn btn-default " data-toggle="tooltip" data-placement="auto" title="Voltar para Listagem">Voltar</a>
             </div>
         </div>
     </div>

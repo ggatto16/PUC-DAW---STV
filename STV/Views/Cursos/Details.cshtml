@@ -127,9 +127,9 @@
 
     <div class="row" style="margin: 15px 0 5px 0;">
         <div class="col-sm-3"><b>Situações:</b></div>
-        <div class="col-sm-3" style="color: #337ab7;"><span class="glyphicon glyphicon-upload"></span> Vai abrir</div>
-        <div class="col-sm-3" style="color: #3c763d;"><span class="glyphicon glyphicon-time"></span> Aberta</div>
-        <div class="col-sm-3" style="color: #a94442;"><span class="glyphicon glyphicon-download"></span> Encerrada</div>
+        <div class="col-sm-3" style="color: #87d7ff;"><span class="glyphicon glyphicon-upload"></span> Vai abrir</div>
+        <div class="col-sm-3 my-text-success"><span class="glyphicon glyphicon-time"></span> Aberta</div>
+        <div class="col-sm-3 my-text-danger"><span class="glyphicon glyphicon-download"></span> Encerrada</div>
     </div>
     <br />
     <div class="row">
@@ -144,17 +144,17 @@
             @if (User.IsInRole("Admin"))
             {
                 @Html.ActionLink("Alterar", "Edit", new { id = Model.Idcurso }, new { @class = "btn btn-primary" })
-                <a href="@Url.Action("Index")" class="btn btn-default grid-control" data-toggle="tooltip" data-placement="auto" title="Voltar para Listagem">Voltar</a>
+                <a href="@Url.Action("Index")" class="btn btn-default " data-toggle="tooltip" data-placement="auto" title="Voltar para Listagem">Voltar</a>
             }
             else
             {
                 if (Model.IsInstutor)
                 {
-                    <a href="@Url.Action("MeusCursosGerenciaveis")" class="btn btn-default grid-control" data-toggle="tooltip" data-placement="auto" title="Voltar para Listagem">Voltar</a>
+                    <a href="@Url.Action("MeusCursosGerenciaveis")" class="btn btn-default " data-toggle="tooltip" data-placement="auto" title="Voltar para Listagem">Voltar</a>
                 }
                 else
                 {
-                    <a href="@Url.Action("MeusCursos")" class="btn btn-default grid-control" data-toggle="tooltip" data-placement="auto" title="Voltar para Listagem">Voltar</a>
+                    <a href="@Url.Action("MeusCursos")" class="btn btn-default " data-toggle="tooltip" data-placement="auto" title="Voltar para Listagem">Voltar</a>
                 }
             }
         </div>
@@ -195,7 +195,7 @@
                 var unidSelecionada = string.Empty;
                 if (ViewBag.UnidadeSelecionada == unidade.Idunidade)
                 {
-                    unidSelecionada = "info";
+                    unidSelecionada = "my-selected";
                 }
                 else
                 {

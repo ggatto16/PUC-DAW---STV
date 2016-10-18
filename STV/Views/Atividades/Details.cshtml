@@ -51,7 +51,7 @@
     </div>
     <p>
         @Html.ActionLink("Alterar", "Edit", new { id = Model.Idatividade }, new { @class = "btn btn-primary" })
-        <a href="@Url.Action("Details", "Cursos", new { id = Model.Unidade.Idcurso, Idunidade = Model.Idunidade })" class="btn btn-default grid-control" data-toggle="tooltip" data-placement="auto" title="Voltar para Listagem">Voltar</a>
+        <a href="@Url.Action("Details", "Cursos", new { id = Model.Unidade.Idcurso, Idunidade = Model.Idunidade })" class="btn btn-default " data-toggle="tooltip" data-placement="auto" title="Voltar para Listagem">Voltar</a>
     </p>
 
     <hr />
@@ -76,7 +76,7 @@
             var tooltipAviso = string.Empty;
             if (ViewBag.QuestaoSelecionada == questao.Idquestao)
             {
-                questaoSelecionada = "info";
+                questaoSelecionada = "my-selected";
             }
             else
             {
@@ -200,8 +200,8 @@
 
         function SetInfoClass(tr) {
             try {
-                $('#' + trSelecionada).removeClass('info');
-                tr.classList.add('info');
+                $('#' + trSelecionada).removeClass('my-selected');
+                tr.classList.add('my-selected');
                 trSelecionada = tr.id;
                 onCompleteAjax();
             }

@@ -50,12 +50,12 @@
                     @if (Model.Arquivo.ContentType.Substring(0, 5) == "video" || Model.Arquivo.ContentType.Substring(0, 5) == "image")
                     {
                         <div id="linkVideo">
-                            @Ajax.ActionLink(Model.Arquivo.Nome, "MostrarArquivo", "Materiais", new { Id = Model.Idmaterial }, new AjaxOptions { UpdateTargetId = "ConteudoMaterial", InsertionMode = InsertionMode.Replace, HttpMethod = "Get", OnBegin = "onBeginAjax", OnComplete = "AbrirModal" });
+                            @Ajax.ActionLink(Model.Arquivo.Nome, "MostrarArquivo", "Materiais", new { Id = Model.Idmaterial }, new AjaxOptions { UpdateTargetId = "ConteudoMaterial", InsertionMode = InsertionMode.Replace, HttpMethod = "Get", OnBegin = "onBeginAjax", OnComplete = "AbrirModal" })
                         </div>
                     }
                     else
                     {
-                        @Html.ActionLink(Model.Arquivo.Nome, "BaixarArquivo", new { Id = Model.Idmaterial }, new { target = "_blank" });
+                        @Html.ActionLink(Model.Arquivo.Nome, "BaixarArquivo", new { Id = Model.Idmaterial }, new { target = "_blank" })
                     }
                 </dd>
             }
@@ -84,7 +84,7 @@
     </div>
     <p>
         @Html.ActionLink("Alterar", "Edit", new { id = Model.Idmaterial }, new { @class = "btn btn-primary" })
-        <a href="@Url.Action("Details", "Cursos", new { id = Model.Unidade.Idcurso, Idunidade = Model.Idunidade })" class="btn btn-default grid-control" data-toggle="tooltip" data-placement="auto" title="Voltar para Listagem">Voltar</a>
+        <a href="@Url.Action("Details", "Cursos", new { id = Model.Unidade.Idcurso, Idunidade = Model.Idunidade })" class="btn btn-default " data-toggle="tooltip" data-placement="auto" title="Voltar para Listagem">Voltar</a>
     </p>
 </div>
 

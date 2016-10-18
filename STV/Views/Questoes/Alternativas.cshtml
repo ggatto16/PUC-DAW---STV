@@ -4,7 +4,7 @@
     <h4>
         Alternativas &nbsp;
         <div class="pull-right">
-            <a href="javascript:void(0);" onclick='$("#Alternativas").empty(); $("#" + trSelecionada).removeClass("info");' class="btn btn-default">Fechar</a>
+            <a href="javascript:void(0);" onclick='$("#Alternativas").empty(); $("#" + trSelecionada).removeClass("my-selected");' class="btn btn-default">Fechar</a>
         </div>
         @Html.ActionLink("Adicionar", "Create", "Alternativas", new { Idquestao = Model.Idquestao }, new { @class = "btn btn-success" })
     </h4>
@@ -39,19 +39,19 @@ else
 
         if (item.Idalternativa == Model.IdalternativaCorreta)
         {
-            trcorreta = "success";
+            trcorreta = "alt_correta";
             txtcorreta = "text-success";
             tooltip = "Alternativa Correta";
         }
 
-        <tr class="@trcorreta @txtcorreta" data-toggle="tooltip" data-placement="auto" title="@tooltip">
+        <tr class="@trcorreta @txtcorreta">
             <td>
                 @Html.ActionLink((item.Descricao.Length > 70) ? item.Descricao.Substring(0, 70) + "[...]" : item.Descricao, "Details", "Alternativas", new { id = item.Idalternativa }, null)
             </td>
             <td>
                 @if (item.Idalternativa == Model.IdalternativaCorreta)
                 {
-                    <span class="glyphicon glyphicon-check" aria-hidden="true"></span>
+                    <span class="glyphicon glyphicon-check" aria-hidden="true" data-toggle="tooltip" data-placement="auto" title="@tooltip"></span>
                 }
             </td>
             <td>

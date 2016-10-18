@@ -26,11 +26,11 @@
             }
             return "";
         }
-        debugger;
+
         var userid = getCookie("stvkd_userid");
-        var tema = getCookie("stvkd_tema_" + userid);
-        if (tema == 'Dark')
-            document.write('<link href="/Content/' + tema + '.css" rel="stylesheet" />');
+        var cookieTema = getCookie("stvkd_tema_" + userid);
+        if (cookieTema == 'Dark')
+            document.write('<link href="/Content/' + cookieTema + '.css" rel="stylesheet" />');
 
     </script>
 

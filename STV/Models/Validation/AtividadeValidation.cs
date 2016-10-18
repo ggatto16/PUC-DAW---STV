@@ -14,8 +14,8 @@ namespace STV.Models.Validation
                 throw new ApplicationException("Ops! Atividade não encontrada.");
             if (CommonValidation.Encerrada(atv.DataEncerramento))
                 throw new ApplicationException("Atividade encerrada. Não pode ser alterada.");
-            if (CommonValidation.EmAberto(atv.DataAbertura, atv.DataEncerramento))
-                throw new ApplicationException("Atividade em aberto e publicada. Não pode ser alterada.");
+            if (CommonValidation.EmAberto(atv.DataAbertura, atv.DataEncerramento) && atv.Notas.Count() > 0)
+                throw new ApplicationException("Atividade está aberta e já contem notas. Não pode ser alterada.");
 
             return;
         }

@@ -134,7 +134,7 @@
 <body>
     <div> 
 
-        @using (Html.BeginForm("Login", "Home", FormMethod.Post))
+        @using (Html.BeginForm("Login", "Home", new { ReturnUrl = Request.QueryString["ReturnUrl"] }, FormMethod.Post))
         {
             @Html.AntiForgeryToken() // previne o ataque CSRF
             @Html.ValidationSummary(true)
@@ -142,7 +142,6 @@
             <div class="login-page">
                 <div class="form">
                     <form class="login-form">
-
                         @Html.TextBoxFor(a => a.UserId, new { @placeholder = "CPF" })
                         @Html.ValidationMessageFor(a => a.UserId)
                         @Html.PasswordFor(a => a.Senha, new { @placeholder = "Senha" })

@@ -12,6 +12,33 @@
 </div>
 
 <div class="row">
+    <div class="col-md-12" style="text-align: center;">
+        Escolha seu lado
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12" style="text-align:center; margin: 15px 0 10px;">
+        <!-- Rounded switch -->
+        @using (Html.BeginForm("TrocarTema", "Home", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            <div style="display: inline-flex;">
+                <label>LIGHT</label>
+                <div style="margin: -6px 15px;">
+                    <label class="switch">
+                        <input type="checkbox" name="dark" id="dark" value="true">
+                        <div class="slider round"></div>
+                        <input type="submit" value="" style="display:none;" id="submitTheme">
+                    </label>
+                </div>
+                <label>DARK</label>
+            </div>
+        }
+        
+    </div>
+</div>
+
+<div class="row">
     <div class="col-md-4">
         <div class="box-home meio">
             <h3>Quadro de Medalhas</h3>
@@ -42,7 +69,7 @@
                     }
                 }
 
-                <a  style="cursor: pointer;" onclick="MostrarMedalha('Sortudo')"><img src="~/Images/ico-Sortudo.jpg" width="50" /></a>
+                <a style="cursor: pointer;" onclick="MostrarMedalha('Sortudo')"><img src="~/Images/ico-Sortudo.jpg" width="50" /></a>
                 <a onclick="MostrarMedalha('Nerd')"><img src="~/Images/ico-Nerd.jpg" width="50" /></a>
                 <a onclick="MostrarMedalha('Genio')"><img src="~/Images/ico-Genio.jpg" width="50" /></a>
             </div>
@@ -86,9 +113,6 @@
     </div>
 </div>
 
-@Html.ActionLink("DARK","TrocarTema", new { tema = "Dark" })
-@Html.ActionLink("LIGHT", "TrocarTema", new { tema = "Light" })
-
 <!-- Modal -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
@@ -101,7 +125,9 @@
                 <div class="container-fluid">
                     <div class="col-md-12 text-center">
                         <figure>
-                            <img src="" id="imgMedalha" alt="Medalha" width="200" />
+                            <div id="divQuadro" style="background-color: white; border-radius: 1em; margin-left:auto; margin-right:auto;">
+                                <img src="" id="imgMedalha" alt="Medalha" width="200" />
+                            </div>
                             <br />
                             <figcaption id="capMedalha"></figcaption>
                         </figure>
@@ -135,6 +161,7 @@
                     break;
             }
 
+            $('#divQuadro').width($('#imgMedalha').width() + 10);
             $('#myModal').modal('show');
         }
 
@@ -147,6 +174,14 @@
         function LoadCSS() {
             $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', '~/Content/Dark.css'));
         }
+
+        $(document).ready(function () {
+            $('#dark').prop('checked', cookieTema == "Dark");
+        });
+
+        $("#dark").change(function () {
+            $('#submitTheme').click()
+        });
 
     </script>
 
