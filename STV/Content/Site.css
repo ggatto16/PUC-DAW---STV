@@ -1,4 +1,15 @@
-﻿/* The switch - the box around the slider */
+﻿/*Só aplicar highlight no logo section form IE*/
+@media all and (-ms-high-contrast:none) {
+    .head-logo {
+        background-color: #d8d9da;
+        border-radius: 1em;
+        padding: 6px;
+        margin-top: -6px;
+        color: steelblue;
+    }
+}
+
+/* The switch - the box around the slider */
 .switch {
   position: relative;
   display: inline-block;

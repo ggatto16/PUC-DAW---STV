@@ -67,13 +67,13 @@
                         switch ((STV.Models.Medalhas)medalha.Idmedalha)
                         {
                             case STV.Models.Medalhas.Sortudo:
-                                Html.Raw("<a style=\"cursor: pointer;\" onclick=\"MostrarMedalha('Sortudo')\"><img src = \"~/Images/ico-Sortudo.jpg\" width=\"50\" /></a>");
+                                @Html.Raw("<a style=\"cursor: pointer;\" onclick=\"MostrarMedalha('Sortudo')\"><img src = \"/Images/ico-Sortudo.jpg\" width=\"50\" /></a>");
                                 break;
                             case STV.Models.Medalhas.Nerd:
-                                Html.Raw("<a style=\"cursor: pointer;\" onclick=\"MostrarMedalha('Nerd')\"><img src = \"~/Images/ico-Nerd.jpg\" width=\"50\" /></a>");
+                                @Html.Raw("<a style=\"cursor: pointer;\" onclick=\"MostrarMedalha('Nerd')\"><img src = \"/Images/ico-Nerd.jpg\" width=\"50\" /></a>");
                                 break;
                             case STV.Models.Medalhas.Genio:
-                                Html.Raw("<a style=\"cursor: pointer;\" onclick=\"MostrarMedalha('Genio')\"><img src = \"~/Images/ico-Genio.jpg\" width=\"50\" /></a>");
+                                @Html.Raw("<a style=\"cursor: pointer;\" onclick=\"MostrarMedalha('Genio')\"><img src = \"/Images/ico-Genio.jpg\" width=\"50\" /></a>");
                                 break;
                             default:
                                 break;
@@ -81,9 +81,9 @@
                     }
                 }
 
-                <a style="cursor: pointer;" onclick="MostrarMedalha('Sortudo')"><img src="~/Images/ico-Sortudo.jpg" width="50" /></a>
+                @*<a style="cursor: pointer;" onclick="MostrarMedalha('Sortudo')"><img src="~/Images/ico-Sortudo.jpg" width="50" /></a>
                 <a onclick="MostrarMedalha('Nerd')"><img src="~/Images/ico-Nerd.jpg" width="50" /></a>
-                <a onclick="MostrarMedalha('Genio')"><img src="~/Images/ico-Genio.jpg" width="50" /></a>
+                <a onclick="MostrarMedalha('Genio')"><img src="~/Images/ico-Genio.jpg" width="50" /></a>*@
             </div>
         </div>
     </div>
@@ -99,7 +99,7 @@
                 <ul>
                     @foreach (var curso in Model.Cursos.OrderByDescending(c => c.DataInicial).Take(5))
                     {
-                        <li>@Html.ActionLink(curso.Titulo, "Details", "Cursos", new { id = curso.Idcurso })</li>
+                        <li>@Html.ActionLink(curso.Titulo, "Details", "Cursos", new { id = curso.Idcurso }, null)</li>
                     }
                 </ul>
             }
@@ -107,7 +107,7 @@
     </div>
     <div class="col-md-4">
         <div class="box-home">
-            <h3 class="meio">Notas</h3>
+            <h3 class="meio">Últimas Notas</h3>
             @if (Model.Notas == null || Model.Notas.Count() == 0)
             {
                 <p class="meio">Nenhuma nota</p>
@@ -117,7 +117,7 @@
                 <ul>
                     @foreach (var nota in Model.Notas.OrderByDescending(n => n.Atividade.DataAbertura).Take(5))
                     {
-                        @Html.Raw(nota.Atividade.Descricao + ": " + nota.Pontos);
+                        <li>@Html.Raw(nota.Atividade.Descricao + ": " + nota.Pontos)</li>
                     }
                 </ul>
             }

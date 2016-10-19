@@ -18,7 +18,9 @@
     }
     else if (Model.Tipo == STV.Models.TipoMaterial.Embedded)
     {
-        <iframe width="420" height="280" src="@Model.URL allowFullScreen" style="width: 100%; height: 100%;"></iframe>
+        <a class="embedly-card" href="@Model.URL">@Model.Descricao</a>
+        <script async src="//cdn.embedly.com/widgets/platform.js" charset="UTF-8"></script>
+        @*<iframe width="420" height="280" src="@Model.URL allowFullScreen" style="width: 100%; height: 100%;"></iframe>*@
     }
     else
     {

@@ -46,7 +46,7 @@ a:focus {
     background-color: #3a2e44!important;
 }
 
-input[type="text"], input[type="number"], input[type="date"], input[type="url"], input[type="email"], textarea, select {
+input[type="text"], input[type="number"], input[type="date"], input[type="url"], input[type="email"], input[type="password"], textarea, select {
   background-color : #97999b!important; 
   color: white!important;
 }

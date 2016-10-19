@@ -56,7 +56,8 @@ namespace STV.Controllers
                 Response.SetCookie(cookie);
                 cookie = new HttpCookie("stvkd_tema_" + UsuarioLogado.Idusuario, tema);
                 Response.SetCookie(cookie);
-                return View(UsuarioLogado);
+                var user = db.Usuario.Find(UsuarioLogado.Idusuario);
+                return View(user);
             }
             else
                 return RedirectToAction("Login");
