@@ -38,12 +38,15 @@ a:focus {
 .my-text-warning {
     color: #a9761e;
 }
+.my-text-info {
+    color: #87d7ff;
+}
 
 .my-selected {
     background-color: #3a2e44!important;
 }
 
-input[type="text"], input[type="number"], input[type="date"], textarea, select {
+input[type="text"], input[type="number"], input[type="date"], input[type="url"], input[type="email"], textarea, select {
   background-color : #97999b!important; 
   color: white!important;
 }
@@ -64,4 +67,10 @@ select option {
 
 .jumbotron {
     background-color: #7d8082;
+}
+.container-error {
+    margin-top: 1em;
+    background-color: white;
+    color: black;
+    border-radius: 1em;
 }

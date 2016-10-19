@@ -259,14 +259,17 @@ namespace STV.Controllers
                 erros.Add("Data de abertura não pode ser posterior à data de encerramento.");
 
             var dataAberturaUnidade = db.Unidade.Find(atv.Idunidade).DataAbertura;
-            if (dataAberturaUnidade != null)
+            if (dataAberturaUnidade != null && dataAberturaUnidade.HasValue)
             {
                 if (atv.DataAbertura < dataAberturaUnidade)
-                    erros.Add("Data de abertura não pode ser anterior à data de abertura da unidade.");
+                    erros.Add("Data de abertura não pode ser anterior à data de abertura da unidade que é " + dataAberturaUnidade.Value.ToShortDateString());
             }
 
             if (CommonValidation.Encerrada(atv.DataEncerramento))
                 erros.Add("Data de encerramento não pode ser anterior à data atual.");
+
+            if (atv.DataAbertura < DateTime.Now)
+                erros.Add("Data de abertura não pode ser anterior à data atual.");
 
             AddErrors(erros);
         }

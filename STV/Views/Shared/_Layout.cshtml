@@ -44,7 +44,9 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                @Html.ActionLink("KD - Knowledge Database", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+                <a href="@Url.Action("Index", "Home")" area="" class="navbar-brand">
+                    <img src="~/Images/kd-logo3.jpg" alt="Knowledge Database" width="50" style="float: left; margin-top: -4px;" /> &nbsp; <small><i>Knowledge Database</i></small>
+                </a>
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">

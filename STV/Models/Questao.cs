@@ -21,6 +21,7 @@
         [DataType(DataType.MultilineText)]
         public string Descricao { get; set; }
 
+        [Display(Name = "Número")]
         public int? Numero { get; set; }
 
         public virtual Atividade Atividade { get; set; }

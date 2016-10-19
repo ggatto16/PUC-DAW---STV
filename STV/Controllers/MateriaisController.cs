@@ -150,11 +150,16 @@ namespace STV.Controllers
         }
 
         // GET: Materiais/Create
-        public ActionResult Create(int Idunidade)
+        public ActionResult Create(int? Idunidade)
         {
+            if (Idunidade == null)
+            {
+                TempData["msgErr"] = "Ops! Requisição inválida.";
+                return RedirectToAction("Index", "Home");
+            }
             Material material = new Material();
             var materialVM = Mapper.Map<Material, MaterialVM>(material);
-            materialVM.Idunidade = Idunidade;
+            materialVM.Idunidade = (int)Idunidade;
             var unidade = db.Unidade.Find(Idunidade);
             materialVM.Unidade = unidade;
             materialVM.Idcurso = unidade.Idcurso;

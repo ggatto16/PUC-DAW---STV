@@ -75,6 +75,9 @@ input:checked + .slider:before {
 .my-text-warning {
     color: #8a6d3b;
 }
+.my-text-info {
+    color: #31708f;
+}
 .my-selected {
     background-color: #d9edf7!important;
 }

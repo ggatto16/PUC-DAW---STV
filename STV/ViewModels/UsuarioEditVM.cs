@@ -32,6 +32,8 @@ namespace STV.ViewModels
 
         [StringLength(100, ErrorMessage = "Este campo suporta até 100 caracteres")]
         [Required(AllowEmptyStrings = false, ErrorMessage = "Este campo é obrigatório")]
+        [Display(Name = "E-mail")]
+        [EmailAddress(ErrorMessage = "E-mail inválido")]
         public string Email { get; set; }
 
         [Required(AllowEmptyStrings = false, ErrorMessage = "Este campo é obrigatório")]

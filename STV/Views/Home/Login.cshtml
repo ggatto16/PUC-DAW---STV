@@ -15,14 +15,6 @@
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
 
-    <script>
-
-        $('.message a').click(function () {
-            $('form').animate({ height: "toggle", opacity: "toggle" }, "slow");
-        });
-
-    </script>
-
     <link href="@Url.Content("https://fonts.googleapis.com/css?family=Roboto:300")" rel="stylesheet" type="text/css" />
 
     <style>
@@ -31,7 +23,7 @@
 
         .login-page {
           width: 360px;
-          padding: 8% 0 0;
+          /*padding: 8% 0 0;*/
           margin: auto;
         }
         .form {
@@ -50,7 +42,6 @@
           background: #f2f2f2;
           width: 100%;
           border: 0;
-          margin: 0 0 15px;
           padding: 15px;
           box-sizing: border-box;
           font-size: 14px;
@@ -59,7 +50,7 @@
           font-family: "Roboto", sans-serif;
           text-transform: uppercase;
           outline: 0;
-          background: #4CAF50;
+          background: #2c89b7;
           width: 100%;
           border: 0;
           padding: 15px;
@@ -70,7 +61,7 @@
           cursor: pointer;
         }
         .form button:hover,.form button:active,.form button:focus {
-          background: #43A047;
+          background: #1193d4;
         }
         .form .message {
           margin: 15px 0 0;
@@ -118,14 +109,16 @@
           color: #EF3B3A;
         }
         body {
-            background: rgba(212,228,239,1);
-            background: -moz-radial-gradient(center, ellipse cover, rgba(212,228,239,1) 0%, rgba(134,174,204,1) 100%);
-            background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%, rgba(212,228,239,1)), color-stop(100%, rgba(134,174,204,1)));
-            background: -webkit-radial-gradient(center, ellipse cover, rgba(212,228,239,1) 0%, rgba(134,174,204,1) 100%);
-            background: -o-radial-gradient(center, ellipse cover, rgba(212,228,239,1) 0%, rgba(134,174,204,1) 100%);
-            background: -ms-radial-gradient(center, ellipse cover, rgba(212,228,239,1) 0%, rgba(134,174,204,1) 100%);
-            background: radial-gradient(ellipse at center, rgba(212,228,239,1) 0%, rgba(134,174,204,1) 100%);
-            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#d4e4ef', endColorstr='#86aecc', GradientType=1 );
+            padding-top: 10px!important;
+            height: 100vh;
+            background: rgba(255,255,255,1);
+            background: -moz-linear-gradient(top, rgba(255,255,255,1) 0%, rgba(245,245,245,1) 47%, rgba(237,237,237,1) 100%);
+            background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(255,255,255,1)), color-stop(47%, rgba(245,245,245,1)), color-stop(100%, rgba(237,237,237,1)));
+            background: -webkit-linear-gradient(top, rgba(255,255,255,1) 0%, rgba(245,245,245,1) 47%, rgba(237,237,237,1) 100%);
+            background: -o-linear-gradient(top, rgba(255,255,255,1) 0%, rgba(245,245,245,1) 47%, rgba(237,237,237,1) 100%);
+            background: -ms-linear-gradient(top, rgba(255,255,255,1) 0%, rgba(245,245,245,1) 47%, rgba(237,237,237,1) 100%);
+            background: linear-gradient(to bottom, rgba(255,255,255,1) 0%, rgba(245,245,245,1) 47%, rgba(237,237,237,1) 100%);
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#ededed', GradientType=0 );
         }
 
     </style>
@@ -133,6 +126,7 @@
 </head>
 <body>
     <div> 
+        
 
         @using (Html.BeginForm("Login", "Home", new { ReturnUrl = Request.QueryString["ReturnUrl"] }, FormMethod.Post))
         {
@@ -140,16 +134,18 @@
             @Html.ValidationSummary(true)
 
             <div class="login-page">
+                <img src="~/Images/kd-logo2.jpg" width="400" class="img-responsive" alt="Knowledge Database" />
                 <div class="form">
                     <form class="login-form">
                         @Html.TextBoxFor(a => a.UserId, new { @placeholder = "CPF" })
-                        @Html.ValidationMessageFor(a => a.UserId)
+                        @Html.ValidationMessageFor(a => a.UserId, "", new { @class = "text-danger" })
+                        <div style="margin: 15px"></div>
                         @Html.PasswordFor(a => a.Senha, new { @placeholder = "Senha" })
-                        @Html.ValidationMessageFor(a => a.Senha)
-
+                        @Html.ValidationMessageFor(a => a.Senha, "", new { @class = "text-danger" })
+                        <div style="margin: 15px"></div>
                         @if (ViewBag.Message != null)
                         { 
-                            <div class="alert alert-danger" role="alert">@Html.Raw(@ViewBag.Message)</div>
+                            <div class="alert alert-danger" style="cursor: pointer;" role="alert" id="msg">@Html.Raw(@ViewBag.Message)</div>
                         }
 
                         <button>login</button>
@@ -160,9 +156,17 @@
         }
 
     </div>
-    @*@Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/jquery")
+    @*@Scripts.Render("~/bundles/jqueryval")
     @Scripts.Render("~/Scripts/CustomValidation.js")
     @Scripts.Render("~/bundles/inputmask")*@
+
+    <script>
+
+        $('.alert').click(function () {
+            $('#msg').animate({ height: "toggle", opacity: "toggle" }, "slow");
+        });
+
+    </script>
 </body>
 </html>

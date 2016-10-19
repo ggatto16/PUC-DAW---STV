@@ -321,9 +321,13 @@
     <Content Include="Images\ico-Genio.jpg" />
     <Content Include="Images\ico-Nerd.jpg" />
     <Content Include="Images\ico-Sortudo.jpg" />
+    <Content Include="Images\kd-logo.jpg" />
+    <Content Include="Images\kd-logo2.jpg" />
+    <Content Include="Images\logo-relat.jpg" />
     <Content Include="Images\Nerd.jpg" />
     <Content Include="Images\RedX.jpg" />
     <Content Include="Images\Sortudo.jpg" />
+    <Content Include="Images\kd-logo3.jpg" />
     <Content Include="Images\video-loading.gif" />
     <Content Include="Images\video-loading1.gif" />
     <Content Include="Images\video-loading2.gif" />
