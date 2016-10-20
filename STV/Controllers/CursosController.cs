@@ -53,7 +53,7 @@ namespace STV.Controllers
 
             var cursoVM = Mapper.Map<Curso, DetalhesCurso>(curso);
 
-            if (!VerificarCertificado(cursoVM)) return View("NaoAutorizado");
+            if (!VerificarCertificado(cursoVM)) throw new UnauthorizedAccessException("Não Autorizado");
             
             //return new PdfActionResult("Certificado", curso);
             //return View("Certificado", curso);
@@ -186,7 +186,7 @@ namespace STV.Controllers
                 && x.DataInicial <= DateTime.Now && !x.Encerrado)
                     .Include(u => u.Usuarios);
             if (cursosAutorizados.Where(c => c.Idcurso == Idcurso).Count() == 0)
-                return View("NaoAutorizado");
+                throw new UnauthorizedAccessException("Não Autorizado");
 
             var curso = await db.Curso.FindAsync(Idcurso);
             Usuario usuario = await db.Usuario.FindAsync(UsuarioLogado.Idusuario);
@@ -292,7 +292,7 @@ namespace STV.Controllers
                     throw new ApplicationException("Curso não encontrado.");
 
                 if (!CommonValidation.CanSee(curso, UsuarioLogado.Idusuario, User))
-                    return View("NaoAutorizado");
+                    throw new UnauthorizedAccessException("Não Autorizado");
 
                 var detalhesCurso = Mapper.Map<Curso, DetalhesCurso>(curso);
 

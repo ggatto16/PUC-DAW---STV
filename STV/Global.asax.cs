@@ -64,7 +64,29 @@ namespace STV
             }
             else
             {
-                // TODO: Handle the case of non async calls
+                Server.ClearError();
+                Response.Redirect("Error");
+            }
+        }
+
+        public class HandleExceptionsAttribute : HandleErrorAttribute
+        {
+            public override void OnException(ExceptionContext filterContext)
+            {
+                var expception = filterContext.Exception;
+                filterContext.ExceptionHandled = true;
+                string controller = filterContext.RouteData.Values["controller"].ToString();
+                string action = filterContext.RouteData.Values["action"].ToString();
+                var model = new HandleErrorInfo(filterContext.Exception, controller, action);
+
+                if (filterContext.Exception is UnauthorizedAccessException)
+                    filterContext.Result = new ViewResult { ViewName = "NaoAutorizado", ViewData = new ViewDataDictionary(model) };
+                else if (filterContext.Exception is HttpRequestValidationException)
+                    filterContext.Result = new ViewResult { ViewName = "Error", ViewData = new ViewDataDictionary(model) };
+                else if (filterContext.Exception is KeyNotFoundException)
+                    filterContext.Result = new ViewResult { ViewName = "Error", ViewData = new ViewDataDictionary(model) };
+                else
+                    filterContext.Result = new ViewResult { ViewName = "Error", ViewData = new ViewDataDictionary(model) };
             }
         }
 

@@ -42,23 +42,6 @@ namespace STV.Controllers
 
         #region Actions
 
-        // GET: Materiais
-        //public async Task<ActionResult> Index(int? idunidade)
-        //{
-
-        //    if (idunidade == null)
-        //    {
-        //        TempData["msgErr"] = "Ops! Requisição inválida.";
-        //        return RedirectToAction("Index", "Home");
-        //    }
-
-        //    var materiais = db.Material.Where(m => m.Unidade.Idunidade == idunidade);
-
-        //    return PartialView(await materiais.ToListAsync());
-        //}
-
-
-
         // GET: Materiais/Details/5
         public async Task<ActionResult> Details(int? id)
         {
@@ -70,12 +53,13 @@ namespace STV.Controllers
                 Material material = await db.Material.FindAsync(id);
 
                 ViewBag.DescricaoTipo = GetText(material.Tipo);
+                ViewBag.IsInstrutorOrAdmin = material.Unidade.Curso.IdusuarioInstrutor == UsuarioLogado.Idusuario || User.IsInRole("Admin");
 
                 if (material == null)
                     throw new ApplicationException("Material não encontrado.");
 
                 if (!CommonValidation.CanSee(material.Unidade.Curso, UsuarioLogado.Idusuario, User))
-                    return View("NaoAutorizado");
+                    throw new UnauthorizedAccessException("Não Autorizado");
 
                 GetArquivoInfo(ref material);
 
@@ -96,7 +80,7 @@ namespace STV.Controllers
             if (material != null)
             {
                 if (!CommonValidation.CanSee(material.Unidade.Curso, UsuarioLogado.Idusuario, User))
-                    return View("NaoAutorizado");
+                    throw new UnauthorizedAccessException("Não Autorizado");
 
                 RegistrarVisualizacao(material);
             }
@@ -152,18 +136,26 @@ namespace STV.Controllers
         // GET: Materiais/Create
         public ActionResult Create(int? Idunidade)
         {
-            if (Idunidade == null)
+            try
             {
-                TempData["msgErr"] = "Ops! Requisição inválida.";
-                return RedirectToAction("Index", "Home");
+                if (Idunidade == null)
+                    throw new Exception("Ops! Requisição inválida.");
+                
+                var unidade = db.Unidade.Find(Idunidade);
+                MaterialValidation.CanEdit(unidade, UsuarioLogado.Idusuario, User);
+
+                var materialVM = new MaterialVM();
+                materialVM.Idunidade = (int)Idunidade;
+                materialVM.Unidade = unidade;
+                materialVM.Idcurso = unidade.Idcurso;
+
+                return View(materialVM);
             }
-            Material material = new Material();
-            var materialVM = Mapper.Map<Material, MaterialVM>(material);
-            materialVM.Idunidade = (int)Idunidade;
-            var unidade = db.Unidade.Find(Idunidade);
-            materialVM.Unidade = unidade;
-            materialVM.Idcurso = unidade.Idcurso;
-            return View(materialVM);
+            catch (ApplicationException ex)
+            {
+                TempData["msgErr"] = ex.Message;
+                return VoltarParaListagem(Idunidade);
+            }
         }
 
         [HttpPost]
@@ -176,6 +168,9 @@ namespace STV.Controllers
 
                 if (string.IsNullOrEmpty(form["Idunidade"]))
                     throw new ApplicationException("Ops! Requisição inválida.");
+
+                var unidade = db.Unidade.Find(Convert.ToInt32(form["Idunidade"]));
+                MaterialValidation.CanEdit(unidade, UsuarioLogado.Idusuario, User);
 
                 if (string.IsNullOrEmpty(form["Descricao"]))
                     throw new ApplicationException("Descrição não informada.");
@@ -304,13 +299,12 @@ namespace STV.Controllers
                 if (material == null)
                     throw new Exception("Material não encontrado.");
 
-                if (material.Unidade.Encerrada)
-                    throw new ApplicationException("Unidade encerrada. Material não pode ser alterado.");
+                MaterialValidation.CanEdit(material.Unidade, UsuarioLogado.Idusuario, User);
 
                 GetArquivoInfo(ref material);
 
                 var materialVM = Mapper.Map<Material, MaterialVM>(material);
-                materialVM.Idunidade = material.Unidade.Idunidade;
+                materialVM.Idunidade = material.Idunidade;
                 materialVM.Idcurso = material.Unidade.Idcurso;
 
                 ViewBag.URL = material.URL;
@@ -320,12 +314,7 @@ namespace STV.Controllers
             catch (ApplicationException ex)
             {
                 TempData["msgErr"] = ex.Message;
-                return VoltarParaListagem(material);
-            }
-            catch (Exception ex)
-            {
-                TempData["msgErr"] = ex.Message;
-                return RedirectToAction("Index", "Home");
+                return VoltarParaListagem(material.Idunidade);
             }
         }
 
@@ -345,7 +334,7 @@ namespace STV.Controllers
                 TempData["msg"] = "Dados salvos!";
             }
 
-            return VoltarParaListagem(material);
+            return VoltarParaListagem(material.Idunidade);
         }
 
 
@@ -362,15 +351,14 @@ namespace STV.Controllers
                 if (material == null)
                     throw new Exception("Material não econtrado.");
 
-                if (material.Unidade.Encerrada)
-                    throw new ApplicationException("Unidade encerrada. Material não pode eser excluído.");
+                MaterialValidation.CanEdit(material.Unidade, UsuarioLogado.Idusuario, User);
 
                 return View(material);
             }
             catch (ApplicationException ex)
             {
                 TempData["msgErr"] = ex.Message;
-                return VoltarParaListagem(material);
+                return VoltarParaListagem(material.Idunidade);
             }
             catch (Exception ex)
             {
@@ -392,20 +380,20 @@ namespace STV.Controllers
                 db.Material.Remove(material);
                 await db.SaveChangesAsync();
                 TempData["msg"] = "Material excluído!";
-                return VoltarParaListagem(material);
+                return VoltarParaListagem(material.Idunidade);
             }
             catch (Exception)
             {
                 TempData["msgErr"] = "Material não pode ser excluído.";
-                return RedirectToAction("Details", "Cursos", new { id = material.Unidade.Idcurso, Idunidade = material.Unidade.Idunidade });
+                return RedirectToAction("Details", "Cursos", new { id = material.Unidade.Idcurso, Idunidade = material.Idunidade });
             }
         }
 
         //Retorna para a tela principal do Curso
-        private RedirectToRouteResult VoltarParaListagem(Material material)
+        private RedirectToRouteResult VoltarParaListagem(int? Idunidade)
         {
-            Unidade unidade = db.Unidade.Find(material.Idunidade);
-            return RedirectToAction("Details", "Cursos", new { id = unidade.Idcurso, Idunidade = material.Idunidade });
+            Unidade unidade = db.Unidade.Find(Idunidade);
+            return RedirectToAction("Details", "Cursos", new { id = unidade.Idcurso, Idunidade = Idunidade });
         }
 
         #endregion

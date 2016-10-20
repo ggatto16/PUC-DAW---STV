@@ -25,5 +25,11 @@ namespace STV.Models.Validation
         {
             return DataAbertura < DateTime.Now && DataEncerramento >= DateTime.Now;
         }
+
+        public static void ChecarUsuarioAutorizado(int IdusuarioInstrutor, int Idusuario, IPrincipal User)
+        {
+            if (IdusuarioInstrutor != Idusuario && !User.IsInRole("Admin"))
+                throw new UnauthorizedAccessException("Não autorizado");
+        }
     }
 }

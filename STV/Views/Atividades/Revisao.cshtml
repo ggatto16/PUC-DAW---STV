@@ -20,11 +20,11 @@
 {
     if (questao.IdalternativaCorreta == questao.IdAlternativaSelecionada)
     {
-        <div class="bg-success text-success text-center" style="width: 20%;">✔ Correto</div>
+        <div class="my-text-success text-center" style="width: 20%;">✔ Correto</div>
     }
     else
     {
-        <div class="bg-danger text-danger text-center" style="width: 20%;">✖ Errado</div>
+        <div class="my-text-danger text-center" style="width: 20%;">✖ Errado</div>
     }
 
     <h4> @questao.Numero - @questao.Descricao </h4>
@@ -35,11 +35,11 @@
         {
             if (questao.IdalternativaCorreta == alternativa.Idalternativa)
             {
-                classe = "bg-success text-success";
+                classe = "my-text-success";
             }
             else
             {
-                classe = "bg-danger text-danger";
+                classe = "my-text-danger";
             }
             <tr class="@classe">
                 <td>

@@ -3,11 +3,13 @@ using STV.DAL;
 using STV.Models;
 using STV.Models.Validation;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Mvc;
 
 namespace STV.Controllers
@@ -42,7 +44,7 @@ namespace STV.Controllers
                 var questao = await db.Questao.FindAsync(Idquestao);
 
                 if (!QuestaoValidation.CanSee(questao, UsuarioLogado.Idusuario, User))
-                    return View("NaoAutorizado");
+                    throw new UnauthorizedAccessException("Não Autorizado");
 
                 var alternativas = from a in db.Alternativa where a.Idquestao == Idquestao select a;
                 questao.Alternativas = await alternativas.ToListAsync();
@@ -69,7 +71,7 @@ namespace STV.Controllers
                 Questao questao = await db.Questao.FindAsync(id);
 
                 if (!QuestaoValidation.CanSee(questao, UsuarioLogado.Idusuario, User))
-                    return View("NaoAutorizado");
+                    throw new UnauthorizedAccessException("Não Autorizado");
 
                 return View(questao);
             }
@@ -94,7 +96,7 @@ namespace STV.Controllers
                 ViewBag.IdalternativaCorreta = new SelectList(db.Alternativa, "Idalternativa", "Descricao");
                 ViewBag.Idatividade = new SelectList(db.Atividade, "Idatividade", "Descricao");
 
-                AtividadeValidation.CanEdit(questao.Atividade);
+                AtividadeValidation.CanEdit(questao.Atividade, UsuarioLogado.Idusuario, User);
 
                 return View(questao);
             }
@@ -132,16 +134,16 @@ namespace STV.Controllers
             try
             {
                 if (id == null)
-                    throw new Exception("Ops! Requisição inválida.");
+                    throw new HttpRequestValidationException("Ops! Requisição inválida.");
 
                 questao = await db.Questao.FindAsync(id);
                 if (questao == null)
-                    throw new Exception("Questão não encontrada.");
+                    throw new KeyNotFoundException("Questão não encontrada.");
 
                 ViewBag.IdalternativaCorreta = new SelectList(db.Alternativa.Where(a => a.Idquestao == id), "Idalternativa", "Descricao");
                 ViewBag.Idatividade = new SelectList(db.Atividade, "Idatividade", "Idatividade", questao.Idatividade);
 
-                AtividadeValidation.CanEdit(questao.Atividade);
+                AtividadeValidation.CanEdit(questao.Atividade, UsuarioLogado.Idusuario, User);
 
                 return View(questao);
             }
@@ -149,11 +151,6 @@ namespace STV.Controllers
             {
                 TempData["msgErr"] = ex.Message;
                 return VoltarParaListagem(questao);
-            }
-            catch (Exception ex)
-            {
-                TempData["msgErr"] = ex.Message;
-                return RedirectToAction("Index", "Home");
             }
         }
 
@@ -189,7 +186,7 @@ namespace STV.Controllers
                 if (questao == null)
                     throw new Exception("Questão não econtrada.");
 
-                AtividadeValidation.CanEdit(questao.Atividade);
+                AtividadeValidation.CanEdit(questao.Atividade, UsuarioLogado.Idusuario, User);
 
                 return View(questao);
             }

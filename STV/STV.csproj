@@ -276,6 +276,7 @@
     <Compile Include="Models\Unidade.cs" />
     <Compile Include="Models\Usuario.cs" />
     <Compile Include="Models\Validation\AlternativaValidation.cs" />
+    <Compile Include="Models\Validation\MaterialValidation.cs" />
     <Compile Include="Models\Validation\AtividadeValidation.cs" />
     <Compile Include="Models\Validation\CommonValidation.cs" />
     <Compile Include="Models\Validation\CursoValidation.cs" />

@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
+using STV.Auth;
 using STV.DAL;
 using STV.Models;
 using STV.Models.Validation;
 using STV.ViewModels;
 using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Threading.Tasks;
 using System.Web.Mvc;
@@ -13,6 +15,14 @@ namespace STV.Controllers
     public class AlternativasController : Controller
     {
         private STVDbContext db = new STVDbContext();
+
+        private Usuario UsuarioLogado;
+
+        public AlternativasController()
+        {
+            SessionContext auth = new SessionContext();
+            UsuarioLogado = auth.GetUserData();
+        }
 
         // GET: Alternativas
         public async Task<ActionResult> Index()
@@ -37,6 +47,8 @@ namespace STV.Controllers
                 if (alternativa == null)
                     throw new ApplicationException("Alternativa não encontrada.");
 
+                CommonValidation.CanSee(alternativa.Questao.Atividade.Unidade.Curso, UsuarioLogado.Idusuario, User);
+
                 return View(alternativa);
             }
             catch (ApplicationException ex)
@@ -50,6 +62,7 @@ namespace STV.Controllers
         public async Task<ActionResult> Create(int Idquestao)
         {
             Alternativa alternativa = new Alternativa();
+
             try
             {
                 ViewBag.Idquestao = new SelectList(db.Questao, "Idquestao", "Descricao");
@@ -57,9 +70,9 @@ namespace STV.Controllers
                 alternativa.Questao = await db.Questao.FindAsync(Idquestao);
 
                 if (alternativa.Questao == null)
-                    throw new ApplicationException("Questão não encontrada.");
+                    throw new KeyNotFoundException("Questão não encontrada.");
 
-                AtividadeValidation.CanEdit(alternativa.Questao.Atividade);
+                AtividadeValidation.CanEdit(alternativa.Questao.Atividade, UsuarioLogado.Idusuario, User);
 
                 var alternativaVM = Mapper.Map<Alternativa, AlternativaVM>(alternativa);
                 if (alternativaVM.Questao.IdalternativaCorreta == null) alternativaVM.IsCorreta = true; //caso ainda não tenha alternativa correta
@@ -71,7 +84,6 @@ namespace STV.Controllers
                 TempData["msgErr"] = ex.Message;
                 return VoltarParaListagem(alternativa);
             }
-
         }
 
         // POST: Alternativas/Create
@@ -119,7 +131,7 @@ namespace STV.Controllers
                 if (alternativa == null)
                     throw new Exception("Alternativa não encontrada.");
 
-                AtividadeValidation.CanEdit(alternativa.Questao.Atividade);
+                AtividadeValidation.CanEdit(alternativa.Questao.Atividade, UsuarioLogado.Idusuario, User);
 
                 var alternativaVM = Mapper.Map<Alternativa, AlternativaVM>(alternativa);
                 ViewBag.Idquestao = new SelectList(db.Questao, "Idquestao", "Descricao", alternativa.Idquestao);
@@ -129,11 +141,6 @@ namespace STV.Controllers
             {
                 TempData["msgErr"] = ex.Message;
                 return VoltarParaListagem(alternativa);
-            }
-            catch (Exception ex)
-            {
-                TempData["msgErr"] = ex.Message;
-                return RedirectToAction("Index", "Home");
             }
         }
 
@@ -178,7 +185,7 @@ namespace STV.Controllers
                 if (alternativa == null)
                     throw new Exception("Alternativa não encontrada.");
 
-                AtividadeValidation.CanEdit(alternativa.Questao.Atividade);
+                AtividadeValidation.CanEdit(alternativa.Questao.Atividade, UsuarioLogado.Idusuario, User);
 
                 if (alternativa.Idalternativa == alternativa.Questao.IdalternativaCorreta)
                     throw new ApplicationException("Este alternativa é a correta. Não pode ser excluída.");
@@ -189,11 +196,6 @@ namespace STV.Controllers
             {
                 TempData["msgErr"] = ex.Message;
                 return VoltarParaListagem(alternativa);
-            }
-            catch (Exception ex)
-            {
-                TempData["msgErr"] = ex.Message;
-                return RedirectToAction("Index", "Home");
             }
         }
 

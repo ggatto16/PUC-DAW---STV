@@ -29,18 +29,14 @@ namespace STV.Models.Validation
             return;
         }
 
-        public static bool CanEdit(Curso curso,int Idusuario, IPrincipal User)
+        public static void CanEdit(Curso curso,int Idusuario, IPrincipal User)
         {
             if (curso == null)
-                throw new ApplicationException("Ops! Curso não encontrado.");
+                throw new HttpRequestValidationException("Curso não encontrado.");
             if (curso.Encerrado)
                 throw new ApplicationException("Curso encerrado. Não pode ser alterado.");
-            if (User.IsInRole("Admin"))
-                return true;
-            if (curso.IdusuarioInstrutor == Idusuario)
-                return true;
-
-            return false;
+            if (!User.IsInRole("Admin") && curso.IdusuarioInstrutor != Idusuario)
+                throw new UnauthorizedAccessException("Não Autorizado");
         }
     }
 }

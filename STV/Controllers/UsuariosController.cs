@@ -51,7 +51,7 @@ namespace STV.Controllers
 
         // GET: Usuarios
         [Authorize(Roles = "Admin")]
-        public async Task<ActionResult> Index(string cpf, string nome)
+        public async Task<ActionResult> Index(string cpf, string nome, int? Iddepartamento)
         {
             ViewBag.FiltroCPF = cpf;
             ViewBag.FiltroNome = nome;
@@ -61,13 +61,17 @@ namespace STV.Controllers
 
             IQueryable<Usuario> usuarios;
 
+            usuarios = db.Usuario.Where(u => u.Cpf != admin);
             if (!string.IsNullOrEmpty(cpf))
-                usuarios = db.Usuario.Where(u => u.Cpf == cpf && u.Cpf != admin);
-            else if (!string.IsNullOrEmpty(nome))
-                usuarios = db.Usuario.Where(u => u.Nome.Contains(nome) && u.Cpf != admin);
-            else
-                usuarios = db.Usuario.Where(u => u.Cpf != admin);
+                usuarios = usuarios.Where(u => u.Cpf == cpf && u.Cpf != admin);
 
+            if (!string.IsNullOrEmpty(nome))
+                usuarios = usuarios.Where(u => u.Nome.Contains(nome) && u.Cpf != admin);
+
+            if (Iddepartamento != null)
+                usuarios = usuarios.Where(u => u.Iddepartamento == Iddepartamento);
+
+            ViewBag.Iddepartamento = new SelectList(db.Departamento, "Iddepartamento", "Descricao", Iddepartamento);
             return View(await usuarios.ToListAsync());
         }
 
@@ -421,7 +425,6 @@ namespace STV.Controllers
             }
         }
 
-        [Authorize(Roles = "Default")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> AlterarSenha([Bind(Include = "Idusuario,Senha,SenhaDigitada,SenhaDigitadaConfirmacao")] AlterarSenhaVM usuarioVM)

@@ -3,14 +3,22 @@
 @{
     int i = 0;
 }
-@foreach (var nota in Model.NotasCurso)
-{
-    @Html.Raw("<p>\"")
-        @nota.Comentario; @Html.Raw("\"<br /><b>Nota: </b>") @nota.Pontos
-    @Html.Raw("</p>")
 
-    if (i > 0)
+@if (Model.NotasCurso.Count() == 0)
+{
+    <p>Nenhum comentário ainda.</p>
+}
+else
+{
+    @foreach (var nota in Model.NotasCurso)
     {
-        @Html.Raw("<hr />")
+        @Html.Raw("<p>\"")
+        @nota.Comentario; @Html.Raw("\"<br /><b>Nota: </b>") @nota.Pontos
+        @Html.Raw("</p>")
+
+        if (i > 0)
+        {
+            @Html.Raw("<hr />")
+        }
     }
 }

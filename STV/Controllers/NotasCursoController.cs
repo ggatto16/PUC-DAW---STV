@@ -2,6 +2,7 @@
 using STV.DAL;
 using STV.Models;
 using STV.Models.Validation;
+using System;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Mvc;
@@ -30,7 +31,7 @@ namespace STV.Controllers
 
             var curso = db.Curso.Find(Idcurso);
             if (!CommonValidation.CanSee(curso, UsuarioLogado.Idusuario, User))
-                return View("NaoAutorizado");
+                throw new UnauthorizedAccessException("Não Autorizado");
 
             var notaAtual = await db.NotaCurso.FindAsync(UsuarioLogado.Idusuario, Idcurso);
 

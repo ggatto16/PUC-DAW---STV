@@ -121,7 +121,14 @@
                 bool aberta = item.DataAbertura < DateTime.Now;
                 <tr>
                     <td>
-                        @Html.ActionLink(item.Descricao, "Details", "Atividades", new { id = item.Idatividade }, null)
+                        @if (adminOrInstrutor)
+                        {
+                            @Html.ActionLink(item.Descricao, "Details", "Atividades", new { id = item.Idatividade }, null)
+                        }
+                        else
+                        {
+                            @Html.Raw(item.Descricao)
+                        }
                     </td>
 
                     <td align="center" valign="middle" style="cursor: pointer;">
@@ -170,6 +177,10 @@
                         }
 
                     }
+                    else
+                    {
+                        <td></td>
+                    }
 
                     @if (!adminOrInstrutor)
                     {
@@ -177,7 +188,7 @@
                         {
                             <td align="center">
                                 <a onclick="MostrarSituacao('Atividade finalizada. Aguarde o prazo final em @item.DataEncerramento.ToShortDateString() para conferir a revisão.', '@item.Descricao')" data-toggle="tooltip" data-placement="auto" title="Finalizada">
-                                    <div class="td-link" style="color: #3c763d; cursor: pointer;">
+                                    <div class="td-link my-text-success" style="cursor: pointer;">
                                         <span class="glyphicon glyphicon-check" aria-hidden="true"></span>
                                     </div>
                                 </a>
@@ -208,6 +219,11 @@
                                             <span class="glyphicon glyphicon-tasks" aria-hidden="true"></span>
                                         </a>
                                     </td>
+                                    <td></td>
+                                }
+                                else
+                                {
+                                    <td></td>
                                     <td></td>
                                 }
                             }

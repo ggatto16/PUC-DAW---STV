@@ -69,6 +69,31 @@
             <dd>
                 @Html.DisplayFor(model => model.Palavraschave)
             </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Departamentos)
+            </dt>
+
+            <dd>
+                @{
+                    var tamanho = Model.Departamentos.Count();
+
+                    if (tamanho == 0)
+                    {
+                        <span class="glyphicon glyphicon-thumbs-down"></span> @Html.Raw("Nenhuma")
+                    }
+
+                    for (var i = 0; i < tamanho; i++)
+                    {
+                        @Model.Departamentos.ElementAtOrDefault(i).Descricao
+                        if (i < tamanho - 1)
+                        {
+                            @Html.Raw(",");
+                        }
+
+                    }
+                }
+            </dd>
  
             @if (User.IsInRole("Default") && !Model.IsInstutor)
             {
@@ -287,9 +312,9 @@
                         <h4 class="modal-title" id="myModalLabel">Comentário</h4>
                     </div>
                     <div class="modal-body">
-                        <div class="container-fluid">
+                        <div class="row">
                             <div class="col-md-12">
-                                @Html.TextBoxFor(model => model.NotaCursoAtual.Comentario, new { Class = "form-control", id = "Comentario", Name = "Comentario" })
+                                @Html.TextAreaFor(model => model.NotaCursoAtual.Comentario, new { Class = "form-control", id = "Comentario", Name = "Comentario", @rows = "5", @style="margin: 0 auto;" })
                             </div>
                         </div>
                     </div>

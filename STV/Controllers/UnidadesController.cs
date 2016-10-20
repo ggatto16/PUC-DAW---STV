@@ -62,7 +62,7 @@ namespace STV.Controllers
                     .SingleOrDefaultAsync();
 
                 if (!UnidadeValidation.CanSee(unidade, UsuarioLogado.Idusuario, User))
-                    return View("NaoAutorizado");
+                    throw new UnauthorizedAccessException("Não Autorizado");
 
                 var unidadeVM = Mapper.Map<Unidade, UnidadeVM>(unidade);
 
@@ -127,7 +127,7 @@ namespace STV.Controllers
                     throw new ApplicationException("Unidade não encontrada.");
 
                 if (!UnidadeValidation.CanSee(unidade, UsuarioLogado.Idusuario, User))
-                    return View("NaoAutorizado");
+                    throw new UnauthorizedAccessException("Não Autorizado");
 
                 return View(unidade);
             }
@@ -180,8 +180,7 @@ namespace STV.Controllers
             {
                 Curso curso = db.Curso.Find(Idcurso);
 
-                if (!CursoValidation.CanEdit(curso, UsuarioLogado.Idusuario, User))
-                    return View("NaoAutorizado");
+                CursoValidation.CanEdit(curso, UsuarioLogado.Idusuario, User);
 
                 unidade = new Unidade { Curso = curso };
 
@@ -230,8 +229,7 @@ namespace STV.Controllers
                 if (unidade == null)
                     throw new ApplicationException("Unidade não encontrada.");
 
-                if (!CursoValidation.CanEdit(unidade.Curso, UsuarioLogado.Idusuario, User))
-                    return View("NaoAutorizado");
+                CursoValidation.CanEdit(unidade.Curso, UsuarioLogado.Idusuario, User);
 
                 ViewBag.Idcurso = new SelectList(db.Curso, "Idcurso", "Titulo");
                 return View(Mapper.Map<Unidade, UnidadeVM>(unidade));
@@ -278,8 +276,7 @@ namespace STV.Controllers
                 if (unidade == null)
                     throw new Exception("Unidade não encontrada.");
 
-                if (!CursoValidation.CanEdit(unidade.Curso, UsuarioLogado.Idusuario, User))
-                    return View("NaoAutorizado");
+                CursoValidation.CanEdit(unidade.Curso, UsuarioLogado.Idusuario, User);
 
                 return View(unidade);
             }

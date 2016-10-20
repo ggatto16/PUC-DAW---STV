@@ -11,11 +11,13 @@ using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Mvc;
 
 namespace STV.Controllers
 {
     [Authorize]
+    [HandleError]
     public class AtividadesController : Controller
     {
         private STVDbContext db = new STVDbContext();
@@ -40,7 +42,7 @@ namespace STV.Controllers
                     .SingleOrDefaultAsync();
 
                 if (!AtividadeValidation.CanDo(atividade, UsuarioLogado.Idusuario, User))
-                    return View("NaoAutorizado");
+                    throw new UnauthorizedAccessException("Não Autorizado");
 
                 var AtividadeModel = Mapper.Map<Atividade, AtividadeVM>(atividade);
 
@@ -85,7 +87,7 @@ namespace STV.Controllers
                     throw new Exception("Atividade não encontrada.");
 
                 if (!CommonValidation.CanSee(atividade.Unidade.Curso, UsuarioLogado.Idusuario, User))
-                    return View("NaoAutorizado");
+                    throw new UnauthorizedAccessException("Não Autorizado");
                 
                 var AtividadeModel = Mapper.Map<Atividade, AtividadeVM>(atividade);
                 AtividadeModel.IsRevisao = true;
@@ -163,7 +165,7 @@ namespace STV.Controllers
                     .SingleOrDefaultAsync();
 
                 if (!AtividadeValidation.CanDo(atividade, UsuarioLogado.Idusuario, User))
-                    return View("NaoAutorizado");
+                    throw new UnauthorizedAccessException("Não Autorizado");
 
                 var corretas = db.Resposta
                     .Where(r => r.Idusuario == UsuarioLogado.Idusuario && r.Questao.Idatividade == atividade.Idatividade)
@@ -212,15 +214,15 @@ namespace STV.Controllers
             try
             {
                 if (id == null)
-                    throw new ApplicationException("Ops! Requisição inválida.");
+                    throw new HttpRequestValidationException("Ops! Requisição inválida.");
 
                 Atividade atividade = await db.Atividade.FindAsync(id);
 
                 if (atividade == null)
-                    throw new ApplicationException("Atividade não encontrada.");
+                    throw new KeyNotFoundException("Atividade não encontrada.");
 
                 if (!CommonValidation.CanSee(atividade.Unidade.Curso, UsuarioLogado.Idusuario, User))
-                    return View("NaoAutorizado");
+                    throw new UnauthorizedAccessException("Não Autorizado");
 
                 ViewBag.MensagemSucesso = TempData["msg"];
                 ViewBag.MensagemErro = TempData["msgErr"];
@@ -237,18 +239,31 @@ namespace STV.Controllers
         }
 
         // GET: Atividades/Create
-        public ActionResult Create(int Idunidade)
+        public ActionResult Create(int? Idunidade)
         {
-            ViewBag.Idunidade = new SelectList(db.Unidade, "Idunidade", "Titulo");
-            Atividade atividade = new Atividade();
-            atividade.Idunidade = Idunidade;
-            atividade.Unidade = db.Unidade.Find(Idunidade);
-            if (atividade.Unidade.Encerrada)
+            try
             {
-                TempData["msgErr"] = "Unidade encerrada. Não pode ser alterada.";
-                return VoltarParaListagem(atividade);
+                if (Idunidade == null)
+                    throw new HttpRequestValidationException("Ops! Requisição inválida.");
+
+                var unidade = db.Unidade.Find(Idunidade);
+                if (unidade == null)
+                    throw new KeyNotFoundException("Unidade não encontrada.");
+
+                Atividade atividade = new Atividade();
+                atividade.Idunidade = (int)Idunidade;
+                atividade.Unidade = unidade;
+
+                AtividadeValidation.CanEdit(atividade, UsuarioLogado.Idusuario, User);
+
+                ViewBag.Idunidade = new SelectList(db.Unidade, "Idunidade", "Titulo");
+                return View(atividade);
             }
-            return View(atividade);
+            catch (ApplicationException ex)
+            {
+                TempData["msgErr"] = ex.Message;
+                return VoltarParaListagem(Idunidade);
+            }
         }
 
         private void ValidarDatas(ref Atividade atv)
@@ -296,7 +311,7 @@ namespace STV.Controllers
                 db.Atividade.Add(atividade);
                 await db.SaveChangesAsync();
                 TempData["msg"] = "Dados salvos!";
-                return VoltarParaListagem(atividade);
+                return VoltarParaListagem(atividade.Idunidade);
             }
 
             atividade.Idunidade = atividade.Idunidade;
@@ -312,13 +327,10 @@ namespace STV.Controllers
             try
             {
                 if (id == null)
-                    throw new Exception("Ops! Requisição inválida.");
+                    throw new HttpRequestValidationException("Requisição inválida");
 
                 atividade = await db.Atividade.FindAsync(id);
-                if (atividade == null)
-                    throw new Exception("Atividade não encontrada.");
-
-                AtividadeValidation.CanEdit(atividade);
+                AtividadeValidation.CanEdit(atividade, UsuarioLogado.Idusuario, User);
 
                 ViewBag.Idunidade = new SelectList(db.Unidade, "Idunidade", "Titulo", atividade.Idunidade);
                 return View(Mapper.Map<Atividade, AtividadeVM>(atividade));
@@ -326,12 +338,7 @@ namespace STV.Controllers
             catch (ApplicationException ex)
             {
                 TempData["msgErr"] = ex.Message;
-                return VoltarParaListagem(atividade);
-            }
-            catch (Exception ex)
-            {
-                TempData["msgErr"] = ex.Message;
-                return RedirectToAction("Index", "Home");
+                return VoltarParaListagem(atividade.Idunidade);
             }
         }
 
@@ -351,7 +358,7 @@ namespace STV.Controllers
                 db.Entry(atividade).State = EntityState.Modified;
                 await db.SaveChangesAsync();
                 TempData["msg"] = "Dados salvos!";
-                return VoltarParaListagem(atividade);
+                return VoltarParaListagem(atividade.Idunidade);
             }
 
             ViewBag.Idunidade = new SelectList(db.Unidade, "Idunidade", "Titulo", atividade.Idunidade);
@@ -369,19 +376,14 @@ namespace STV.Controllers
 
                 atividade = await db.Atividade.FindAsync(id);
 
-                AtividadeValidation.CanDelete(atividade);
+                AtividadeValidation.CanDelete(atividade, UsuarioLogado.Idusuario, User);
 
                 return View(atividade);
             }
             catch (ApplicationException ex)
             {
                 TempData["msgErr"] = ex.Message;
-                return VoltarParaListagem(atividade);
-            }
-            catch (Exception ex)
-            {
-                TempData["msgErr"] = ex.Message;
-                return RedirectToAction("Index", "Home");
+                return VoltarParaListagem(atividade.Idunidade);
             }
         }
 
@@ -397,7 +399,7 @@ namespace STV.Controllers
                 db.Atividade.Remove(atividade);
                 await db.SaveChangesAsync();
                 TempData["msg"] = "Atividade excluída!";
-                return VoltarParaListagem(atividade);
+                return VoltarParaListagem(atividade.Idunidade);
             }
             catch (Exception)
             {
@@ -407,11 +409,10 @@ namespace STV.Controllers
         }
 
         //Retorna para a tela principal do Curso
-        private RedirectToRouteResult VoltarParaListagem(Atividade atividade)
+        private RedirectToRouteResult VoltarParaListagem(int? Idunidade)
         {
-            if (atividade == null) return RedirectToAction("Index", "Home");
-            Unidade unidade = db.Unidade.Find(atividade.Idunidade);
-            return RedirectToAction("Details", "Cursos", new { id = unidade.Idcurso, Idunidade = atividade.Idunidade });
+            Unidade unidade = db.Unidade.Find(Idunidade);
+            return RedirectToAction("Details", "Cursos", new { id = unidade.Idcurso, Idunidade = Idunidade });
         }
 
         protected override void Dispose(bool disposing)

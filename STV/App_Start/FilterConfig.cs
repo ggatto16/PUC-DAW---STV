@@ -1,5 +1,6 @@
 ﻿using System.Web;
 using System.Web.Mvc;
+using static STV.MvcApplication;
 
 namespace STV
 {
@@ -7,6 +8,7 @@ namespace STV
     {
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
+            filters.Add(new HandleExceptionsAttribute());
             filters.Add(new HandleErrorAttribute()
             {
                 View = "Error"

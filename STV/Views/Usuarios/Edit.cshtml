@@ -46,6 +46,11 @@
             <div class="col-md-10">
                 @Html.DropDownList("Iddepartamento", null, htmlAttributes: new { @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.Iddepartamento, "", new { @class = "text-danger" })
+                <div class="my-text-warning">
+                    <small>
+                        <span class="glyphicon glyphicon-alert"></span> Alterar o departamento do usuáro fará com que ele perca o acesso aos cursos do departamento atual.
+                    </small>
+                </div>
             </div>
         </div>
 
