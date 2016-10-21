@@ -10,7 +10,7 @@
 }
 else
 {
-    @foreach (var nota in Model.NotasCurso)
+    foreach (var nota in Model.NotasCurso)
     {
         @Html.Raw("<p>\"")
         @nota.Comentario; @Html.Raw("\"<br /><b>Nota: </b>") @nota.Pontos

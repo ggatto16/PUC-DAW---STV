@@ -133,13 +133,13 @@
                     <span class="starRating">
                         @Html.RadioButton("rating", "10", Model.MediaNota > 8 ? true : false, new { id = "rating10", disabled = "disabled" })
                         <label for="rating10">5</label>
-                        @Html.RadioButton("rating", "8", Model.MediaNota > 6 ? true : false, new { id = "rating8", disabled = "disabled" })
+                        @Html.RadioButton("rating", "8", Model.MediaNota > 6 && Model.MediaNota <=8 ? true : false, new { id = "rating8", disabled = "disabled" })
                         <label for="rating8">4</label>
-                        @Html.RadioButton("rating", "6", Model.MediaNota > 4 ? true : false, new { id = "rating6", disabled = "disabled" })
+                        @Html.RadioButton("rating", "6", Model.MediaNota > 4 && Model.MediaNota <= 6 ? true : false, new { id = "rating6", disabled = "disabled" })
                         <label for="rating6">3</label>
-                        @Html.RadioButton("rating", "4", Model.MediaNota > 2 ? true : false, new { id = "rating4", disabled = "disabled" })
+                        @Html.RadioButton("rating", "4", Model.MediaNota > 2 && Model.MediaNota <= 4 ? true : false, new { id = "rating4", disabled = "disabled" })
                         <label for="rating4">2</label>
-                        @Html.RadioButton("rating", "2", Model.MediaNota > 0 ? true : false, new { id = "rating2", disabled = "disabled" })
+                        @Html.RadioButton("rating", "2", Model.MediaNota > 0 && Model.MediaNota <= 2 ? true : false, new { id = "rating2", disabled = "disabled" })
                         <label for="rating2">1</label>
                     </span>
 
@@ -277,12 +277,12 @@
                     @if (User.IsInRole("Admin") || Model.IsInstutor)
                     {
                         <td>
-                            <a href="@Url.Action("Edit", new { id = unidade.Idunidade })" class="btn btn-primary" data-toggle="tooltip" data-placement="auto" title="Alterar">
+                            <a href="@Url.Action("Edit", "Unidades", new { id = unidade.Idunidade })" class="btn btn-primary" data-toggle="tooltip" data-placement="auto" title="Alterar">
                                 <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                             </a>
                         </td>
                         <td>
-                            <a href="@Url.Action("Delete", new { id = unidade.Idunidade })" class="btn btn-danger" data-toggle="tooltip" data-placement="auto" title="Excluir">
+                            <a href="@Url.Action("Delete", "Unidades", new { id = unidade.Idunidade })" class="btn btn-danger" data-toggle="tooltip" data-placement="auto" title="Excluir">
                                 <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                             </a>
                         </td>

@@ -49,11 +49,18 @@
 }
 else
 {
-    foreach (var curso in Model.Cursos)
-    {
+     
         var notaMaximaCurso = 0;
         var notaAlunoCurso = 0;
         var qtdMateriaisCurso = 0;
+        var notaMaximaUnidade = 0;
+        var notaAlunoUnidade = 0;
+    
+        foreach (var curso in Model.Cursos)
+        {
+            notaMaximaCurso = 0;
+            notaAlunoCurso = 0;
+            qtdMateriaisCurso = 0;
 
         <hr />
         <div style="text-align: center; padding: 10px 0px 10px 0px; width: 100%; overflow: hidden;">
@@ -79,8 +86,13 @@ else
                         </tr>
                     </thead>
                     <tbody>
+                        @{ 
+                            notaMaximaUnidade = 0;
+                            notaAlunoUnidade = 0;
+                        }
                         @foreach (var atividade in unidade.Atividades)
                         {
+                            notaMaximaUnidade += atividade.Valor;
                             notaMaximaCurso += atividade.Valor;
                             var nota = Model.Notas.Where(n => n.Idatividade == atividade.Idatividade && n.Idusuario == Model.Idusuario).FirstOrDefault();
                             string nota2 = string.Empty;
@@ -88,6 +100,7 @@ else
                             {
                                 nota2 = nota.Pontos.ToString();
                                 notaAlunoCurso = nota.Pontos;
+                                notaAlunoUnidade += nota.Pontos;
                             }
                             <tr>
                                 <td style="width: 50%;">
@@ -102,6 +115,28 @@ else
                             </tr>
                         }
                     </tbody>
+                    <tfoot>
+                        <tr style="background-color: #d8d9da;">
+                            <td style="width: 50%;">
+                                Nota na Unidade
+                            </td>
+                            <td>&nbsp;</td>
+                            <td style="width: 20%; text-align: right;">
+                                @{
+                                    if (notaMaximaUnidade > 0)
+                                    {
+                                        var porcentagem = (100 * notaAlunoUnidade) / notaMaximaUnidade;
+                                        @Html.Raw(porcentagem + "%");
+                                    }
+                                    else
+                                    {
+                                        @Html.Raw("0%");
+                                    }
+                                }
+
+                            </td>
+                        </tr>
+                    </tfoot>
                 </table>
             </div>
 
@@ -141,7 +176,7 @@ else
                         }
                     </tbody>
                     <tfoot>
-                        <tr>
+                        <tr style="background-color: #d8d9da;">
                             <td style="width: 50%;">
                                 Materiais Consultados
                             </td>
@@ -165,6 +200,7 @@ else
                 </table>
             </div>
         }
+        <br />
         var aprovado = false;
         if (curso.Encerrado)
         {
@@ -178,16 +214,16 @@ else
 
             if (aprovado)
             {
-                <div>Aluno Aprovado</div>
+                <div style="padding: 2px; text-align: center; color: green;">Aluno Aprovado</div>
             }
             else
             {
-                <div>Aluno Reprovado</div>
+                <div style="padding: 2px; text-align: center; color: red;">Aluno Reprovado</div>
             }
         }
         else
         {
-            <div>Curso em Andamento</div>
+            <div style="background-color: yellow; padding: 2px; text-align: center;"><b>Curso em Andamento</b></div>
         }
         <div style="page-break-after: always"></div>
     }

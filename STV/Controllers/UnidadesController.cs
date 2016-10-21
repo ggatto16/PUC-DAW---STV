@@ -183,6 +183,7 @@ namespace STV.Controllers
                 CursoValidation.CanEdit(curso, UsuarioLogado.Idusuario, User);
 
                 unidade = new Unidade { Curso = curso };
+                unidade.Idcurso = curso.Idcurso;
 
                 ViewBag.Idcurso = new SelectList(db.Curso, "Idcurso", "Titulo");
                 return View(unidade);

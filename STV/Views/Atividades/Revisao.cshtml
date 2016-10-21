@@ -20,11 +20,11 @@
 {
     if (questao.IdalternativaCorreta == questao.IdAlternativaSelecionada)
     {
-        <div class="my-text-success text-center" style="width: 20%;">✔ Correto</div>
+        <div class="bg-success my-text-success text-center" style="width: 20%; border-radius: 0.5em;">✔ Correto</div>
     }
     else
     {
-        <div class="my-text-danger text-center" style="width: 20%;">✖ Errado</div>
+        <div class="bg-danger my-text-danger text-center" style="width: 20%; border-radius: 0.5em;">✖ Errado</div>
     }
 
     <h4> @questao.Numero - @questao.Descricao </h4>
@@ -33,28 +33,41 @@
     <table class="table">
         @foreach (var alternativa in questao.Alternativas)
         {
-            if (questao.IdalternativaCorreta == alternativa.Idalternativa)
-            {
-                classe = "my-text-success";
-            }
-            else
-            {
-                classe = "my-text-danger";
-            }
-            <tr class="@classe">
+            <tr>
                 <td>
-                    @Html.RadioButtonFor(modelItem => questao.IdAlternativaSelecionada, alternativa.Idalternativa, (questao.Respostas.Count() > 0 && alternativa.Idalternativa == questao.Respostas.FirstOrDefault().Idalternativa) ? new { @checked = "checked" } : null) @alternativa.Descricao
-                    <br />
-                    <small>
-                        @if (questao.IdalternativaCorreta == alternativa.Idalternativa)
+                    @{ var selecionada = (questao.Respostas.Count() > 0 && alternativa.Idalternativa == questao.Respostas.FirstOrDefault().Idalternativa);
+                        var correta = questao.IdalternativaCorreta == alternativa.Idalternativa;
+                        if (correta)
                         {
-                            <span>Justificativa: &nbsp;</span><span class="text-success">@Html.Raw(alternativa.Justificativa)</span>
+                            classe = "my-text-success";
+                        }
+                        else if (selecionada)
+                        {
+                            classe = "my-text-danger";
                         }
                         else
                         {
-                            <span>Justificativa: &nbsp;</span><span class="text-danger">@Html.Raw(alternativa.Justificativa)</span>
+                            classe = "";
                         }
-                    </small>
+
+                    }
+                    @Html.RadioButton(alternativa.Descricao, alternativa.Idalternativa, selecionada, new { @disabled = "disabled" })
+                    @Html.Raw("<label class=" + @classe + ">" + alternativa.Descricao + "</label>")
+
+                    @if (!string.IsNullOrEmpty(alternativa.Justificativa))
+                    {
+                        <br />
+                        <small>
+                            @if (questao.IdalternativaCorreta == alternativa.Idalternativa)
+                            {
+                                <span>Justificativa: &nbsp;</span><span class="text-success">@Html.Raw(alternativa.Justificativa)</span>
+                            }
+                            else
+                            {
+                                <span>Justificativa: &nbsp;</span><span class="text-danger">@Html.Raw(alternativa.Justificativa)</span>
+                            }
+                        </small>
+                    }
                 </td>
             </tr>
         }
