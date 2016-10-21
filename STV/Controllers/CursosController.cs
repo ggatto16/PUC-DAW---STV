@@ -441,7 +441,8 @@ namespace STV.Controllers
                 CarregarDepartamentos(curso);
 
                 ViewBag.IdusuarioInstrutor = new SelectList(db.Usuario, "Idusuario", "Nome", curso.IdusuarioInstrutor);
-                return View(Mapper.Map<Curso, CursoVM>(curso));
+                var cursoVM = Mapper.Map<Curso, CursoVM>(curso);
+                return View(cursoVM);
             }
             catch (ApplicationException ex)
             {
@@ -475,11 +476,22 @@ namespace STV.Controllers
             {
                 try
                 {
+                    if (cursoToUpdate.Encerrado)
+                    {
+                        var curso = db.Curso.Find(cursoToUpdate.Idcurso);
+                        if (curso.Unidades.Where(u => u.Encerrada == false).FirstOrDefault() != null)
+                            throw new ApplicationException("Curso contém unidades em aberto. Não pode ser encerrado.");
+                    }
+
                     AtualizarVisibilidadeDepartamentos(departamentosSelecionados, cursoToUpdate);
                     cursoToUpdate.Stamp = DateTime.Now;
                     db.SaveChanges();
                     TempData["msg"] = "Dados Salvos!";
                     return RedirectToAction("Index");
+                }
+                catch (ApplicationException ex)
+                {
+                    ModelState.AddModelError("", ex.Message);
                 }
                 catch (RetryLimitExceededException /* dex */)
                 {
@@ -490,7 +502,8 @@ namespace STV.Controllers
 
             CarregarDepartamentos(cursoToUpdate);
             ViewBag.IdusuarioInstrutor = new SelectList(db.Usuario, "Idusuario", "Nome");
-            return View(cursoToUpdate);
+            var cursoVM = Mapper.Map<Curso, CursoVM>(cursoToUpdate);
+            return View(cursoVM);
         }
 
         [Authorize(Roles = "Admin")]

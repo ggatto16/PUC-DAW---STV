@@ -232,8 +232,8 @@ namespace STV.Controllers
 
                 CursoValidation.CanEdit(unidade.Curso, UsuarioLogado.Idusuario, User);
 
-                ViewBag.Idcurso = new SelectList(db.Curso, "Idcurso", "Titulo");
-                return View(Mapper.Map<Unidade, UnidadeVM>(unidade));
+                var undiadeVM = Mapper.Map<Unidade, UnidadeVM>(unidade);
+                return View(undiadeVM);
             }
             catch (ApplicationException ex)
             {
@@ -249,18 +249,28 @@ namespace STV.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit([Bind(Include = "Idunidade,Idcurso,Titulo,DataAbertura,Encerrada")] UnidadeVM unidadeVM)
         {
-            var unidade = Mapper.Map<UnidadeVM, Unidade>(unidadeVM);
-            ValidarDatas(ref unidade);
+            var unidadeToUpdate = Mapper.Map<UnidadeVM, Unidade>(unidadeVM);
+            ValidarDatas(ref unidadeToUpdate);
+
+            if (unidadeToUpdate.Encerrada)
+            {
+                var unidade = db.Unidade.Find(unidadeToUpdate.Idunidade);
+                if (unidade.Atividades.Where(a => a.DataEncerramento > DateTime.Now).FirstOrDefault() != null)
+                    ModelState.AddModelError("", "Unidade contém uma ou mais atividades em aberto. Não pode ser encerrada.");
+            }
 
             if (ModelState.IsValid)
             {
-                unidade.Stamp = DateTime.Now;
-                db.Entry(unidade).State = EntityState.Modified;
+                unidadeToUpdate.Stamp = DateTime.Now;
+                db.Entry(unidadeToUpdate).State = EntityState.Modified;
                 await db.SaveChangesAsync();
                 TempData["msg"] = "Dados Salvos!";
-                return VoltarParaListagem(unidade);
+                return VoltarParaListagem(unidadeToUpdate);
             }
-            return View(unidade);
+
+            Unidade unidadeR = db.Unidade.Find(unidadeVM.Idunidade);
+            unidadeVM = Mapper.Map<Unidade, UnidadeVM>(unidadeR);
+            return View(unidadeVM);
         }
 
         // GET: Unidades/Delete/5
