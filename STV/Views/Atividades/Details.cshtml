@@ -82,9 +82,16 @@
             {
                 questaoSelecionada = string.Empty;
             }
-            if (questao.IdalternativaCorreta == null)
+            if (questao.Alternativas.Count() == 0)
             {
                 tooltipAviso = "Atenção! Questão sem alternativas não será publicada.";
+            }
+            else
+            {
+                if (questao.IdalternativaCorreta == null)
+                {
+                    tooltipAviso = "Atenção! Questão sem alternativa correta não será publicada.";
+                }
             }
             <tr class="@questaoSelecionada" id="tr_@questao.Idquestao">
                 <td>

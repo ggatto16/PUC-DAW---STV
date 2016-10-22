@@ -80,7 +80,7 @@ namespace STV.Controllers
             HTMLString.Append("</div>");
             HTMLString.Append("</div>");
 
-            string html = string.Format(HTMLString.ToString(), UsuarioLogado.Nome, curso.Titulo, curso.Instrutor.Nome, UsuarioLogado.Nome, DateTime.Today.ToString("dd/MM/yyyy"));
+            string html = string.Format(HTMLString.ToString(), UsuarioLogado.Nome, curso.Titulo, curso.Instrutor.Nome, UsuarioLogado.Nome, curso.Stamp.ToShortDateString());
             string css = @".Nome{padding:320px 0 50px;font-family:'Kunstler Script';font-size:350%;color:#036;text-align:center;position:absolute;width:500px;height:535px;overflow-y:hidden;}.Curso{padding:0px 0 0 20px;font-family:'Arial';color:#036;font-size:100%;text-align:center;position:absolute;width:580px;height:60px;overflow-y:hidden;}.Instrutor{padding:127px 0 0;font-family:'Arial';color:#036;font-size:100%;text-align:center;position:absolute;width:410px}.Aluno{padding:100px 0 0;font-family:'Arial';color:#036;font-size:100%;text-align:center;position:absolute;width:410px}.Data{padding:67px 0 0;font-family:'Freestyle Script';color:#036;font-size:150%;text-align:center;position:absolute;width:320px}.LabelData{padding:0;font-family:'Arial';color:#036;font-size:100%;text-align:center;position:absolute;width:320px}";
 
             if (RequestExtensions.IsMobileBrowser(Request.UserAgent))

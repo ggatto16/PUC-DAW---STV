@@ -83,7 +83,7 @@ namespace STV.Controllers
                 {
                     atividades = db.Atividade
                         .Where(a => a.Idunidade == unidade.Idunidade && a.Questoes
-                            .Where(q => q.Alternativas.Count() > 0).Count() > 0).ToList();
+                            .Where(q => q.Alternativas.Count() > 0 && q.IdalternativaCorreta != null).Count() > 0).ToList();
                 }
 
                 var atividadesVM = Mapper.Map<IEnumerable<Atividade>, IEnumerable<AtividadeVM2>>(atividades);
@@ -249,6 +249,7 @@ namespace STV.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit([Bind(Include = "Idunidade,Idcurso,Titulo,DataAbertura,Encerrada")] UnidadeVM unidadeVM)
         {
+
             var unidadeToUpdate = Mapper.Map<UnidadeVM, Unidade>(unidadeVM);
             ValidarDatas(ref unidadeToUpdate);
 
@@ -262,11 +263,14 @@ namespace STV.Controllers
             if (ModelState.IsValid)
             {
                 unidadeToUpdate.Stamp = DateTime.Now;
+                var local = db.Set<Unidade>().Local.FirstOrDefault(u => u.Idunidade == unidadeToUpdate.Idunidade);
+                db.Entry(local).State = EntityState.Detached;
                 db.Entry(unidadeToUpdate).State = EntityState.Modified;
                 await db.SaveChangesAsync();
                 TempData["msg"] = "Dados Salvos!";
                 return VoltarParaListagem(unidadeToUpdate);
             }
+
 
             Unidade unidadeR = db.Unidade.Find(unidadeVM.Idunidade);
             unidadeVM = Mapper.Map<Unidade, UnidadeVM>(unidadeR);

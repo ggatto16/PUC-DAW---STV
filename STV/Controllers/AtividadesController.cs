@@ -45,6 +45,7 @@ namespace STV.Controllers
                     throw new UnauthorizedAccessException("Não Autorizado");
 
                 var AtividadeModel = Mapper.Map<Atividade, AtividadeVM>(atividade);
+                AtividadeModel.Questoes = AtividadeModel.Questoes.Where(q => q.Alternativas.Count() > 0 && q.IdalternativaCorreta != null).ToList();
 
                 if (idProxima != null)
                 {
@@ -256,7 +257,6 @@ namespace STV.Controllers
 
                 AtividadeValidation.CanEdit(atividade, UsuarioLogado.Idusuario, User);
 
-                ViewBag.Idunidade = new SelectList(db.Unidade, "Idunidade", "Titulo");
                 return View(atividade);
             }
             catch (ApplicationException ex)
@@ -333,7 +333,8 @@ namespace STV.Controllers
                 AtividadeValidation.CanEdit(atividade, UsuarioLogado.Idusuario, User);
 
                 ViewBag.Idunidade = new SelectList(db.Unidade, "Idunidade", "Titulo", atividade.Idunidade);
-                return View(Mapper.Map<Atividade, AtividadeVM>(atividade));
+                var atividadeVM = Mapper.Map<Atividade, AtividadeVM>(atividade);
+                return View(atividadeVM);
             }
             catch (ApplicationException ex)
             {
@@ -361,7 +362,8 @@ namespace STV.Controllers
                 return VoltarParaListagem(atividade.Idunidade);
             }
 
-            ViewBag.Idunidade = new SelectList(db.Unidade, "Idunidade", "Titulo", atividade.Idunidade);
+            var atividadeR = db.Atividade.Find(atividade.Idatividade);
+            atividadeVM = Mapper.Map<Atividade, AtividadeVM>(atividadeR);
             return View(atividadeVM);
         }
 

@@ -133,6 +133,23 @@ namespace STV.Controllers
             return File(blobArquivo.Blob, blobArquivo.ContentType);
         }
 
+        public async Task<ActionResult> RedirecionarURL(int Id)
+        {
+            var material = await db.Material.FindAsync(Id);
+
+            if (material != null || material.Tipo != TipoMaterial.Link)
+            {
+                if (!CommonValidation.CanSee(material.Unidade.Curso, UsuarioLogado.Idusuario, User))
+                    throw new UnauthorizedAccessException("Não Autorizado");
+
+                RegistrarVisualizacao(material);
+            }
+            else
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            return Redirect(material.URL);
+        }
+
         // GET: Materiais/Create
         public ActionResult Create(int? Idunidade)
         {

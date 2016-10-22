@@ -66,7 +66,7 @@
                 </dt>
 
                 <dd>
-                    <a href="@Model.URL" target="_blank">@Model.URL</a>
+                    @Html.ActionLink(Model.URL, "RedirecionarURL", new { Id = Model.Idmaterial }, new { target = "_blank" })
                 </dd>
             }
             else if (Model.Tipo == STV.Models.TipoMaterial.Embedded && Model.URL != string.Empty)
