@@ -50,7 +50,7 @@ else
             cssLinha = string.Empty;
         }
 
-        <tr class="@cssLinha">
+        <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Titulo)
             </td>
@@ -74,7 +74,7 @@ else
                     }
                     else
                     {
-                        <p class="text-success"><b>Já inscrito!</b></p>
+                        <p class="my-text-success"><b>Já inscrito!</b></p>
                     }
                 }
             </td>
