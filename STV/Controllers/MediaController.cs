@@ -23,7 +23,7 @@ namespace STV.Controllers
 
         private STVDbContext db = new STVDbContext();
         private static  SessionContext auth = new SessionContext();
-        private static Usuario UsuarioLogado = auth.GetUserData();
+        private Usuario UsuarioLogado = auth.GetUserData();
 
         #region Fields
 
@@ -56,6 +56,7 @@ namespace STV.Controllers
 
             InvalidFileNameChars = Array.AsReadOnly(Path.GetInvalidFileNameChars());
             InitialDirectory = WebConfigurationManager.AppSettings["InitialDirectory"];
+
         }
 
         #endregion
